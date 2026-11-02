@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>대리상 정보 제출 · 글로벌사업부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+:root { --navy: #14213d; --navy-ink: #e6ecf5; --teal: #0f8b8d; --teal-soft: #e3f3f3; --bg: #eef2f6; --panel: #ffffff; --fg: #15202b; --muted: #637282; --line: #d8e0e8; --red: #c6283c; --red-soft: #fbe6e9; --green: #1f8a4c; --green-soft: #e4f4ea; --orange: #c46a00; --orange-soft: #fdf0dc; --radius: 12px; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif; -webkit-text-size-adjust: 100%; }
+header { background: var(--navy); color: var(--navy-ink); padding: 26px max(16px, env(safe-area-inset-left, 0px)) 24px max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 760px; margin: 0 auto; }
+.eyebrow { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; opacity: .7; font-weight: 700; }
+h1 { margin: 6px 0 4px; font-size: 24px; font-weight: 800; letter-spacing: -.01em; }
+header p { margin: 0; opacity: .82; font-size: 14px; }
+main { padding: 16px max(16px, env(safe-area-inset-left, 0px)) 48px max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 14px; }
+.card { background: var(--panel); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(20, 33, 61, .06), 0 6px 20px rgba(20, 33, 61, .05); padding: 18px 18px 20px; }
+.card h2 { margin: 0 0 4px; font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.card h2 .n { display: inline-flex; width: 26px; height: 26px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 13px; align-items: center; justify-content: center; }
+.hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+.grid .wide { grid-column: 1 / -1; }
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+label.f { display: block; font-size: 13.5px; font-weight: 700; min-width: 0; }
+label.f > input, label.f > select { margin-top: 6px; }
+label.f small, .g small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
+.req { color: var(--red); }
+input, select { width: 100%; min-height: 46px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 16px; background: #fff; color: var(--fg); }
+input:focus, select:focus, button:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+.g { display: block; font-size: 13.5px; font-weight: 700; } .g > .chips, .g > .stars { margin-top: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 42px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--fg); font: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 700; }
+.stars { display: flex; gap: 2px; } .star { width: 44px; height: 44px; border: 0; background: none; font-size: 28px; line-height: 1; color: #cfd8e0; cursor: pointer; padding: 0; } .star.on { color: #f0a500; }
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+.btn { min-height: 48px; padding: 0 22px; border-radius: 10px; border: 0; font: inherit; font-size: 16px; font-weight: 800; cursor: pointer; }
+.btn.primary { background: var(--teal); color: #fff; } .btn.primary:disabled { opacity: .55; cursor: default; }
+.btn.ghost { background: transparent; color: var(--teal); border: 1px solid var(--teal); }
+.msg { border-radius: 10px; padding: 10px 12px; font-size: 14px; display: none; } .msg.err { display: block; background: var(--red-soft); color: var(--red); } .msg.ok { display: block; background: var(--green-soft); color: var(--green); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; } th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-size: 12px; font-weight: 700; }
+.tag { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; } .tag.wait { background: var(--orange-soft); color: var(--orange); } .tag.done { background: var(--green-soft); color: var(--green); }
+.empty { color: var(--muted); font-size: 14px; padding: 10px 0; }
+.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--navy); color: #fff; padding: 12px 18px; border-radius: 10px; font-size: 14.5px; font-weight: 700; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); max-width: calc(100vw - 32px); z-index: 10; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16px 32px; }
+.who { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } @media (max-width: 560px) { .who { grid-template-columns: 1fr; } }
+.topnote { font-size: 13px; color: var(--muted); margin: 0; }
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Global Business · Partner CRM</div><h1>대리상 정보 제출</h1><p>제출하면 글로벌사업부 CRM에 자동 반영됩니다. 로그인 없이 30초.</p></div></header>
+<main class="wrap">
+  <section class="card">
+    <h2>제출자</h2>
+    <p class="hint">이름과 팀은 이 기기에 기억됩니다.</p>
+    <div class="who">
+      <label class="f">이름 <span class="req">*</span><input id="who-name" maxlength="50" autocomplete="name" placeholder="홍길동"></label>
+      <label class="f">팀<select id="who-team"><option value="">선택</option><option value="글로벌영업1팀">글로벌영업1팀</option><option value="글로벌영업2팀">글로벌영업2팀</option><option value="글로벌영업3팀">글로벌영업3팀</option><option value="미용성형TF">미용성형TF</option><option value="인니TF">인니TF</option><option value="글로벌사업부">글로벌사업부</option><option value="기타">기타</option></select></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">1</span>대리상 빠른 입력</h2>
+    <p class="hint">필수는 회사명·국가·구분·취급 카테고리 4칸. 나머지는 아는 만큼만. 같은 회사를 다시 보내면 기존 정보가 갱신됩니다.</p>
+    <form id="form" novalidate>
+      <div class="grid">
+        <label class="f">회사명 <span class="req">*</span><input id="f-name" maxlength="200" autocomplete="organization"></label>
+        <label class="f">국가 <span class="req">*</span><select id="f-country"><option value="">선택</option><optgroup label="APAC"><option value="일본">일본</option><option value="베트남">베트남</option><option value="태국">태국</option><option value="인도네시아">인도네시아</option><option value="말레이시아">말레이시아</option><option value="싱가포르">싱가포르</option><option value="필리핀">필리핀</option><option value="인도">인도</option><option value="호주">호주</option><option value="뉴질랜드">뉴질랜드</option><option value="캄보디아">캄보디아</option><option value="미얀마">미얀마</option><option value="파키스탄">파키스탄</option><option value="방글라데시">방글라데시</option><option value="스리랑카">스리랑카</option></optgroup><optgroup label="중화권"><option value="중국">중국</option><option value="대만">대만</option><option value="홍콩">홍콩</option><option value="마카오">마카오</option></optgroup><optgroup label="중동"><option value="사우디아라비아">사우디아라비아</option><option value="UAE">UAE</option><option value="카타르">카타르</option><option value="쿠웨이트">쿠웨이트</option><option value="오만">오만</option><option value="바레인">바레인</option><option value="요르단">요르단</option><option value="튀르키예">튀르키예</option></optgroup><optgroup label="유럽"><option value="독일">독일</option><option value="프랑스">프랑스</option><option value="영국">영국</option><option value="이탈리아">이탈리아</option><option value="스페인">스페인</option><option value="네덜란드">네덜란드</option><option value="벨기에">벨기에</option><option value="스위스">스위스</option><option value="오스트리아">오스트리아</option><option value="스웨덴">스웨덴</option><option value="덴마크">덴마크</option><option value="노르웨이">노르웨이</option><option value="핀란드">핀란드</option><option value="포르투갈">포르투갈</option><option value="그리스">그리스</option><option value="아일랜드">아일랜드</option></optgroup><optgroup label="CEE"><option value="폴란드">폴란드</option><option value="체코">체코</option><option value="헝가리">헝가리</option><option value="루마니아">루마니아</option><option value="불가리아">불가리아</option><option value="슬로바키아">슬로바키아</option><option value="크로아티아">크로아티아</option><option value="세르비아">세르비아</option><option value="슬로베니아">슬로베니아</option></optgroup><optgroup label="CIS"><option value="러시아">러시아</option><option value="카자흐스탄">카자흐스탄</option><option value="우즈베키스탄">우즈베키스탄</option><option value="우크라이나">우크라이나</option><option value="아제르바이잔">아제르바이잔</option><option value="조지아">조지아</option><option value="키르기스스탄">키르기스스탄</option></optgroup><optgroup label="아프리카"><option value="남아프리카공화국">남아프리카공화국</option><option value="이집트">이집트</option><option value="모로코">모로코</option><option value="나이지리아">나이지리아</option><option value="케냐">케냐</option><option value="알제리">알제리</option><option value="튀니지">튀니지</option><option value="가나">가나</option></optgroup><optgroup label="북미"><option value="미국">미국</option><option value="캐나다">캐나다</option></optgroup><optgroup label="중남미"><option value="멕시코">멕시코</option><option value="브라질">브라질</option><option value="콜롬비아">콜롬비아</option><option value="아르헨티나">아르헨티나</option><option value="칠레">칠레</option><option value="페루">페루</option><option value="에콰도르">에콰도르</option><option value="과테말라">과테말라</option><option value="도미니카공화국">도미니카공화국</option><option value="파나마">파나마</option><option value="코스타리카">코스타리카</option><option value="우루과이">우루과이</option></optgroup><option value="__direct">직접 입력</option></select></label>
+        <label class="f" id="f-country-direct-wrap" hidden>국가 직접 입력<input id="f-country-direct" maxlength="60" placeholder="국가명"></label>
+        <label class="f">구분 <span class="req">*</span><select id="f-status"><option value="후보 대리상" selected>후보 대리상</option><option value="현재 대리상">현재 대리상</option><option value="초기 접촉">초기 접촉</option><option value="거래종료">거래종료</option></select></label>
+        <label class="f">파트너 유형<small>해외법인이면 꼭 골라 주세요</small><select id="f-ptype"><option value="">선택</option><option value="총판">총판</option><option value="의료기기유통">의료기기유통</option><option value="수입유통">수입유통</option><option value="클리닉체인">클리닉체인</option><option value="에이전트">에이전트</option><option value="온라인셀러">온라인셀러</option><option value="해외법인">해외법인</option></select></label>
+        <div class="g wide">취급 카테고리 <span class="req">*</span><div class="chips" id="f-cats"><button type="button" class="chip" aria-pressed="false" data-v="에너지기기">에너지기기</button><button type="button" class="chip" aria-pressed="false" data-v="스킨부스터">스킨부스터</button><button type="button" class="chip" aria-pressed="false" data-v="수술·시술용">수술·시술용</button><button type="button" class="chip" aria-pressed="false" data-v="소모품">소모품</button><button type="button" class="chip" aria-pressed="false" data-v="기타">기타</button></div></div>
+        <div class="g wide">유통 채널<div class="chips" id="f-channels"><button type="button" class="chip" aria-pressed="false" data-v="피부과">피부과</button><button type="button" class="chip" aria-pressed="false" data-v="성형외과">성형외과</button><button type="button" class="chip" aria-pressed="false" data-v="에스테틱">에스테틱</button><button type="button" class="chip" aria-pressed="false" data-v="병원">병원</button><button type="button" class="chip" aria-pressed="false" data-v="온라인">온라인</button><button type="button" class="chip" aria-pressed="false" data-v="기타">기타</button></div></div>
+        <div class="g">파트너 평가 <small>감으로 1–5</small><div class="stars" id="f-rating" data-value=""><button type="button" class="star" data-v="1" aria-label="1점">★</button><button type="button" class="star" data-v="2" aria-label="2점">★</button><button type="button" class="star" data-v="3" aria-label="3점">★</button><button type="button" class="star" data-v="4" aria-label="4점">★</button><button type="button" class="star" data-v="5" aria-label="5점">★</button></div></div>
+        <div class="g">강점 <small>해당만</small><div class="chips" id="f-strengths"><button type="button" class="chip" aria-pressed="false" data-v="인허가">인허가</button><button type="button" class="chip" aria-pressed="false" data-v="재무">재무</button><button type="button" class="chip" aria-pressed="false" data-v="커버리지">커버리지</button><button type="button" class="chip" aria-pressed="false" data-v="마케팅">마케팅</button><button type="button" class="chip" aria-pressed="false" data-v="물류·CS">물류·CS</button></div></div>
+        <label class="f">담당자명<input id="f-contact" maxlength="100"></label>
+        <label class="f">이메일<input id="f-email" type="email" maxlength="255" inputmode="email"></label>
+        <label class="f">전화<input id="f-phone" type="tel" maxlength="50" inputmode="tel"></label>
+        <label class="f">최근 접촉일<input id="f-date" type="date"></label>
+        <div class="g wide">당사 취급 제품<div class="chips" id="f-products"><button type="button" class="chip" aria-pressed="false" data-v="Facetem">Facetem</button><button type="button" class="chip" aria-pressed="false" data-v="Novosis">Novosis</button><button type="button" class="chip" aria-pressed="false" data-v="AiLEENE">AiLEENE</button><button type="button" class="chip" aria-pressed="false" data-v="Surgical">Surgical</button></div></div>
+        <label class="f wide">메모 한 줄<input id="f-notes" maxlength="500" placeholder="예: 하노이 피부과 30곳 거래, 독점 요구"></label>
+      </div>
+      <div class="msg" id="msg" role="alert"></div>
+      <div class="actions"><button class="btn primary" id="btn-submit" type="submit">제출</button><button class="btn ghost" id="btn-reset" type="button">지우기</button></div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>내 제출 내역</h2>
+    <p class="hint">「접수됨」은 글로벌사업부 CRM이 받아가면 「반영됨」으로 바뀝니다.</p>
+    <div id="hist"></div>
+    <div class="actions"><button class="btn ghost" id="refresh" type="button">새로고침</button></div>
+  </section>
+</main>
+<footer>Internal use · 글로벌사업부 · D2D 참석자는 글로벌사업부가 별도로 취합합니다</footer>
+<script>
+(() => {
+  'use strict';
+  const SUPA = "https://oksmjiloekekbhdoxzkq.supabase.co", KEY = "sb_publishable_i8pKVYVTELEvNUoCa-R7-Q_HSwvR6CB";
+  const $ = (s) => document.querySelector(s);
+  const H = {apikey: KEY, 'Content-Type': 'application/json'};
+  const get = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+  const set = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } };
+  const cid = get('gp_client_id') || (() => { const v = (crypto.randomUUID ? crypto.randomUUID() : 'c-' + Date.now().toString(36) + Math.random().toString(36).slice(2)); set('gp_client_id', v); return v; })();
+  const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  let toastT = null; const toast = (t) => { let n = $('.toast'); if (!n) { n = document.createElement('div'); n.className = 'toast'; document.body.append(n); } n.textContent = t; n.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { n.hidden = true; }, 3200); };
+  // remembered submitter
+  $('#who-name').value = get('gp_name'); $('#who-team').value = get('gp_team');
+  $('#who-name').addEventListener('input', (e) => set('gp_name', e.target.value.trim()));
+  $('#who-team').addEventListener('change', (e) => set('gp_team', e.target.value));
+  // chips, stars, country direct input
+  document.querySelectorAll('.chips').forEach((box) => box.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (!b) return; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); }));
+  const stars = $('#f-rating'); stars.addEventListener('click', (e) => { const b = e.target.closest('.star'); if (!b) return; const v = Number(b.dataset.v); const cur = Number(stars.dataset.value || 0); const nv = cur === v ? 0 : v; stars.dataset.value = nv ? String(nv) : ''; [...stars.children].forEach((c, i) => c.classList.toggle('on', i < nv)); });
+  $('#f-country').addEventListener('change', (e) => { $('#f-country-direct-wrap').hidden = e.target.value !== '__direct'; if (e.target.value === '__direct') $('#f-country-direct').focus(); });
+  $('#f-date').value = today();
+  const picked = (id) => [...document.querySelectorAll(id + ' .chip[aria-pressed="true"]')].map((b) => b.dataset.v);
+  const msg = (kind, text) => { const m = $('#msg'); m.className = 'msg' + (kind ? ' ' + kind : ''); m.textContent = text || ''; };
+  const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => b.setAttribute('aria-pressed', 'false')); stars.dataset.value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); $('#f-country-direct-wrap').hidden = true; $('#f-date').value = today(); msg('', ''); };
+  $('#btn-reset').addEventListener('click', resetForm);
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? String(iso).slice(0, 16) : `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+  // my submissions: the server list for this browser's client id, falling back to what this browser remembers
+  const localHist = () => { try { return JSON.parse(get('gp_history') || '[]'); } catch (e) { return []; } };
+  const renderHist = (rows) => {
+    const box = $('#hist');
+    if (!rows.length) { box.innerHTML = '<p class="empty">아직 제출한 내역이 없습니다.</p>'; return; }
+    box.innerHTML = '<table><thead><tr><th>시각</th><th>내용</th><th>상태</th></tr></thead><tbody>' + rows.map((r) => { const rr = r.relay_result || null; const extra = rr && (rr.added !== undefined || rr.inserted !== undefined) ? ` <small>신규 ${rr.added ?? rr.inserted ?? 0} · 갱신 ${rr.updated ?? 0}</small>` : ''; return `<tr><td style="white-space:nowrap">${fmt(r.created_at)}</td><td>${esc(r.summary)}</td><td>${r.relayed_at ? '<span class="tag done">반영됨</span>' : '<span class="tag wait">접수됨</span>'}${extra}</td></tr>`; }).join('') + '</tbody></table>';
+  };
+  async function refresh() {
+    try { const r = await fetch(SUPA + '/rest/v1/rpc/my_submissions', {method: 'POST', headers: H, body: JSON.stringify({p_client_id: cid})}); if (r.ok) { const rows = await r.json(); if (Array.isArray(rows)) { renderHist(rows); return; } } } catch (e) { /* offline */ }
+    renderHist(localHist());
+  }
+  $('#refresh').addEventListener('click', refresh);
+  refresh();
+  // submit
+  let busy = false;
+  $('#form').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); if (busy) return;
+    const who = $('#who-name').value.trim(), team = $('#who-team').value;
+    const name = $('#f-name').value.trim(); let country = $('#f-country').value; if (country === '__direct') country = $('#f-country-direct').value.trim();
+    const status = $('#f-status').value, cats = picked('#f-cats');
+    const errs = [];
+    if (!who) errs.push('제출자 이름');
+    if (!name) errs.push('회사명'); if (!country) errs.push('국가'); if (!status) errs.push('구분'); if (!cats.length) errs.push('취급 카테고리');
+    const email = $('#f-email').value.trim(); if (email && !/^\S+@\S+\.\S+$/.test(email)) { msg('err', '이메일 형식을 확인해 주세요.'); return; }
+    if (errs.length) { msg('err', errs.join(' · ') + ' — 필수 항목입니다.'); if (!who) $('#who-name').focus(); return; }
+    const payload = {partner_name: name, country, status, partner_type: $('#f-ptype').value, categories: cats.join(';'), channels: picked('#f-channels').join(';'), rating: stars.dataset.value ? Number(stars.dataset.value) : '', strengths: picked('#f-strengths').join(';'),
+      contact_name: $('#f-contact').value.trim(), contact_email: email, contact_phone: $('#f-phone').value.trim(), last_contact_date: $('#f-date').value || '', our_products: picked('#f-products').join(';'), notes: $('#f-notes').value.trim(), owner: who, updated_by: who};
+    const row = {type: 'partner', submitter: who, team, summary: `${name} (${country} · ${status})`, payload, client_id: cid};
+    busy = true; $('#btn-submit').disabled = true; $('#btn-submit').textContent = '보내는 중…'; msg('', '');
+    try {
+      const r = await fetch(SUPA + '/rest/v1/submissions', {method: 'POST', headers: {...H, Prefer: 'return=minimal'}, body: JSON.stringify([row])});
+      if (!r.ok) { let t = ''; try { t = (await r.json()).message || ''; } catch (e) { /* no body */ } throw new Error(t || ('HTTP ' + r.status)); }
+      const hist = [{created_at: new Date().toISOString(), summary: row.summary, relayed_at: null}, ...localHist()].slice(0, 50); set('gp_history', JSON.stringify(hist));
+      toast('제출했습니다 — 글로벌사업부 CRM에 자동 반영됩니다'); msg('ok', `제출 완료: ${row.summary}. 한 건 더 입력할 수 있습니다.`);
+      const keep = {who, team}; resetForm(); msg('ok', `제출 완료: ${row.summary}. 한 건 더 입력할 수 있습니다.`); $('#who-name').value = keep.who; $('#who-team').value = keep.team; $('#f-name').focus();
+      refresh();
+    } catch (e) { msg('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e) + ' — 잠시 후 다시 시도해 주세요.'); }
+    finally { busy = false; $('#btn-submit').disabled = false; $('#btn-submit').textContent = '제출'; }
+  });
+})();
+</script>
+</body>
+</html>
