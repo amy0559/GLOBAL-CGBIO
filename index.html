@@ -93,7 +93,7 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
   <section class="card">
     <h2>제출자</h2>
     <div class="who">
-      <label class="f">이름 <span class="req">*</span><input id="who-name" maxlength="50" autocomplete="name" placeholder="홍길동"></label>
+      <label class="f">이름 <span class="req">*</span><input id="who-name" maxlength="50" autocomplete="off" list="who-list" placeholder="홍길동"><datalist id="who-list"></datalist></label>
       <label class="f">팀 <span class="req">*</span><select id="who-team"><option value="">선택</option><option value="글로벌영업1팀">글로벌영업1팀</option><option value="글로벌영업2팀">글로벌영업2팀</option><option value="글로벌영업3팀">글로벌영업3팀</option><option value="미용성형TF">미용성형TF</option><option value="인니TF">인니TF</option><option value="글로벌사업부">글로벌사업부</option><option value="기타">기타</option></select></label>
     </div>
   </section>
@@ -584,6 +584,16 @@ const FREE = (() => {
     if (!rows.length) { box.innerHTML = '<p class="empty">아직 제출한 내역이 없습니다.</p>'; return; }
     box.innerHTML = '<div class="tbox"><table><thead><tr><th>시각</th><th>내용</th><th>상태</th></tr></thead><tbody>' + rows.map((r) => { const rr = r.relay_result || null; const extra = rr && (rr.added !== undefined || rr.inserted !== undefined) ? ` <small>신규 ${rr.added ?? rr.inserted ?? 0} · 갱신 ${rr.updated ?? 0}</small>` : ''; return `<tr><td style="white-space:nowrap">${fmt(r.created_at)}</td><td>${esc(r.summary)}</td><td>${r.relayed_at ? '<span class="tag done">반영됨</span>' : '<span class="tag wait">접수됨</span>'}${extra}</td></tr>`; }).join('') + '</tbody></table></div>';
   };
+  // submitter names from the roster the HQ keeps (names + teams only): exact names make the 미제출 count reliable, and the team fills itself
+  let ROSTER = [];
+  const normName = (v) => String(v || '').replace(/\s/g, '').toLowerCase();
+  async function loadRoster() {
+    try { const r = await fetch(SUPA + '/rest/v1/rpc/roster_names', {method: 'POST', headers: H, body: '{}'}); if (!r.ok) return; const rows = await r.json(); if (!Array.isArray(rows) || !rows.length) return; ROSTER = rows.filter((x) => x && x.name); const dl = $('#who-list'); dl.innerHTML = ROSTER.map((x) => `<option value="${esc(x.name)}">${esc(x.team || '')}</option>`).join(''); syncTeam(); } catch (e) { /* offline: free text still works */ }
+  }
+  function syncTeam() { const hit = ROSTER.find((x) => normName(x.name) === normName($('#who-name').value)); if (hit && hit.team && !$('#who-team').value && [...$('#who-team').options].some((o) => o.value === hit.team)) { $('#who-team').value = hit.team; set('gp_team', hit.team); } }
+  $('#who-name').addEventListener('change', syncTeam); $('#who-name').addEventListener('input', syncTeam);
+  window.__setRoster = (rows) => { ROSTER = rows; $('#who-list').innerHTML = rows.map((x) => `<option value="${esc(x.name)}">${esc(x.team || '')}</option>`).join(''); syncTeam(); };
+  loadRoster();
   async function refresh() {
     try { const r = await fetch(SUPA + '/rest/v1/rpc/my_submissions', {method: 'POST', headers: H, body: JSON.stringify({p_client_id: cid})}); if (r.ok) { const rows = await r.json(); if (Array.isArray(rows)) { renderHist(rows); return; } } } catch (e) { /* offline */ }
     renderHist(localHist());
