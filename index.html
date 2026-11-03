@@ -21,7 +21,7 @@ header p { margin: 0; color: var(--muted); font-size: 13.5px; }
 main { padding: 14px max(16px, env(safe-area-inset-left, 0px)) 48px max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 12px; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 16px 18px; }
 .card h2 { margin: 0 0 2px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.card h2 .n { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--fg); color: #fff; font-size: 12px; align-items: center; justify-content: center; }
+.card h2 .n, h3.or .n { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--fg); color: #fff; font-size: 12px; align-items: center; justify-content: center; flex: none; }
 .card h2 .tag { font-size: 11.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 1px 7px; }
 .hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
@@ -72,10 +72,20 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16
 .two { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 6px 14px; font-size: 13px; } .cols b { display: block; font-size: 11.5px; color: var(--muted); font-weight: 600; }
 .banner { background: var(--accent-soft); border: 1px solid #cfe0f7; border-radius: 6px; padding: 9px 12px; font-size: 13.5px; }
+.pick { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px 14px; }
+.pick-h { font-size: 14px; margin-bottom: 10px; } .pick-h b { color: var(--accent); }
+.pick-g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } @media (max-width: 640px) { .pick-g { grid-template-columns: 1fr; } }
+.pick-c { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: var(--fg); border: 1px solid var(--line-2); border-radius: 6px; padding: 10px 12px; background: var(--panel-2); }
+.pick-c:hover { border-color: var(--accent); background: var(--accent-soft); } .pick-c b { font-size: 14.5px; } .pick-c span { font-size: 12.5px; color: var(--muted); } .pick-c em { font-style: normal; font-size: 12.5px; color: var(--accent); font-weight: 600; margin-top: 2px; }
+.steps { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; margin: 0 0 10px; color: var(--muted); } .steps span { display: inline-flex; align-items: center; gap: 6px; } .steps i { font-style: normal; display: inline-flex; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--line-2); font-size: 11px; align-items: center; justify-content: center; color: var(--fg); background: #fff; }
+.tplrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--panel-2); } .tplrow small { display: block; color: var(--muted); font-size: 12.5px; }
+.btn.tpl { background: var(--fg); color: #fff; min-height: 44px; font-size: 15px; padding: 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,.12); } .btn.tpl:hover { background: #000; }
+h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: center; gap: 8px; padding-top: 14px; border-top: 1px dashed var(--line-2); }
+.muted-s { font-size: 12.5px; color: var(--muted); }
 </style>
 </head>
 <body>
-<header><div class="wrap"><div class="eyebrow">Global Business · Partner CRM</div><h1>대리상 정보 제출</h1><p>쓰던 엑셀 그대로 올리면 끝. 글로벌사업부 CRM에 자동 반영됩니다. 로그인 없음.</p></div></header>
+<header><div class="wrap"><div class="eyebrow">Global Business · Partner CRM</div><h1>대리상 정보 제출</h1><p>로그인 없음. <b>방법은 ①②③ 중 하나만</b> — 쓰던 엑셀을 그대로 올리거나, 한 곳만 직접 적거나. 제출하면 글로벌사업부 CRM에 자동 반영됩니다.</p></div></header>
 <main class="wrap">
   <section class="card">
     <h2>제출자</h2>
@@ -85,19 +95,31 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16
     </div>
   </section>
 
+  <section class="pick" aria-label="방법 고르기">
+    <div class="pick-h">세 가지 중 <b>하나만</b> 하면 됩니다 — 1번과 2번을 둘 다 할 필요 없습니다</div>
+    <div class="pick-g">
+      <a href="#card-file" class="pick-c"><b>① 파일 올리기</b><span>대리상이 여러 곳 · 이미 엑셀로 갖고 있을 때</span><em>쓰던 파일 그대로 → 30초</em></a>
+      <a href="#card-file" class="pick-c"><b>② 복사해서 붙여넣기</b><span>파일 찾기 귀찮을 때 · 엑셀 일부만 보낼 때</span><em>범위 복사 → 붙여넣기</em></a>
+      <a href="#card-form" class="pick-c"><b>③ 한 곳만 직접 입력</b><span>신규 1곳 · 파일이 없을 때</span><em>업체명·국가 2칸이면 제출</em></a>
+    </div>
+  </section>
+
   <section class="card" id="card-file">
-    <h2><span class="n">1</span>파일 올리기 <span class="tag">가장 빠름</span></h2>
-    <p class="hint">지금 쓰는 대리점 현황 엑셀을 <b>그대로</b> 올리세요. 열 제목이 달라도 자동으로 읽고, 한 칸에 여러 국가·여러 담당자·이메일·전화·단가가 줄바꿈으로 들어 있어도 알아서 나눕니다. 올리기 전에 어떻게 읽었는지 보여 드립니다.</p>
-    <label class="drop" id="drop"><b>엑셀 파일 끌어다 놓기 / 눌러서 선택</b><small>.xlsx · .xls · .csv — 여러 파일 가능 · 업체명과 국가 열만 있으면 됩니다</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
-    <label class="f" style="margin-top:10px">파일이 없으면 엑셀에서 범위를 복사해 여기에 붙여넣기<small>머리글 행부터 선택해서 Ctrl+C → 여기 Ctrl+V. 바로 위와 똑같이 읽습니다.</small><textarea id="paste" rows="3" placeholder="국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
+    <h2><span class="n">1</span>파일 올리기 <span class="tag">여러 업체를 한 번에</span></h2>
+    <p class="hint">지금 쓰는 대리점 현황 엑셀을 <b>고치지 말고 그대로</b> 올리세요. 열 제목이 달라도 자동으로 읽고, 한 칸에 여러 국가·담당자·이메일·전화·주소·단가가 줄바꿈으로 들어 있어도 알아서 나눕니다. 필요한 열은 <b>업체명과 국가</b> 둘뿐, 나머지는 있는 만큼만 가져갑니다.</p>
+    <div class="steps"><span><i>1</i>파일 올리기</span><span><i>2</i>"이렇게 읽음" 표 확인 (틀리면 드롭다운으로 고침)</span><span><i>3</i>제출 → 본사 CRM 자동 반영</span></div>
+    <label class="drop" id="drop"><b>엑셀 파일 끌어다 놓기 / 눌러서 선택</b><small>.xlsx · .xls · .csv — 여러 파일·여러 시트 가능</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
+    <div class="tplrow"><div><b>양식이 필요하면</b><small>드롭다운·예시·칸별 설명이 들어간 정식 양식. 양식 없이 쓰던 파일을 올려도 결과는 같습니다.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>⬇ 정식 양식 받기 (.xlsx)</a></div>
+    <h3 class="or"><span class="n">2</span>또는 — 파일 없이 엑셀 범위를 복사해서 붙여넣기</h3>
+    <label class="f">엑셀에서 <b>머리글 행부터</b> 범위를 선택해 Ctrl+C, 아래 칸에 Ctrl+V<small>파일 올린 것과 똑같이 읽습니다. 1번을 했다면 이건 건너뛰세요.</small><textarea id="paste" rows="3" placeholder="국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
     <div id="prev"></div>
-    <div class="two" style="margin-top:12px"><a class="btn ghost" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 받기 (.xlsx)</a><button class="btn ghost" id="btn-cols" type="button">읽을 수 있는 열 이름 보기</button></div>
+    <div class="two" style="margin-top:12px"><button class="btn ghost" id="btn-cols" type="button">읽을 수 있는 열 이름 보기</button><span class="muted-s">국가·담당자·이메일·전화·주소·품목·단가·계약 일자/만료·MOQ … 한글·영문 열 이름 모두</span></div>
     <div id="cols" class="cols" hidden style="margin-top:10px"></div>
   </section>
 
-  <section class="card">
-    <h2><span class="n">2</span>한 곳만 직접 입력</h2>
-    <p class="hint">필수 4칸이면 제출됩니다(구분·영업담당자는 미리 채워져 있어 실제로는 업체명·국가 2칸). 나머지는 아는 만큼만 펼쳐서 적으세요. 같은 회사를 다시 보내면 기존 정보가 갱신됩니다.</p>
+  <section class="card" id="card-form">
+    <h2><span class="n">3</span>한 곳만 직접 입력 <span class="tag">파일이 없을 때</span></h2>
+    <p class="hint">1·2번으로 올렸다면 여기는 쓰지 않아도 됩니다. 업체명·관할 국가 2칸이면 제출됩니다(구분·영업담당자는 미리 채워짐). 나머지는 아는 만큼만 펼쳐서 적으세요. 같은 회사를 다시 보내면 기존 정보가 갱신됩니다.</p>
     <label class="f" style="margin-bottom:12px">메일 서명·명함·메모를 붙여넣으면 자동으로 채웁니다<small>이메일·전화·홈페이지·국가·업체명을 찾아 아래 칸에 넣습니다 (확인 후 제출)</small><textarea id="autofill" rows="2" placeholder="예) Ramy Fahmi, Vice president, KARMA COSMETICS, Dubai UAE, rfahmy@karmacosmetic.com, +20 100 999 8797"></textarea></label>
     <form id="form" novalidate>
       <div class="grid">
