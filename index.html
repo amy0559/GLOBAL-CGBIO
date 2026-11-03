@@ -56,7 +56,12 @@ details.fold { border: 1px solid var(--line); border-radius: 6px; padding: 0 12p
 .stars { display: flex; gap: 2px; } .star { width: 40px; height: 40px; border: 0; background: none; font-size: 26px; line-height: 1; color: var(--line-2); cursor: pointer; padding: 0; } .star.on { color: var(--warn); }
 .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
 .btn { min-height: 46px; padding: 0 20px; border-radius: 6px; border: 1px solid transparent; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
-.btn.primary { background: var(--accent); color: #fff; } .btn.primary:disabled { opacity: .55; cursor: default; }
+.btn.primary { background: var(--accent); color: #fff; min-height: 50px; font-size: 16px; padding: 0 28px; box-shadow: 0 1px 2px rgba(0,0,0,.15); } .btn.primary:disabled { opacity: .55; cursor: default; box-shadow: none; }
+.sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--panel); border-top: 2px solid var(--accent); box-shadow: 0 -6px 18px rgba(0,0,0,.10); padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.sticky .in { max-width: 860px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+.sticky .what { font-size: 14px; color: var(--muted); min-width: 0; line-height: 1.35; } .sticky .what b { color: var(--fg); } .sticky .what .bad { color: var(--bad); }
+.sticky .btn.primary { white-space: nowrap; flex: 0 0 auto; } @media (max-width: 480px) { .sticky .in { flex-direction: column; align-items: stretch; } .sticky .btn.primary { width: 100%; } }
+body.has-sticky main { padding-bottom: 120px; } body.has-sticky footer { padding-bottom: 110px; }
 .btn.ghost { background: transparent; color: var(--accent); border-color: var(--accent); }
 .btn.dark { background: var(--fg); color: #fff; }
 .msg { border-radius: 6px; padding: 10px 12px; font-size: 14px; display: none; } .msg.err { display: block; background: var(--bad-soft); color: var(--bad); } .msg.ok { display: block; background: var(--ok-soft); color: var(--ok); }
@@ -177,6 +182,7 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
     <div class="actions"><button class="btn ghost" id="refresh" type="button">새로고침</button></div>
   </section>
 </main>
+<div class="sticky" id="sticky" hidden><div class="in"><div class="what" id="sticky-what"></div><button class="btn primary" id="sticky-btn" type="button">제출</button></div></div>
 <footer>Internal use · 글로벌사업부 · D2D 참석자 명단은 글로벌사업부에서 별도 취합합니다</footer>
 <script>
 (() => {
@@ -555,7 +561,7 @@ const FREE = (() => {
   function syncCats() { const cats = new Set(picked('#f-products').map((n) => (PRODUCTS.find((p) => p.name === n) || {}).category).filter(Boolean)); document.querySelectorAll('#f-cats .chip').forEach((b) => { if (cats.has(b.dataset.v)) { b.setAttribute('aria-pressed', 'true'); b.dataset.auto = '1'; } else if (b.dataset.auto) { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; } }); }
   // countries as tokens: typed text is canonicalised with the same alias table the HQ tool uses
   const tokBox = $('#f-countries'), tokIn = $('#f-country-in'); const countries = [];
-  const drawTokens = () => { tokBox.querySelectorAll('.tok').forEach((t) => t.remove()); countries.forEach((c, i) => { const t = document.createElement('span'); t.className = 'tok' + (CODES.country.includes(c) ? '' : ' bad'); t.innerHTML = esc(c) + (CODES.country.includes(c) ? '' : ' <small>?</small>') + ' <button type="button" aria-label="삭제">×</button>'; t.querySelector('button').addEventListener('click', () => { countries.splice(i, 1); drawTokens(); }); tokBox.insertBefore(t, tokIn); }); };
+  const drawTokens = () => { tokBox.querySelectorAll('.tok').forEach((t) => t.remove()); countries.forEach((c, i) => { const t = document.createElement('span'); t.className = 'tok' + (CODES.country.includes(c) ? '' : ' bad'); t.innerHTML = esc(c) + (CODES.country.includes(c) ? '' : ' <small>?</small>') + ' <button type="button" aria-label="삭제">×</button>'; t.querySelector('button').addEventListener('click', () => { countries.splice(i, 1); drawTokens(); }); tokBox.insertBefore(t, tokIn); }); if (window.__updateSticky) window.__updateSticky(); };
   const addCountry = (raw) => { for (const part of String(raw).split(/[,;\n/]/)) { const t = part.trim(); if (!t) continue; const c = FREE.parseCountries(t); const v = c.all[0] || t; if (!countries.includes(v)) countries.push(v); } drawTokens(); tokIn.value = ''; };
   tokIn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ',' || e.key === 'Tab' && tokIn.value.trim()) { e.preventDefault(); addCountry(tokIn.value); } else if (e.key === 'Backspace' && !tokIn.value && countries.length) { countries.pop(); drawTokens(); } });
   tokIn.addEventListener('change', () => { if (tokIn.value.trim() && CODES.country.includes(FREE.parseCountries(tokIn.value).all[0] || '')) addCountry(tokIn.value); });
@@ -574,7 +580,7 @@ const FREE = (() => {
   const readContacts = () => [...contactsBox.querySelectorAll('.crow')].map((r) => ({name: $('[data-k="name"]', r).value.trim(), role: $('[data-k="func"]', r).value, func: $('[data-k="func"]', r).value, email: $('[data-k="email"]', r).value.trim().toLowerCase(), phone: $('[data-k="phone"]', r).value.trim(), is_ceo: $('[data-k="func"]', r).value === '대표'})).filter((c) => c.name || c.email || c.phone);
   const allContacts = () => { const ceoName = $('#f-ceo-name').value.trim(), ceoEmail = $('#f-ceo-email').value.trim().toLowerCase(), ceoPhone = $('#f-ceo-phone').value.trim(); const ceo = ceoName && !FREE.isNone(ceoName) ? [{...FREE.nameRole(ceoName), func: '대표', email: FREE.isNone(ceoEmail) ? '' : ceoEmail, phone: FREE.isNone(ceoPhone) ? '' : ceoPhone, is_ceo: true}] : []; const staff = readContacts().filter((c) => !FREE.isNone(c.name)).map((c) => ({...c, email: FREE.isNone(c.email) ? '' : c.email, phone: FREE.isNone(c.phone) ? '' : c.phone})); return [...ceo.map((c) => ({...c, role: c.role || '대표'})), ...staff]; };
   const msg = (kind, text) => { const m = $('#msg'); m.className = 'msg' + (kind ? ' ' + kind : ''); m.textContent = text || ''; };
-  const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; }); defaultStatus(); stars.dataset.value = ''; $('#autofill').value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); countries.length = 0; drawTokens(); contactsBox.innerHTML = ''; addContactRow(); $('#f-date').value = today(); $('#f-owner').value = $('#who-name').value.trim(); delete $('#f-owner').dataset.touched; ['#f-ceo-name', '#f-ceo-email', '#f-ceo-phone'].forEach((id) => { $(id).value = ''; }); msg('', ''); };
+  const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; }); defaultStatus(); stars.dataset.value = ''; $('#autofill').value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); countries.length = 0; drawTokens(); contactsBox.innerHTML = ''; addContactRow(); $('#f-date').value = today(); $('#f-owner').value = $('#who-name').value.trim(); delete $('#f-owner').dataset.touched; ['#f-ceo-name', '#f-ceo-email', '#f-ceo-phone'].forEach((id) => { $(id).value = ''; }); msg('', ''); if (window.__updateSticky) window.__updateSticky(); };
   $('#btn-reset').addEventListener('click', resetForm);
   const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? String(iso).slice(0, 16) : `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
   // ---------- my submissions ----------
@@ -652,10 +658,10 @@ const FREE = (() => {
   window.__submitParsed = submitParsed;
   const prevBox = $('#prev');
   const msgP = (kind, text) => { prevBox.innerHTML = `<div class="msg ${kind}" style="display:block">${esc(text)}</div>`; };
-  let parsedFiles = [], rawFiles = [], overrides = {};
+  let parsedFiles = [], rawFiles = [], overrides = {}, bulkSubmit = null;
   const LABEL = FREE.LABELS;
   function renderPreview() {
-    if (!parsedFiles.length) { prevBox.innerHTML = ''; return; }
+    if (!parsedFiles.length) { prevBox.innerHTML = ''; bulkSubmit = null; updateSticky(); return; }
     const errors = parsedFiles.flatMap((f) => f.errors), warnings = parsedFiles.flatMap((f) => f.warnings), notices = parsedFiles.flatMap((f) => f.notices), n = parsedFiles.reduce((s, f) => s + f.rows.length, 0), partial = parsedFiles.some((f) => f.partial);
     const skipped = parsedFiles.flatMap((f) => f.skipped.map((s) => `${f.name} · ${s}`));
     const nC = new Set(parsedFiles.flatMap((f) => f.rows.flatMap((r) => FREE.coverageOf(r)))).size, nP = parsedFiles.reduce((s, f) => s + (f.contacts || 0), 0), noStatus = parsedFiles.some((f) => f.noStatus);
@@ -683,6 +689,7 @@ const FREE = (() => {
     prevBox.querySelectorAll('[data-cancel]').forEach((c) => c.addEventListener('click', () => { parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); }));
     const bulk = async () => { const b = $('#btn-bulk'); const b2 = $('#btn-bulk-2'); if (b2) b2.disabled = true; b.disabled = true; b.textContent = '보내는 중…'; try { const k = await submitParsed(parsedFiles); parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); toast('제출되었습니다. 글로벌사업부 CRM에 자동 반영됩니다.'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); } catch (e) { b.disabled = false; b.textContent = '제출'; if (b2) b2.disabled = false; msgP('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e)); } };
     $('#btn-bulk').addEventListener('click', bulk); const b2 = $('#btn-bulk-2'); if (b2) b2.addEventListener('click', bulk);
+    bulkSubmit = bulk; updateSticky();
   }
   function reparse() { parsedFiles = rawFiles.map((rf) => parseSheets(rf.sheets, rf.name, overrides[rf.name])); renderPreview(); }
   async function readFiles(list) {
@@ -729,6 +736,25 @@ const FREE = (() => {
   $('#btn-cols').addEventListener('click', () => { const b = $('#cols'); b.hidden = !b.hidden; if (!b.innerHTML) b.innerHTML = Object.keys(LABEL).map((k) => `<div><b>${esc(LABEL[k])}</b>${esc(FREE.HEADERS[k].slice(0, 6).join(' · '))}</div>`).join(''); });
   // ---------- quick form submit ----------
   let busy = false;
+  // always-visible submit: a bar fixed to the bottom of the screen that says what will be sent (file rows or the typed company)
+  const sticky = $('#sticky'), stickyWhat = $('#sticky-what'), stickyBtn = $('#sticky-btn');
+  const formTouched = () => !!($('#f-name').value.trim() || countries.length || $('#f-ceo-name').value.trim() || $('#f-web').value.trim() || $('#f-address').value.trim() || $('#f-contract').value.trim() || $('#f-prices').value.trim() || picked('#f-products').length);
+  function updateSticky() {
+    const n = parsedFiles.reduce((a, f) => a + f.rows.length, 0), errs = parsedFiles.flatMap((f) => f.errors).length, partial = parsedFiles.some((f) => f.partial);
+    if (parsedFiles.length) {
+      sticky.hidden = false; stickyBtn.dataset.mode = 'file';
+      stickyWhat.innerHTML = n ? `파일 업로드 → <b>대리상 ${n}건</b>${partial ? ' · 보완 필요 항목 있음' : ''}${errs ? ` · <span class="bad">오류 ${errs}건 — 수정 후 제출</span>` : ''}` : '읽을 수 있는 대리상 행이 없습니다 — 열 이름을 확인해 주십시오';
+      stickyBtn.textContent = `제출 (대리상 ${n}건)`; stickyBtn.disabled = !n || errs > 0;
+    } else if (formTouched()) {
+      sticky.hidden = false; stickyBtn.dataset.mode = 'form';
+      stickyWhat.innerHTML = `직접 입력 → <b>${esc($('#f-name').value.trim() || '업체명 미입력')}</b>${countries.length ? ` · ${esc(countries[0])}${countries.length > 1 ? ' 외 ' + (countries.length - 1) : ''}` : ''}`;
+      stickyBtn.textContent = '제출'; stickyBtn.disabled = busy;
+    } else { sticky.hidden = true; }
+    document.body.classList.toggle('has-sticky', !sticky.hidden);
+  }
+  stickyBtn.addEventListener('click', () => { if (stickyBtn.dataset.mode === 'file') { if (bulkSubmit) bulkSubmit(); } else { $('#form').requestSubmit ? $('#form').requestSubmit() : $('#form').dispatchEvent(new Event('submit', {cancelable: true})); } });
+  $('#form').addEventListener('input', updateSticky); $('#form').addEventListener('change', updateSticky); $('#form').addEventListener('click', (e) => { if (e.target.closest('.chip, .seg button, .star')) updateSticky(); });
+  window.__updateSticky = updateSticky;
   $('#form').addEventListener('submit', async (ev) => {
     ev.preventDefault(); if (busy) return;
     const who = $('#who-name').value.trim(), team = $('#who-team').value;
@@ -743,7 +769,7 @@ const FREE = (() => {
     if (!$('#f-web').value.trim()) errs.push('홈페이지/SNS'); if (!$('#f-address').value.trim()) errs.push('주소');
     if (!picked('#f-cats').length) errs.push('카테고리'); if (!picked('#f-products').length && !$('#f-products-other').value.trim()) errs.push('취급/계약 제품명 (없으면 "없음")');
     if (!$('#f-contract').value.trim()) errs.push('계약'); if (!$('#f-moq').value.trim()) errs.push('MOQ'); if (!$('#f-prices').value.trim()) errs.push('단가'); if (!$('#f-terms').value.trim()) errs.push('계약 조건·메모');
-    if (errs.length) { msg('err', '빈칸: ' + errs.join(' · ') + ' — 모든 항목이 필수입니다. 해당 사항이 없으면 "없음", 협의 단계는 "협의중"으로 기재해 주십시오.'); if (!who) $('#who-name').focus(); return; }
+    if (errs.length) { msg('err', '빈칸: ' + errs.join(' · ') + ' — 모든 항목이 필수입니다. 해당 사항이 없으면 "없음", 협의 단계는 "협의중"으로 기재해 주십시오.'); if (!who) { $('#who-name').focus(); $('#who-name').scrollIntoView({block: 'center'}); } else $('#msg').scrollIntoView({block: 'center'}); return; }
     const isSub = status === '해외법인'; const st = isSub ? '기존 대리상' : status;
     const web = FREE.parseWeb($('#f-web').value), addrs = FREE.parseAddresses($('#f-address').value), prices = FREE.parsePrices($('#f-prices').value, PRODUCTS);
     const cl = FREE.parseContractLine($('#f-contract').value, (v) => FREE.toDate(v)) || {}, mq = FREE.parseMoqCell($('#f-moq').value), terms = FREE.isNone($('#f-terms').value) ? '' : $('#f-terms').value.trim();
@@ -763,7 +789,7 @@ const FREE = (() => {
       const keep = {who, team}; resetForm(); msg('ok', `제출 완료: ${row.summary}. 계속해서 다른 업체를 입력할 수 있습니다.`); $('#who-name').value = keep.who; $('#who-team').value = keep.team; $('#f-name').focus();
       refresh();
     } catch (e) { msg('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e) + ' — 잠시 후 다시 시도해 주십시오.'); }
-    finally { busy = false; $('#btn-submit').disabled = false; $('#btn-submit').textContent = '제출'; }
+    finally { busy = false; $('#btn-submit').disabled = false; $('#btn-submit').textContent = '제출'; updateSticky(); }
   });
 })();
 </script>
