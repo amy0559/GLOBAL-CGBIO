@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root { --bg: #f4f5f7; --panel: #ffffff; --panel-2: #f6f7f9; --fg: #171a1f; --muted: #6b7280; --line: #e3e6ea; --line-2: #c8ced6; --accent: #1f5fbf; --accent-soft: #e9f0fb; --ok: #1d7a4a; --ok-soft: #e6f4ec; --warn: #b26a0a; --warn-soft: #fbf0dc; --bad: #c0392b; --bad-soft: #fbe6e4; --radius: 8px; }
+:root { --bg: #f4f5f7; --panel: #ffffff; --panel-2: #f6f7f9; --fg: #171a1f; --muted: #5f6673; --line: #e3e6ea; --line-2: #c8ced6; --accent: #1f5fbf; --accent-soft: #e9f0fb; --ok: #1d7a4a; --ok-soft: #e6f4ec; --warn: #9a5b08; --warn-soft: #fbf0dc; --bad: #c0392b; --bad-soft: #fbe6e4; --radius: 8px; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif; -webkit-text-size-adjust: 100%; }
@@ -66,7 +66,8 @@ body.has-sticky main { padding-bottom: 120px; } body.has-sticky footer { padding
 .btn.dark { background: var(--fg); color: #fff; }
 .msg { border-radius: 6px; padding: 10px 12px; font-size: 14px; display: none; } .msg.err { display: block; background: var(--bad-soft); color: var(--bad); } .msg.ok { display: block; background: var(--ok-soft); color: var(--ok); }
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; } th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--panel-2); }
-.tbox { overflow: auto; border: 1px solid var(--line); border-radius: 6px; }
+.tbox { overflow: auto; border: 1px solid var(--line); border-radius: 6px; } .tbox td:first-child { white-space: nowrap; }
+@media (max-width: 640px) { .tbox table { width: max-content; min-width: 100%; max-width: 230vw; } }
 .tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; } .tag.wait { background: var(--warn-soft); color: var(--warn); } .tag.done { background: var(--ok-soft); color: var(--ok); }
 .empty { color: var(--muted); font-size: 14px; padding: 10px 0; }
 .toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: #fff; padding: 12px 18px; border-radius: 8px; font-size: 14.5px; font-weight: 600; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); max-width: calc(100vw - 32px); z-index: 10; }
@@ -84,7 +85,9 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16
 .pick-h { font-size: 14px; margin-bottom: 10px; } .pick-h b { color: var(--accent); }
 .pick-g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } @media (max-width: 640px) { .pick-g { grid-template-columns: 1fr; } }
 .pick-c { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: var(--fg); border: 1px solid var(--line-2); border-radius: 6px; padding: 10px 12px; background: var(--panel-2); }
-.pick-c:hover { border-color: var(--accent); background: var(--accent-soft); } .pick-c b { font-size: 14.5px; } .pick-c span { font-size: 12.5px; color: var(--muted); } .pick-c em { font-style: normal; font-size: 12.5px; color: var(--accent); font-weight: 600; margin-top: 2px; }
+.pick-c:hover, .pick-c[aria-current="true"] { border-color: var(--accent); background: var(--accent-soft); } .pick-c[aria-current="true"] b::after { content: " ✓"; color: var(--accent); }
+main[data-mode="1"] [data-m]:not([data-m~="1"]), main[data-mode="2"] [data-m]:not([data-m~="2"]), main[data-mode="3"] [data-m]:not([data-m~="3"]) { display: none; } main[data-mode="2"] .or { border-top: 0; margin-top: 0; padding-top: 0; }
+.chg { font-size: 12px; font-weight: 500; margin-left: auto; color: var(--accent); text-decoration: none; } h2 .chg, h3 .chg { float: right; margin-top: 4px; } main:not([data-mode]) .chg { display: none; } .pick-c b { font-size: 14.5px; } .pick-c span { font-size: 12.5px; color: var(--muted); } .pick-c em { font-style: normal; font-size: 12.5px; color: var(--accent); font-weight: 600; margin-top: 2px; }
 .steps { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; margin: 0 0 10px; color: var(--muted); } .steps span { display: inline-flex; align-items: center; gap: 6px; } .steps i { font-style: normal; display: inline-flex; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--line-2); font-size: 11px; align-items: center; justify-content: center; color: var(--fg); background: #fff; }
 .tplrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--panel-2); } .tplrow small { display: block; color: var(--muted); font-size: 12.5px; }
 .btn.tpl { background: var(--fg); color: #fff; min-height: 44px; font-size: 15px; padding: 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,.12); } .btn.tpl:hover { background: #000; }
@@ -101,32 +104,33 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
       <label class="f">이름 <span class="req">*</span><input id="who-name" maxlength="50" autocomplete="off" list="who-list" placeholder="홍길동"><datalist id="who-list"></datalist></label>
       <label class="f">팀 <span class="req">*</span><select id="who-team"><option value="">선택</option><option value="글로벌영업1팀">글로벌영업1팀</option><option value="글로벌영업2팀">글로벌영업2팀</option><option value="글로벌영업3팀">글로벌영업3팀</option><option value="미용성형TF">미용성형TF</option><option value="인니TF">인니TF</option><option value="글로벌전략TF">글로벌전략TF</option><option value="글로벌사업부">글로벌사업부</option><option value="기타">기타</option></select></label>
     </div>
+    <div class="msg" id="who-msg" role="alert"></div>
   </section>
 
-  <section class="pick" aria-label="제출 방법 선택">
+  <section class="pick" aria-label="제출 방법 선택" id="top">
     <div class="pick-h">제출 방법 — 아래 세 가지 중 <b>하나만</b> 진행하시면 됩니다. (여러 업체: ① 또는 ② / 1개 업체: ③)</div>
     <div class="pick-g">
-      <a href="#card-file" class="pick-c"><b>① 파일 업로드</b><span>보유 중인 대리상 현황 엑셀을 그대로 업로드</span><em>여러 업체 · 권장</em></a>
-      <a href="#card-file" class="pick-c"><b>② 복사·붙여넣기</b><span>엑셀에서 범위를 복사하여 붙여넣기</span><em>파일 일부만 제출할 때</em></a>
-      <a href="#card-form" class="pick-c"><b>③ 직접 입력</b><span>화면에서 항목을 입력</span><em>업체 1곳 · 파일이 없을 때</em></a>
+      <a href="#card-file" class="pick-c" data-pick="1"><b>① 파일 업로드</b><span>보유 중인 대리상 현황 엑셀을 그대로 업로드</span><em>여러 업체 · 권장</em></a>
+      <a href="#card-paste" class="pick-c" data-pick="2"><b>② 복사·붙여넣기</b><span>엑셀에서 범위를 복사하여 붙여넣기</span><em>파일 일부만 제출할 때</em></a>
+      <a href="#card-form" class="pick-c" data-pick="3"><b>③ 직접 입력</b><span>화면에서 항목을 입력</span><em>업체 1곳 · 파일이 없을 때</em></a>
     </div>
   </section>
 
-  <section class="card" id="card-file">
-    <h2><span class="n">1</span>파일 업로드 <span class="tag">여러 업체</span></h2>
-    <p class="hint">현재 사용 중인 대리상 현황 엑셀을 수정 없이 그대로 업로드하시면 됩니다. 열 제목이 양식과 달라도 자동으로 인식하며, 한 칸에 국가·담당자·이메일·연락처·주소·단가가 여러 개 기재된 경우에도 항목별로 분리하여 반영됩니다. 정식 양식(19개 항목)에 있는 항목이 파일에 없으면 제출 전에 표시되고, 제출 후 CRM에 '보완 필요'로 기록됩니다. 정식 양식으로 작성하는 경우 모든 칸을 채우며, 해당 사항이 없는 칸은 "없음", 협의 단계는 "협의중"으로 기재해 주십시오.</p>
-    <div class="steps"><span><i>1</i>파일 업로드</span><span><i>2</i>열 인식 결과 확인 (잘못 인식된 열은 드롭다운으로 변경)</span><span><i>3</i>제출 → CRM 자동 반영</span></div>
-    <label class="drop" id="drop"><b>엑셀 파일을 끌어다 놓거나 클릭하여 선택</b><small>.xlsx · .xls · .csv — 여러 파일, 여러 시트 가능</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
-    <div class="tplrow"><div><b>정식 양식</b><small>19개 항목 · 드롭다운 · 작성 예시 시트 포함. 양식에 작성 후 위에 업로드하십시오.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 내려받기 (.xlsx)</a></div>
-    <h3 class="or"><span class="n">2</span>복사·붙여넣기 <span class="muted-s">— 파일 대신 엑셀 범위를 붙여넣는 경우</span></h3>
-    <label class="f">엑셀에서 <b>머리글 행을 포함하여</b> 범위를 선택해 복사(Ctrl+C)한 뒤 아래 칸에 붙여넣기(Ctrl+V)<small>파일 업로드와 동일하게 처리됩니다. ①을 진행하셨다면 생략하십시오.</small><textarea id="paste" rows="3" placeholder="국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
+  <section class="card" id="card-file" data-m="1 2">
+    <h2 data-m="1"><span class="n">1</span>파일 업로드 <span class="tag">여러 업체</span><a href="#top" class="chg" data-chg>방법 변경</a></h2>
+    <p class="hint" data-m="1">현재 사용 중인 대리상 현황 엑셀을 수정 없이 그대로 업로드하시면 됩니다. 열 제목이 양식과 달라도 자동으로 인식하며, 한 칸에 국가·담당자·이메일·연락처·주소·단가가 여러 개 기재된 경우에도 항목별로 분리하여 반영됩니다. 정식 양식(19개 항목)에 있는 항목이 파일에 없으면 제출 전에 표시되고, 제출 후 CRM에 '보완 필요'로 기록됩니다. 정식 양식으로 작성하는 경우 모든 칸을 채우며, 해당 사항이 없는 칸은 "없음", 협의 단계는 "협의중"으로 기재해 주십시오.</p>
+    <div class="steps" data-m="1"><span><i>1</i>파일 업로드</span><span><i>2</i>열 인식 결과 확인 (잘못 인식된 열은 드롭다운으로 변경)</span><span><i>3</i>제출 → CRM 자동 반영</span></div>
+    <label class="drop" id="drop" data-m="1"><b>엑셀 파일을 끌어다 놓거나 클릭하여 선택</b><small>.xlsx · .xls · .csv — 여러 파일, 여러 시트 가능</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
+    <div class="tplrow" data-m="1"><div><b>정식 양식</b><small>19개 항목 · 드롭다운 · 작성 예시 시트 포함. 양식에 작성 후 위에 업로드하십시오.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 내려받기 (.xlsx)</a></div>
+    <h3 class="or" id="card-paste" data-m="2"><span class="n">2</span>복사·붙여넣기 <span class="muted-s">— 파일 대신 엑셀 범위를 붙여넣는 경우</span><a href="#top" class="chg" data-chg>방법 변경</a></h3>
+    <label class="f" data-m="2">엑셀에서 <b>머리글 행을 포함하여</b> 범위를 선택해 복사(Ctrl+C)한 뒤 아래 칸에 붙여넣기(Ctrl+V)<small>파일 업로드와 동일하게 처리됩니다. ①을 진행하셨다면 생략하십시오.</small><textarea id="paste" rows="3" placeholder="국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
     <div id="prev"></div>
     <div class="two" style="margin-top:12px"><button class="btn ghost" id="btn-cols" type="button">인식 가능한 열 이름 보기</button><span class="muted-s">국가·담당자·이메일·연락처·주소·품목·단가·계약·MOQ 등 한글·영문 열 이름</span></div>
     <div id="cols" class="cols" hidden style="margin-top:10px"></div>
   </section>
 
-  <section class="card" id="card-form">
-    <h2><span class="n">3</span>직접 입력 <span class="tag">업체 1곳</span></h2>
+  <section class="card" id="card-form" data-m="3">
+    <h2><span class="n">3</span>직접 입력 <span class="tag">업체 1곳</span><a href="#top" class="chg" data-chg>방법 변경</a></h2>
     <p class="hint">①·②로 제출하셨다면 이 항목은 작성하지 않으셔도 됩니다. <b>모든 항목이 필수</b>이며, 해당 사항이 없으면 "없음", 협의 단계는 "협의중"으로 기재해 주십시오. 동일 업체를 다시 제출하면 기존 정보가 갱신됩니다.</p>
     <label class="f" style="margin-bottom:12px">자동 입력<small>메일 서명·명함 내용을 붙여넣으면 이메일·연락처·홈페이지·국가·업체명을 아래 항목에 채웁니다. 확인 후 제출하십시오.</small><textarea id="autofill" rows="2" placeholder="예) Mina Park, CEO, Atlas Medical Trading, Dubai UAE, mina@atlas-med.example, +971 50 000 0001"></textarea></label>
     <form id="form" novalidate>
@@ -513,7 +517,7 @@ const FREE = (() => {
     if (row.coverage_note) warnings.push(`${where}: 국가 표기 '${row.coverage_note}'를 알아보지 못해 비고에만 남김`);
     if (!row.categories) warnings.push(`${where}: 취급 카테고리·품목 없음 — 팀은 국가 기준으로 배정, 카테고리는 본사에서 보완`);
     if (row.products_other) warnings.push(`${where}: 품목 '${row.products_other}'은 제품 마스터에 없어 메모로만 보관`);
-    if (row.status && !codes.status.includes(row.status)) errors.push(`${where}: 구분 '${row.status}'은 ${codes.status.join('/')} 중 하나여야 합니다`);
+    if (row.status && !codes.status.includes(row.status)) errors.push(`${where}: 업체 구분 '${row.status}'을(를) 인식하지 못했습니다 — 기존 대리상 / 후보 대리상 / 잠재 대리상 / 해외법인 / 거래종료 중 하나로 적어 주십시오`);
     if (!row.status && hasStatusCol) row.status = '후보 대리상';
     if (row.team && codes.team && !codes.team.includes(row.team)) { warnings.push(`${where}: 팀 '${row.team}'은 목록에 없어 국가 규칙으로 배정`); row.team = ''; }
     for (const [k, code, label] of [['channels', 'channel', '유통 채널'], ['strengths', 'strength', '강점']]) { const bad = row[k] ? row[k].split(';').filter((x) => !codes[code].includes(x)) : []; if (bad.length) errors.push(`${where}: ${label}의 '${bad.join(', ')}'은 허용 값이 아닙니다 (${codes[code].join('/')})`); }
@@ -581,6 +585,8 @@ const FREE = (() => {
   addContactRow(); $('#add-contact').addEventListener('click', () => { addContactRow(); contactsBox.lastChild.querySelector('input').focus(); });
   const readContacts = () => [...contactsBox.querySelectorAll('.crow')].map((r) => ({name: $('[data-k="name"]', r).value.trim(), role: $('[data-k="func"]', r).value, func: $('[data-k="func"]', r).value, email: $('[data-k="email"]', r).value.trim().toLowerCase(), phone: $('[data-k="phone"]', r).value.trim(), is_ceo: $('[data-k="func"]', r).value === '대표'})).filter((c) => c.name || c.email || c.phone);
   const allContacts = () => { const ceoName = $('#f-ceo-name').value.trim(), ceoEmail = $('#f-ceo-email').value.trim().toLowerCase(), ceoPhone = $('#f-ceo-phone').value.trim(); const ceo = ceoName && !FREE.isNone(ceoName) ? [{...FREE.nameRole(ceoName), func: '대표', email: FREE.isNone(ceoEmail) ? '' : ceoEmail, phone: FREE.isNone(ceoPhone) ? '' : ceoPhone, is_ceo: true}] : []; const staff = readContacts().filter((c) => !FREE.isNone(c.name)).map((c) => ({...c, email: FREE.isNone(c.email) ? '' : c.email, phone: FREE.isNone(c.phone) ? '' : c.phone})); return [...ceo.map((c) => ({...c, role: c.role || '대표'})), ...staff]; };
+  const whoMsg = (t) => { const box = $('#who-msg'); if (!box) return; box.textContent = t || ''; box.className = 'msg' + (t ? ' err' : ''); };
+  $('#who-name').addEventListener('input', () => whoMsg('')); $('#who-team').addEventListener('change', () => whoMsg(''));
   const msg = (kind, text) => { const m = $('#msg'); m.className = 'msg' + (kind ? ' ' + kind : ''); m.textContent = text || ''; };
   const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; }); defaultStatus(); stars.dataset.value = ''; $('#autofill').value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); countries.length = 0; drawTokens(); contactsBox.innerHTML = ''; addContactRow(); $('#f-date').value = today(); $('#f-owner').value = $('#who-name').value.trim(); delete $('#f-owner').dataset.touched; ['#f-ceo-name', '#f-ceo-email', '#f-ceo-phone'].forEach((id) => { $(id).value = ''; }); msg('', ''); if (window.__updateSticky) window.__updateSticky(); };
   $('#btn-reset').addEventListener('click', resetForm);
@@ -650,7 +656,7 @@ const FREE = (() => {
   const chunk = (arr, n) => { const o = []; for (let i = 0; i < arr.length; i += n) o.push(arr.slice(i, i + n)); return o; };
   async function submitParsed(files) {
     const who = $('#who-name').value.trim(), team = $('#who-team').value;
-    if (!who) { msgP('err', '제출자 이름을 먼저 입력해 주십시오.'); $('#who-name').focus(); return false; }
+    if (!who || !team) { const t = `제출자 ${!who && !team ? '이름과 팀' : !who ? '이름' : '팀'}을 먼저 입력해 주십시오.`; whoMsg(t); toast(t); (!who ? $('#who-name') : $('#who-team')).focus(); $('#who-name').scrollIntoView({block: 'center'}); return false; } // keep the preview: the person only needs to fill the name
     const defStatus = ($('#bulk-status') || {}).value || '기존 대리상';
     const rowsOut = [];
     for (const f of files) for (const c of chunk(f.rows, 150)) rowsOut.push({type: 'batch', submitter: who, team, summary: `${f.name} · 파트너 ${c.length}행`, payload: {simple: c.map((r) => { const o = {...r, status: r.status || defStatus, owner: r.owner || who, updated_by: who}; delete o._row; return o; })}, client_id: cid});
@@ -668,7 +674,7 @@ const FREE = (() => {
     const skipped = parsedFiles.flatMap((f) => f.skipped.map((s) => `${f.name} · ${s}`));
     const nC = new Set(parsedFiles.flatMap((f) => f.rows.flatMap((r) => FREE.coverageOf(r)))).size, nP = parsedFiles.reduce((s, f) => s + (f.contacts || 0), 0), noStatus = parsedFiles.some((f) => f.noStatus);
     const nK = parsedFiles.reduce((s, f) => s + f.rows.filter((r) => (r.contracts || []).length).length, 0), nPr = parsedFiles.reduce((s, f) => s + f.rows.reduce((a, r) => a + (r.prices || []).filter((x) => x.price !== null).length, 0), 0);
-    const mapTables = parsedFiles.flatMap((f) => f.sheets.map((sh) => `<div><h3>열 읽기 결과 — ${esc(f.name)}${f.sheets.length > 1 ? ' · ' + esc(sh.name) : ''}</h3><div class="tbox"><table class="map"><thead><tr><th>엑셀 열</th><th>이렇게 읽음</th><th>예시 값</th></tr></thead><tbody>${sh.headers.map((h, i) => { if (String(h ?? '').trim() === '' && !sh.samples.some((r) => String((r || [])[i] ?? '').trim())) return ''; const cur = Object.keys(sh.map).find((k) => sh.map[k] === i) || ''; return `<tr><td class="h">${esc(h)}</td><td><select data-file="${esc(f.name)}" data-sheet="${esc(sh.name)}" data-col="${i}"><option value="">사용 안 함</option>${Object.keys(LABEL).map((k) => `<option value="${k}"${k === cur ? ' selected' : ''}>${esc(LABEL[k])}</option>`).join('')}</select></td><td class="s">${esc(clip(sh.samples.map((r) => (r || [])[i]).find((v) => v !== undefined && String(v).trim() !== '')))}</td></tr>`; }).join('')}</tbody></table></div></div>`));
+    const mapTables = parsedFiles.flatMap((f) => f.sheets.map((sh) => `<div><h3>열 읽기 결과 — ${esc(f.name)}${f.sheets.length > 1 && sh.name !== f.name ? ' · ' + esc(sh.name) : ''}</h3><div class="tbox"><table class="map"><thead><tr><th>엑셀 열</th><th>이렇게 읽음</th><th>예시 값</th></tr></thead><tbody>${sh.headers.map((h, i) => { if (String(h ?? '').trim() === '' && !sh.samples.some((r) => String((r || [])[i] ?? '').trim())) return ''; const cur = Object.keys(sh.map).find((k) => sh.map[k] === i) || ''; return `<tr><td class="h">${esc(h)}</td><td><select data-file="${esc(f.name)}" data-sheet="${esc(sh.name)}" data-col="${i}"><option value="">사용 안 함</option>${Object.keys(LABEL).map((k) => `<option value="${k}"${k === cur ? ' selected' : ''}>${esc(LABEL[k])}</option>`).join('')}</select></td><td class="s">${esc(clip(sh.samples.map((r) => (r || [])[i]).find((v) => v !== undefined && String(v).trim() !== '')))}</td></tr>`; }).join('')}</tbody></table></div></div>`));
     const sample = parsedFiles.flatMap((f) => f.rows).slice(0, 6);
     const rowTable = sample.length ? `<div><h3>읽은 내용 (처음 ${sample.length}건)</h3><div class="tbox"><table><thead><tr><th>업체명</th><th>국가</th><th>구분</th><th>담당자</th><th>품목</th><th>계약 만료</th></tr></thead><tbody>${sample.map((r) => { const cov = FREE.coverageOf(r); return `<tr><td><b>${esc(r.partner_name)}</b>${r.owner ? `<br><small>${esc(r.owner)}</small>` : ''}</td><td>${esc(cov[0] || '')}${cov.length > 1 ? ` <small>+${cov.length - 1}</small>` : ''}${r.coverage_note ? `<br><small class="warn">? ${esc(r.coverage_note)}</small>` : ''}</td><td>${esc(r.status || (noStatus ? '(선택값)' : ''))}${r.partner_type ? `<br><small>${esc(r.partner_type)}</small>` : ''}</td><td>${(r.contacts || []).length}명${(r.contacts || [])[0] ? `<br><small>${esc((r.contacts[0].name || '') + (r.contacts[0].email ? ' · ' + r.contacts[0].email : ''))}</small>` : ''}</td><td>${esc(r.our_products || r.products_other || '')}${(r.prices || []).filter((x) => x.price !== null).length ? `<br><small>단가 ${(r.prices || []).filter((x) => x.price !== null).length}건</small>` : ''}</td><td>${esc((r.contracts || [])[0] ? (r.contracts[0].end || '—') : '')}</td></tr>`; }).join('')}</tbody></table></div></div>` : '';
     const canSubmit = !errors.length && n > 0;
@@ -689,7 +695,7 @@ const FREE = (() => {
       reparse();
     }));
     prevBox.querySelectorAll('[data-cancel]').forEach((c) => c.addEventListener('click', () => { parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); }));
-    const bulk = async () => { const b = $('#btn-bulk'); const b2 = $('#btn-bulk-2'); if (b2) b2.disabled = true; b.disabled = true; b.textContent = '보내는 중…'; try { const k = await submitParsed(parsedFiles); parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); toast('제출되었습니다. 글로벌사업부 CRM에 자동 반영됩니다.'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); } catch (e) { b.disabled = false; b.textContent = '제출'; if (b2) b2.disabled = false; msgP('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e)); } };
+    const bulk = async () => { const b = $('#btn-bulk'); const b2 = $('#btn-bulk-2'); if (b2) b2.disabled = true; b.disabled = true; b.textContent = '보내는 중…'; try { const k = await submitParsed(parsedFiles); if (k === false) { b.disabled = false; b.textContent = `제출 (대리상 ${parsedFiles.reduce((s, f) => s + f.rows.length, 0)}건)`; if (b2) { b2.disabled = false; b2.textContent = b.textContent; } updateSticky(); return; } parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); toast('제출되었습니다. 글로벌사업부 CRM에 자동 반영됩니다.'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); } catch (e) { b.disabled = false; b.textContent = '제출'; if (b2) b2.disabled = false; msgP('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e)); } };
     $('#btn-bulk').addEventListener('click', bulk); const b2 = $('#btn-bulk-2'); if (b2) b2.addEventListener('click', bulk);
     bulkSubmit = bulk; updateSticky();
   }
@@ -711,7 +717,7 @@ const FREE = (() => {
   function parseTsv(text) { const rows = []; let row = [], cell = '', q = false; for (let i = 0; i < text.length; i++) { const ch = text[i]; if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; } else if (ch === '"' && cell === '') q = true; else if (ch === '\t') { row.push(cell); cell = ''; } else if (ch === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; } else if (ch !== '\r') cell += ch; } if (cell !== '' || row.length) { row.push(cell); rows.push(row); } return rows.filter((r) => r.some((c) => String(c).trim() !== '')); }
   window.__parseTsv = parseTsv;
   const pasteBox = $('#paste');
-  const handlePaste = () => { const t = pasteBox.value; if (!t.trim()) return; const aoa = parseTsv(t); if (!aoa.some((r) => r.length > 1)) { msgP('err', '탭으로 구분된 표가 아닙니다. 엑셀에서 머리글 행을 포함한 범위를 복사하여 붙여넣어 주십시오.'); return; } rawFiles = [{name: '붙여넣기', sheets: [{name: '붙여넣기', rows: aoa}]}]; overrides = {}; reparse(); if (!parsedFiles[0] || !parsedFiles[0].rows.length) msgP('err', '업체명·국가 열을 찾지 못했습니다. 머리글 행(업체명·국가 …)부터 복사했는지 확인해 주세요.'); };
+  const handlePaste = () => { const t = pasteBox.value; if (!t.trim()) return; const aoa = parseTsv(t); if (!aoa.some((r) => r.length > 1)) { msgP('err', '탭으로 구분된 표가 아닙니다. 엑셀에서 머리글 행을 포함한 범위를 복사하여 붙여넣어 주십시오.'); return; } rawFiles = [{name: '붙여넣은 표', sheets: [{name: '범위', rows: aoa}], pasted: true}]; overrides = {}; reparse(); if (!parsedFiles[0] || !parsedFiles[0].rows.length) msgP('err', '업체명·국가 열을 찾지 못했습니다. 머리글 행(업체명·국가 …)부터 복사했는지 확인해 주세요.'); };
   pasteBox.addEventListener('paste', () => setTimeout(handlePaste, 0)); pasteBox.addEventListener('change', handlePaste);
   // free text (signature / business card / memo) → prefill the quick form
   $('#autofill').addEventListener('input', (e) => {
@@ -735,6 +741,12 @@ const FREE = (() => {
   $('#file').addEventListener('change', (e) => { readFiles(e.target.files); e.target.value = ''; });
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); }); drop.addEventListener('dragleave', () => drop.classList.remove('over'));
   drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); readFiles(e.dataTransfer.files); });
+  // method picker: show only the chosen method (①②③); 「방법 변경」 brings the picker back. Nothing is hidden until a choice is made.
+  const mainEl = document.querySelector('main');
+  const setMode = (m) => { if (m) mainEl.dataset.mode = m; else delete mainEl.dataset.mode; document.querySelectorAll('.pick-c').forEach((a) => { if (a.dataset.pick === m) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); };
+  document.querySelectorAll('.pick-c').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); setMode(a.dataset.pick); const t = document.querySelector(a.getAttribute('href')); if (t) t.scrollIntoView({block: 'start', behavior: 'smooth'}); }));
+  document.querySelectorAll('[data-chg]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); setMode(''); $('#top').scrollIntoView({block: 'start', behavior: 'smooth'}); }));
+  window.__setMode = setMode;
   $('#btn-cols').addEventListener('click', () => { const b = $('#cols'); b.hidden = !b.hidden; if (!b.innerHTML) b.innerHTML = Object.keys(LABEL).map((k) => `<div><b>${esc(LABEL[k])}</b>${esc(FREE.HEADERS[k].slice(0, 6).join(' · '))}</div>`).join(''); });
   // ---------- quick form submit ----------
   let busy = false;
@@ -745,7 +757,8 @@ const FREE = (() => {
     const n = parsedFiles.reduce((a, f) => a + f.rows.length, 0), errs = parsedFiles.flatMap((f) => f.errors).length, partial = parsedFiles.some((f) => f.partial);
     if (parsedFiles.length) {
       sticky.hidden = false; stickyBtn.dataset.mode = 'file';
-      stickyWhat.innerHTML = n ? `파일 업로드 → <b>대리상 ${n}건</b>${partial ? ' · 보완 필요 항목 있음' : ''}${errs ? ` · <span class="bad">오류 ${errs}건 — 수정 후 제출</span>` : ''}` : '읽을 수 있는 대리상 행이 없습니다 — 열 이름을 확인해 주십시오';
+      const srcLabel = rawFiles.length && rawFiles.every((rf) => rf.pasted) ? '붙여넣기' : '파일 업로드';
+      stickyWhat.innerHTML = n ? `${srcLabel} → <b>대리상 ${n}건</b>${partial ? ' · 보완 필요 항목 있음' : ''}${errs ? ` · <span class="bad">오류 ${errs}건 — 수정 후 제출</span>` : ''}` : '읽을 수 있는 대리상 행이 없습니다 — 열 이름을 확인해 주십시오';
       stickyBtn.textContent = `제출 (대리상 ${n}건)`; stickyBtn.disabled = !n || errs > 0;
     } else if (formTouched()) {
       sticky.hidden = false; stickyBtn.dataset.mode = 'form';
@@ -771,7 +784,7 @@ const FREE = (() => {
     if (!$('#f-web').value.trim()) errs.push('홈페이지/SNS'); if (!$('#f-address').value.trim()) errs.push('주소');
     if (!picked('#f-cats').length) errs.push('카테고리'); if (!picked('#f-products').length && !$('#f-products-other').value.trim()) errs.push('취급/계약 제품명 (없으면 "없음")');
     if (!$('#f-contract').value.trim()) errs.push('계약'); if (!$('#f-moq').value.trim()) errs.push('MOQ'); if (!$('#f-prices').value.trim()) errs.push('단가'); if (!$('#f-terms').value.trim()) errs.push('계약 조건·메모');
-    if (errs.length) { msg('err', '빈칸: ' + errs.join(' · ') + ' — 모든 항목이 필수입니다. 해당 사항이 없으면 "없음", 협의 단계는 "협의중"으로 기재해 주십시오.'); if (!who) { $('#who-name').focus(); $('#who-name').scrollIntoView({block: 'center'}); } else $('#msg').scrollIntoView({block: 'center'}); return; }
+    if (errs.length) { msg('err', '빈칸: ' + errs.join(' · ') + ' — 모든 항목이 필수입니다. 해당 사항이 없으면 "없음", 협의 단계는 "협의중"으로 기재해 주십시오.'); whoMsg(!who || !team ? `제출자 ${!who && !team ? '이름과 팀' : !who ? '이름' : '팀'}을 입력해 주십시오${errs.length > (!who ? 1 : 0) + (!team ? 1 : 0) ? ` — 아래 입력 항목도 ${errs.filter((x) => x !== '제출자 이름' && x !== '팀').length}칸 비어 있습니다` : ''}` : ''); if (!who || !team) { (!who ? $('#who-name') : $('#who-team')).focus(); $('#who-name').scrollIntoView({block: 'center'}); } else $('#msg').scrollIntoView({block: 'center'}); return; }
     const isSub = status === '해외법인'; const st = isSub ? '기존 대리상' : status;
     const web = FREE.parseWeb($('#f-web').value), addrs = FREE.parseAddresses($('#f-address').value), prices = FREE.parsePrices($('#f-prices').value, PRODUCTS);
     const cl = FREE.parseContractLine($('#f-contract').value, (v) => FREE.toDate(v)) || {}, mq = FREE.parseMoqCell($('#f-moq').value), terms = FREE.isNone($('#f-terms').value) ? '' : $('#f-terms').value.trim();
