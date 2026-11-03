@@ -89,6 +89,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16
     <h2><span class="n">1</span>파일 올리기 <span class="tag">가장 빠름</span></h2>
     <p class="hint">지금 쓰는 대리점 현황 엑셀을 <b>그대로</b> 올리세요. 열 제목이 달라도 자동으로 읽고, 한 칸에 여러 국가·여러 담당자·이메일·전화·단가가 줄바꿈으로 들어 있어도 알아서 나눕니다. 올리기 전에 어떻게 읽었는지 보여 드립니다.</p>
     <label class="drop" id="drop"><b>엑셀 파일 끌어다 놓기 / 눌러서 선택</b><small>.xlsx · .xls · .csv — 여러 파일 가능 · 업체명과 국가 열만 있으면 됩니다</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
+    <label class="f" style="margin-top:10px">파일이 없으면 엑셀에서 범위를 복사해 여기에 붙여넣기<small>머리글 행부터 선택해서 Ctrl+C → 여기 Ctrl+V. 바로 위와 똑같이 읽습니다.</small><textarea id="paste" rows="3" placeholder="국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
     <div id="prev"></div>
     <div class="two" style="margin-top:12px"><a class="btn ghost" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 받기 (.xlsx)</a><button class="btn ghost" id="btn-cols" type="button">읽을 수 있는 열 이름 보기</button></div>
     <div id="cols" class="cols" hidden style="margin-top:10px"></div>
@@ -96,7 +97,8 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16
 
   <section class="card">
     <h2><span class="n">2</span>한 곳만 직접 입력</h2>
-    <p class="hint">필수 4칸이면 제출됩니다. 나머지는 아는 만큼만 펼쳐서 적으세요. 같은 회사를 다시 보내면 기존 정보가 갱신됩니다.</p>
+    <p class="hint">필수 4칸이면 제출됩니다(구분·영업담당자는 미리 채워져 있어 실제로는 업체명·국가 2칸). 나머지는 아는 만큼만 펼쳐서 적으세요. 같은 회사를 다시 보내면 기존 정보가 갱신됩니다.</p>
+    <label class="f" style="margin-bottom:12px">메일 서명·명함·메모를 붙여넣으면 자동으로 채웁니다<small>이메일·전화·홈페이지·국가·업체명을 찾아 아래 칸에 넣습니다 (확인 후 제출)</small><textarea id="autofill" rows="2" placeholder="예) Ramy Fahmi, Vice president, KARMA COSMETICS, Dubai UAE, rfahmy@karmacosmetic.com, +20 100 999 8797"></textarea></label>
     <form id="form" novalidate>
       <div class="grid">
         <label class="f">업체명 <span class="req">*</span><input id="f-name" maxlength="200" autocomplete="organization"></label>
@@ -489,7 +491,7 @@ const FREE = (() => {
   addContactRow(); $('#add-contact').addEventListener('click', () => { addContactRow(); contactsBox.lastChild.querySelector('input').focus(); });
   const readContacts = () => [...contactsBox.querySelectorAll('.crow')].map((r) => ({name: $('[data-k="name"]', r).value.trim(), role: $('[data-k="func"]', r).value, func: $('[data-k="func"]', r).value, email: $('[data-k="email"]', r).value.trim().toLowerCase(), phone: $('[data-k="phone"]', r).value.trim(), is_ceo: $('[data-k="func"]', r).value === '대표'})).filter((c) => c.name || c.email || c.phone);
   const msg = (kind, text) => { const m = $('#msg'); m.className = 'msg' + (kind ? ' ' + kind : ''); m.textContent = text || ''; };
-  const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; }); [...seg.children].forEach((x) => x.setAttribute('aria-pressed', 'false')); stars.dataset.value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); countries.length = 0; drawTokens(); contactsBox.innerHTML = ''; addContactRow(); $('#f-date').value = today(); $('#f-owner').value = $('#who-name').value.trim(); delete $('#f-owner').dataset.touched; msg('', ''); };
+  const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; }); defaultStatus(); stars.dataset.value = ''; $('#autofill').value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); countries.length = 0; drawTokens(); contactsBox.innerHTML = ''; addContactRow(); $('#f-date').value = today(); $('#f-owner').value = $('#who-name').value.trim(); delete $('#f-owner').dataset.touched; msg('', ''); };
   $('#btn-reset').addEventListener('click', resetForm);
   const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? String(iso).slice(0, 16) : `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
   // ---------- my submissions ----------
@@ -520,7 +522,7 @@ const FREE = (() => {
     const auto = FREE.parseSheet(aoa, `${fileName} · ${sh.name}`, CODES, [], [], {toDate, products: PRODUCTS});
     if (!auto && !override) return out;
     const h = auto ? auto.headerRow : (override.headerRow || 0);
-    const map = {...(auto ? auto.map : {}), ...(override ? override.map : {})}; for (const k of Object.keys(map)) if (map[k] === undefined || map[k] === null) delete map[k];
+    const map = override ? {...override.map} : {...(auto ? auto.map : {})}; for (const k of Object.keys(map)) if (map[k] === undefined || map[k] === null) delete map[k];
     out.headers = aoa[h] || []; out.samples = aoa.slice(h + 1, h + 4); out.headerRow = h; out.map = map; out.noStatus = map.status === undefined;
     if (map.partner_name === undefined || map.country === undefined) return out;
     for (let r = h + 1; r < aoa.length; r++) { const raw = aoa[r] || []; if (raw.every((c) => c == null || String(c).trim() === '')) continue; const row = FREE.normalizeRow(raw, map, {toDate, products: PRODUCTS, codes: CODES}); if (!row.partner_name && !row.country) continue; FREE.validate(row, `${fileName} · ${sh.name} ${r + 1}행`, CODES, out.errors, out.warnings, !out.noStatus); out.rows.push(row); }
@@ -594,6 +596,30 @@ const FREE = (() => {
     if (rawFiles.some((rf) => rf.error)) renderPreview();
   }
   window.__readSheets = (name, sheets) => { rawFiles = [{name, sheets}]; overrides = {}; reparse(); };
+  // pasted Excel range: tab-separated, multi-line cells arrive quoted
+  function parseTsv(text) { const rows = []; let row = [], cell = '', q = false; for (let i = 0; i < text.length; i++) { const ch = text[i]; if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; } else if (ch === '"' && cell === '') q = true; else if (ch === '\t') { row.push(cell); cell = ''; } else if (ch === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; } else if (ch !== '\r') cell += ch; } if (cell !== '' || row.length) { row.push(cell); rows.push(row); } return rows.filter((r) => r.some((c) => String(c).trim() !== '')); }
+  window.__parseTsv = parseTsv;
+  const pasteBox = $('#paste');
+  const handlePaste = () => { const t = pasteBox.value; if (!t.trim()) return; const aoa = parseTsv(t); if (!aoa.some((r) => r.length > 1)) { msgP('err', '탭으로 나뉜 표가 아닙니다. 엑셀에서 머리글 행부터 범위를 복사해 붙여넣어 주세요.'); return; } rawFiles = [{name: '붙여넣기', sheets: [{name: '붙여넣기', rows: aoa}]}]; overrides = {}; reparse(); if (!parsedFiles[0] || !parsedFiles[0].rows.length) msgP('err', '업체명·국가 열을 찾지 못했습니다. 머리글 행(업체명·국가 …)부터 복사했는지 확인해 주세요.'); };
+  pasteBox.addEventListener('paste', () => setTimeout(handlePaste, 0)); pasteBox.addEventListener('change', handlePaste);
+  // free text (signature / business card / memo) → prefill the quick form
+  $('#autofill').addEventListener('input', (e) => {
+    const t = e.target.value; if (!t.trim()) return;
+    const emails = [...new Set((t.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g) || []).map((x) => x.toLowerCase()))];
+    const phones = [...new Set((t.match(/(?:\+|00)?\d[\d\s().-]{7,}\d/g) || []).map((x) => x.trim()).filter((x) => x.replace(/\D/g, '').length >= 8))];
+    const web = FREE.parseWeb(t.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, ' '));
+    const found = []; const low = t.toLowerCase();
+    for (const c of CODES.country) if (t.includes(c) && !found.includes(c)) found.push(c);
+    for (const [a, c] of Object.entries(COUNTRY_ALIAS)) if (a.length >= 4 && new RegExp('(^|[^a-z])' + a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^a-z]|$)', 'i').test(low) && !found.includes(c)) found.push(c);
+    for (const c of found) if (!countries.includes(c)) countries.push(c); drawTokens();
+    if (!$('#f-name').value.trim()) { const cand = t.split(/\n|,/).map((x) => x.trim()).find((x) => /[A-Za-z가-힣]/.test(x) && !/@|http|www\.|\d{5,}/.test(x) && /(co\.|ltd|llc|inc|gmbh|company|trading|medical|group|corp|주식회사|㈜|회사)/i.test(x)); if (cand) $('#f-name').value = cand.replace(/^(회사명|업체명)\s*[:：]\s*/, ''); }
+    if (web.website) $('#f-web').value = [web.website, ...web.website_more, ...web.sns].join('\n');
+    const first = contactsBox.querySelector('.crow'); if (first) { if (emails[0] && !$('[data-k="email"]', first).value) $('[data-k="email"]', first).value = emails[0]; if (phones[0] && !$('[data-k="phone"]', first).value) $('[data-k="phone"]', first).value = phones[0]; const nm = t.split(/\n|,/).map((x) => x.trim()).find((x) => /^[A-Z][a-z]+(\s[A-Z][a-z]+){1,3}$/.test(x) || /^[가-힣]{2,4}$/.test(x)); if (nm && !$('[data-k="name"]', first).value) $('[data-k="name"]', first).value = nm; if (/대표|ceo|president|director|owner/i.test(t) && !$('[data-k="func"]', first).value) $('[data-k="func"]', first).value = '대표'; }
+    if (emails.length || phones.length) $('#fold-contacts').open = true;
+    msg('ok', `자동 채움: 국가 ${found.length} · 이메일 ${emails.length} · 전화 ${phones.length}${web.website ? ' · 홈페이지' : ''} — 확인 후 제출하세요`);
+  });
+  // 구분 defaults to 현재 대리상 (most lists are current distributors); the rep can switch
+  const defaultStatus = () => { [...seg.children].forEach((x) => x.setAttribute('aria-pressed', x.dataset.v === '현재 대리상' ? 'true' : 'false')); }; defaultStatus();
   const drop = $('#drop');
   $('#file').addEventListener('change', (e) => { readFiles(e.target.files); e.target.value = ''; });
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); }); drop.addEventListener('dragleave', () => drop.classList.remove('over'));
