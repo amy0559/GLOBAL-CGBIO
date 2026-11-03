@@ -109,10 +109,10 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
 
   <section class="card" id="card-file">
     <h2><span class="n">1</span>파일 업로드 <span class="tag">여러 업체</span></h2>
-    <p class="hint">현재 사용 중인 대리상 현황 엑셀을 수정 없이 그대로 업로드하시면 됩니다. 열 제목이 양식과 달라도 자동으로 인식하며, 한 칸에 국가·담당자·이메일·연락처·주소·단가가 여러 개 기재된 경우에도 항목별로 분리하여 반영됩니다. 정식 양식의 <b>20개 항목이 모두 있어야</b> 제출되며, 누락된 열이나 빈칸은 제출 전에 표시됩니다. 해당 사항이 없는 칸은 "없음", 협의 단계는 "협의중"으로 기재해 주십시오.</p>
+    <p class="hint">현재 사용 중인 대리상 현황 엑셀을 수정 없이 그대로 업로드하시면 됩니다. 열 제목이 양식과 달라도 자동으로 인식하며, 한 칸에 국가·담당자·이메일·연락처·주소·단가가 여러 개 기재된 경우에도 항목별로 분리하여 반영됩니다. 정식 양식(19개 항목)에 있는 항목이 파일에 없으면 제출 전에 표시되고, 제출 후 CRM에 '보완 필요'로 기록됩니다. 정식 양식으로 작성하는 경우 모든 칸을 채우며, 해당 사항이 없는 칸은 "없음", 협의 단계는 "협의중"으로 기재해 주십시오.</p>
     <div class="steps"><span><i>1</i>파일 업로드</span><span><i>2</i>열 인식 결과 확인 (잘못 인식된 열은 드롭다운으로 변경)</span><span><i>3</i>제출 → CRM 자동 반영</span></div>
     <label class="drop" id="drop"><b>엑셀 파일을 끌어다 놓거나 클릭하여 선택</b><small>.xlsx · .xls · .csv — 여러 파일, 여러 시트 가능</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
-    <div class="tplrow"><div><b>정식 양식</b><small>20개 항목 · 드롭다운 · 작성 예시 시트 포함. 양식에 작성 후 위에 업로드하십시오.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 내려받기 (.xlsx)</a></div>
+    <div class="tplrow"><div><b>정식 양식</b><small>19개 항목 · 드롭다운 · 작성 예시 시트 포함. 양식에 작성 후 위에 업로드하십시오.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 내려받기 (.xlsx)</a></div>
     <h3 class="or"><span class="n">2</span>복사·붙여넣기 <span class="muted-s">— 파일 대신 엑셀 범위를 붙여넣는 경우</span></h3>
     <label class="f">엑셀에서 <b>머리글 행을 포함하여</b> 범위를 선택해 복사(Ctrl+C)한 뒤 아래 칸에 붙여넣기(Ctrl+V)<small>파일 업로드와 동일하게 처리됩니다. ①을 진행하셨다면 생략하십시오.</small><textarea id="paste" rows="3" placeholder="국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
     <div id="prev"></div>
@@ -600,7 +600,7 @@ const FREE = (() => {
   const clip = (s) => { s = String(s ?? '').replace(/\s+/g, ' ').trim(); return s.length > 40 ? s.slice(0, 40) + '…' : s; };
   // one sheet with an optional user override of the column map → parsed rows
   function parseOne(sh, fileName, override) {
-    const out = {rows: [], errors: [], warnings: [], map: null, headerRow: 0, headers: [], samples: [], noStatus: false, absent: []};
+    const out = {rows: [], errors: [], warnings: [], notices: [], map: null, headerRow: 0, headers: [], samples: [], noStatus: false, absent: [], partial: false, blanks: 0};
     const aoa = sh.rows || []; if (!aoa.length) return out;
     const auto = FREE.parseSheet(aoa, `${fileName} · ${sh.name}`, CODES, [], [], {toDate, products: PRODUCTS});
     if (!auto && !override) return out;
@@ -610,18 +610,19 @@ const FREE = (() => {
     const has = (...ks) => ks.some((k) => map[k] !== undefined);
     out.absent = [['partner_name', '업체명'], ['status', '업체 구분'], ['team', '담당 팀'], ['owner', '영업담당자'], ['country', '관할 국가'], ['categories', '카테고리'], ['our_products', '취급/계약 제품명'], ['website', '홈페이지/SNS'], ['ceo_name', '업체대표명'], ['ceo_email', '업체대표 이메일'], ['ceo_phone', '업체대표 연락처'], ['contact_name', '실무담당자'], ['contact_email', '실무담당자 이메일'], ['contact_phone', '실무담당자 연락처'], ['address', '주소'], ['price', '단가']].filter(([k]) => !has(k)).map(([, l]) => l);
     if (!has('contract_line', 'contract_signed', 'contract_end', 'contract_flag', 'contract_products')) out.absent.push('계약'); if (!has('moq_total', 'moq_y1')) out.absent.push('MOQ'); if (!has('contract_terms', 'notes')) out.absent.push('계약 조건·메모');
+    out.partial = out.absent.length > 0; // a personal/legacy layout: fewer columns than the official form
     if (map.partner_name === undefined || map.country === undefined) return out;
-    for (let r = h + 1; r < aoa.length; r++) { const raw = aoa[r] || []; if (raw.every((c) => c == null || String(c).trim() === '')) continue; const row = FREE.normalizeRow(raw, map, {toDate, products: PRODUCTS, codes: CODES}); if (!row.partner_name && !row.country) continue; FREE.validate(row, `${fileName} · ${sh.name} ${r + 1}행`, CODES, out.errors, out.warnings, !out.noStatus); const miss = FREE.missingRequired(row).filter((l) => !out.absent.includes(l)); if (miss.length) out.errors.push(`${fileName} · ${sh.name} ${r + 1}행 (${row.partner_name || '업체명 없음'}): 빈칸 — ${miss.join(', ')}`); out.rows.push(row); }
-    if (out.absent.length) out.errors.unshift(`${fileName} · ${sh.name}: 시트에 없는 열 — ${out.absent.join(', ')} (모든 항목이 필수입니다. 정식 양식에 작성하시거나 열을 추가해 주십시오. 해당 없음: "없음" / 협의 단계: "협의중")`);
+    for (let r = h + 1; r < aoa.length; r++) { const raw = aoa[r] || []; if (raw.every((c) => c == null || String(c).trim() === '')) continue; const row = FREE.normalizeRow(raw, map, {toDate, products: PRODUCTS, codes: CODES}); if (!row.partner_name && !row.country) continue; FREE.validate(row, `${fileName} · ${sh.name} ${r + 1}행`, CODES, out.errors, out.warnings, !out.noStatus); const miss = FREE.missingRequired(row).filter((l) => !out.absent.includes(l)); if (miss.length) { if (out.partial) { out.blanks++; out.warnings.push(`${fileName} · ${sh.name} ${r + 1}행 (${row.partner_name || '업체명 없음'}): 빈칸(보완 필요) — ${miss.join(', ')}`); } else out.errors.push(`${fileName} · ${sh.name} ${r + 1}행 (${row.partner_name || '업체명 없음'}): 빈칸 — ${miss.join(', ')}`); } out.rows.push(row); }
+    if (out.absent.length) out.notices.push(`${fileName} · ${sh.name}: 정식 양식의 ${out.absent.length}개 항목이 이 파일에 없습니다 — ${out.absent.join(', ')}. 제출은 가능하며, 없는 항목은 글로벌사업부 CRM에 '보완 필요'로 표시됩니다.`);
     return out;
   }
   function parseSheets(sheets, fileName, overrides) {
-    const f = {name: fileName, sheets: [], rows: [], errors: [], warnings: [], skipped: [], noStatus: false, countries: 0, contacts: 0};
+    const f = {name: fileName, sheets: [], rows: [], errors: [], warnings: [], notices: [], skipped: [], noStatus: false, partial: false, countries: 0, contacts: 0};
     for (const sh of sheets) {
       const o = overrides && overrides[sh.name];
       const r = parseOne(sh, fileName, o);
       if (!r.map) { if ((sh.rows || []).length) f.skipped.push(sh.name); continue; }
-      f.sheets.push({name: sh.name, ...r}); f.rows.push(...r.rows); f.errors.push(...r.errors); f.warnings.push(...r.warnings); if (r.noStatus && r.rows.length) f.noStatus = true;
+      f.sheets.push({name: sh.name, ...r}); f.rows.push(...r.rows); f.errors.push(...r.errors); f.warnings.push(...r.warnings); f.notices.push(...r.notices); if (r.noStatus && r.rows.length) f.noStatus = true; if (r.partial && r.rows.length) f.partial = true;
     }
     f.countries = new Set(f.rows.flatMap((r) => FREE.coverageOf(r))).size;
     f.contacts = f.rows.reduce((s, r) => s + ((r.contacts || []).length || (r.contact_name ? 1 : 0)), 0);
@@ -645,20 +646,23 @@ const FREE = (() => {
   const LABEL = FREE.LABELS;
   function renderPreview() {
     if (!parsedFiles.length) { prevBox.innerHTML = ''; return; }
-    const errors = parsedFiles.flatMap((f) => f.errors), warnings = parsedFiles.flatMap((f) => f.warnings), n = parsedFiles.reduce((s, f) => s + f.rows.length, 0);
+    const errors = parsedFiles.flatMap((f) => f.errors), warnings = parsedFiles.flatMap((f) => f.warnings), notices = parsedFiles.flatMap((f) => f.notices), n = parsedFiles.reduce((s, f) => s + f.rows.length, 0), partial = parsedFiles.some((f) => f.partial);
     const skipped = parsedFiles.flatMap((f) => f.skipped.map((s) => `${f.name} · ${s}`));
     const nC = new Set(parsedFiles.flatMap((f) => f.rows.flatMap((r) => FREE.coverageOf(r)))).size, nP = parsedFiles.reduce((s, f) => s + (f.contacts || 0), 0), noStatus = parsedFiles.some((f) => f.noStatus);
     const nK = parsedFiles.reduce((s, f) => s + f.rows.filter((r) => (r.contracts || []).length).length, 0), nPr = parsedFiles.reduce((s, f) => s + f.rows.reduce((a, r) => a + (r.prices || []).filter((x) => x.price !== null).length, 0), 0);
     const mapTables = parsedFiles.flatMap((f) => f.sheets.map((sh) => `<div><h3>열 읽기 결과 — ${esc(f.name)}${f.sheets.length > 1 ? ' · ' + esc(sh.name) : ''}</h3><div class="tbox"><table class="map"><thead><tr><th>엑셀 열</th><th>이렇게 읽음</th><th>예시 값</th></tr></thead><tbody>${sh.headers.map((h, i) => { if (String(h ?? '').trim() === '' && !sh.samples.some((r) => String((r || [])[i] ?? '').trim())) return ''; const cur = Object.keys(sh.map).find((k) => sh.map[k] === i) || ''; return `<tr><td class="h">${esc(h)}</td><td><select data-file="${esc(f.name)}" data-sheet="${esc(sh.name)}" data-col="${i}"><option value="">사용 안 함</option>${Object.keys(LABEL).map((k) => `<option value="${k}"${k === cur ? ' selected' : ''}>${esc(LABEL[k])}</option>`).join('')}</select></td><td class="s">${esc(clip(sh.samples.map((r) => (r || [])[i]).find((v) => v !== undefined && String(v).trim() !== '')))}</td></tr>`; }).join('')}</tbody></table></div></div>`));
     const sample = parsedFiles.flatMap((f) => f.rows).slice(0, 6);
     const rowTable = sample.length ? `<div><h3>읽은 내용 (처음 ${sample.length}건)</h3><div class="tbox"><table><thead><tr><th>업체명</th><th>국가</th><th>구분</th><th>담당자</th><th>품목</th><th>계약 만료</th></tr></thead><tbody>${sample.map((r) => { const cov = FREE.coverageOf(r); return `<tr><td><b>${esc(r.partner_name)}</b>${r.owner ? `<br><small>${esc(r.owner)}</small>` : ''}</td><td>${esc(cov[0] || '')}${cov.length > 1 ? ` <small>+${cov.length - 1}</small>` : ''}${r.coverage_note ? `<br><small class="warn">? ${esc(r.coverage_note)}</small>` : ''}</td><td>${esc(r.status || (noStatus ? '(선택값)' : ''))}${r.partner_type ? `<br><small>${esc(r.partner_type)}</small>` : ''}</td><td>${(r.contacts || []).length}명${(r.contacts || [])[0] ? `<br><small>${esc((r.contacts[0].name || '') + (r.contacts[0].email ? ' · ' + r.contacts[0].email : ''))}</small>` : ''}</td><td>${esc(r.our_products || r.products_other || '')}${(r.prices || []).filter((x) => x.price !== null).length ? `<br><small>단가 ${(r.prices || []).filter((x) => x.price !== null).length}건</small>` : ''}</td><td>${esc((r.contracts || [])[0] ? (r.contracts[0].end || '—') : '')}</td></tr>`; }).join('')}</tbody></table></div></div>` : '';
+    const canSubmit = !errors.length && n > 0;
+    const actions = (id) => `<div class="actions"><button class="btn primary" id="${id}" type="button" ${canSubmit ? '' : 'disabled'}>제출 (대리상 ${n}건${partial ? ' · 보완 필요 항목 있음' : ''})</button><button class="btn ghost" data-cancel type="button">취소</button>${!canSubmit ? `<span class="muted-s">${n ? '오류를 수정한 뒤 제출할 수 있습니다' : '읽을 수 있는 대리상 행이 없습니다'}</span>` : ''}</div>`;
     prevBox.innerHTML = `<div class="prev"><div class="stat"><span><b>${n}</b>대리상</span><span><b>${nC}</b>개국</span><span><b>${nP}</b>담당자</span>${nPr ? `<span><b>${nPr}</b>단가</span>` : ''}${nK ? `<span><b>${nK}</b>계약</span>` : ''}<span>${parsedFiles.map((f) => esc(f.name) + ' ' + f.rows.length + '행').join(' · ')}</span></div>` +
+      actions('btn-bulk') +
+      (notices.length ? `<div class="banner">${notices.map((t) => '<div>' + esc(t) + '</div>').join('')}</div>` : '') +
       (noStatus ? `<div class="banner" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><span>업체 구분 열이 없는 파일입니다. 이 업체들의 구분:</span><select id="bulk-status" style="width:auto;min-height:36px;padding:4px 8px"><option>기존 대리상</option><option>후보 대리상</option><option>잠재 대리상</option></select><span>으로 제출합니다.</span></div>` : '') +
       (skipped.length ? `<div class="warn">대리상 시트가 아니어서 건너뜀: ${esc(skipped.join(', '))}</div>` : '') +
       (errors.length ? `<div class="err"><b>오류 ${errors.length}건 — 수정 후 다시 업로드해 주십시오</b><ul>${errors.slice(0, 30).map((e) => '<li>' + esc(e) + '</li>').join('')}</ul></div>` : '') +
       (warnings.length ? `<details><summary class="warn" style="cursor:pointer"><b>확인 ${warnings.length}건 (제출은 가능)</b></summary><ul class="warn">${warnings.slice(0, 40).map((e) => '<li>' + esc(e) + '</li>').join('')}</ul></details>` : '') +
-      rowTable + mapTables.join('') +
-      `<div class="actions"><button class="btn primary" id="btn-bulk" type="button" ${errors.length || !n ? 'disabled' : ''}>제출 (대리상 ${n}건)</button><button class="btn ghost" id="btn-bulk-cancel" type="button">취소</button></div></div>`;
+      rowTable + mapTables.join('') + (mapTables.length || rowTable ? actions('btn-bulk-2') : '') + `</div>`;
     prevBox.querySelectorAll('select[data-col]').forEach((sel) => sel.addEventListener('change', () => {
       const fn = sel.dataset.file, sn = sel.dataset.sheet, col = Number(sel.dataset.col), key = sel.value;
       const f = parsedFiles.find((x) => x.name === fn), sh = f && f.sheets.find((x) => x.name === sn); if (!sh) return;
@@ -666,8 +670,9 @@ const FREE = (() => {
       overrides[fn] = overrides[fn] || {}; overrides[fn][sn] = {headerRow: sh.headerRow, map};
       reparse();
     }));
-    $('#btn-bulk-cancel').addEventListener('click', () => { parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); });
-    $('#btn-bulk').addEventListener('click', async () => { const b = $('#btn-bulk'); b.disabled = true; b.textContent = '보내는 중…'; try { const k = await submitParsed(parsedFiles); parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); toast('제출되었습니다. 글로벌사업부 CRM에 자동 반영됩니다.'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); } catch (e) { b.disabled = false; b.textContent = '제출'; msgP('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e)); } });
+    prevBox.querySelectorAll('[data-cancel]').forEach((c) => c.addEventListener('click', () => { parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); }));
+    const bulk = async () => { const b = $('#btn-bulk'); const b2 = $('#btn-bulk-2'); if (b2) b2.disabled = true; b.disabled = true; b.textContent = '보내는 중…'; try { const k = await submitParsed(parsedFiles); parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); toast('제출되었습니다. 글로벌사업부 CRM에 자동 반영됩니다.'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); } catch (e) { b.disabled = false; b.textContent = '제출'; if (b2) b2.disabled = false; msgP('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e)); } };
+    $('#btn-bulk').addEventListener('click', bulk); const b2 = $('#btn-bulk-2'); if (b2) b2.addEventListener('click', bulk);
   }
   function reparse() { parsedFiles = rawFiles.map((rf) => parseSheets(rf.sheets, rf.name, overrides[rf.name])); renderPreview(); }
   async function readFiles(list) {
