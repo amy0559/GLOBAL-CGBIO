@@ -6,100 +6,134 @@
 <meta name="robots" content="noindex, nofollow">
 <title>대리상 정보 제출 · 글로벌사업부</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root { --navy: #171a1f; --navy-ink: #ffffff; --teal: #1f5fbf; --teal-soft: #e9f0fb; --bg: #f4f5f7; --panel: #ffffff; --fg: #171a1f; --muted: #6b7280; --line: #e3e6ea; --red: #c0392b; --red-soft: #fbe6e4; --green: #1d7a4a; --green-soft: #e6f4ec; --orange: #b26a0a; --orange-soft: #fbf0dc; --radius: 8px; }
+:root { --bg: #f4f5f7; --panel: #ffffff; --panel-2: #f6f7f9; --fg: #171a1f; --muted: #6b7280; --line: #e3e6ea; --line-2: #c8ced6; --accent: #1f5fbf; --accent-soft: #e9f0fb; --ok: #1d7a4a; --ok-soft: #e6f4ec; --warn: #b26a0a; --warn-soft: #fbf0dc; --bad: #c0392b; --bad-soft: #fbe6e4; --radius: 8px; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html, body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif; -webkit-text-size-adjust: 100%; }
-header { background: var(--navy); color: var(--navy-ink); padding: 26px max(16px, env(safe-area-inset-left, 0px)) 24px max(16px, env(safe-area-inset-right, 0px)); }
-.wrap { max-width: 760px; margin: 0 auto; }
-.eyebrow { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; opacity: .7; font-weight: 700; }
-h1 { margin: 6px 0 4px; font-size: 24px; font-weight: 800; letter-spacing: -.01em; }
-header p { margin: 0; opacity: .82; font-size: 14px; }
-main { padding: 16px max(16px, env(safe-area-inset-left, 0px)) 48px max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 14px; }
-.card { background: var(--panel); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(20, 33, 61, .06), 0 6px 20px rgba(20, 33, 61, .05); padding: 18px 18px 20px; }
-.card h2 { margin: 0 0 4px; font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-.card h2 .n { display: inline-flex; width: 26px; height: 26px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 13px; align-items: center; justify-content: center; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif; -webkit-text-size-adjust: 100%; }
+header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 18px max(16px, env(safe-area-inset-left, 0px)) 16px max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 860px; margin: 0 auto; }
+.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+h1 { margin: 4px 0 2px; font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+header p { margin: 0; color: var(--muted); font-size: 13.5px; }
+main { padding: 14px max(16px, env(safe-area-inset-left, 0px)) 48px max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 16px 18px; }
+.card h2 { margin: 0 0 2px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card h2 .n { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--fg); color: #fff; font-size: 12px; align-items: center; justify-content: center; }
+.card h2 .tag { font-size: 11.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 1px 7px; }
 .hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
 .grid .wide { grid-column: 1 / -1; }
 @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
-label.f { display: block; font-size: 13.5px; font-weight: 700; min-width: 0; }
-label.f > input, label.f > select { margin-top: 6px; }
+label.f, .g { display: block; font-size: 13px; font-weight: 600; min-width: 0; }
+label.f > input, label.f > select, label.f > textarea, .g > .chips, .g > .tokens, .g > .seg { margin-top: 5px; }
 label.f small, .g small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
-.req { color: var(--red); }
-input, select { width: 100%; min-height: 46px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 16px; background: #fff; color: var(--fg); }
-input:focus, select:focus, button:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
-.g { display: block; font-size: 13.5px; font-weight: 700; } .g > .chips, .g > .stars { margin-top: 6px; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { min-height: 42px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--fg); font: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer; }
-.chip[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 700; }
-.stars { display: flex; gap: 2px; } .star { width: 44px; height: 44px; border: 0; background: none; font-size: 28px; line-height: 1; color: #cfd8e0; cursor: pointer; padding: 0; } .star.on { color: #f0a500; }
-.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
-.btn { min-height: 48px; padding: 0 22px; border-radius: 10px; border: 0; font: inherit; font-size: 16px; font-weight: 800; cursor: pointer; }
-.btn.primary { background: var(--teal); color: #fff; } .btn.primary:disabled { opacity: .55; cursor: default; }
-.btn.ghost { background: transparent; color: var(--teal); border: 1px solid var(--teal); }
-.msg { border-radius: 10px; padding: 10px 12px; font-size: 14px; display: none; } .msg.err { display: block; background: var(--red-soft); color: var(--red); } .msg.ok { display: block; background: var(--green-soft); color: var(--green); }
-table { width: 100%; border-collapse: collapse; font-size: 14px; } th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-size: 12px; font-weight: 700; }
-.tag { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; } .tag.wait { background: var(--orange-soft); color: var(--orange); } .tag.done { background: var(--green-soft); color: var(--green); }
+.req { color: var(--bad); }
+input, select, textarea { width: 100%; min-height: 44px; border: 1px solid var(--line-2); border-radius: 6px; padding: 9px 11px; font: inherit; font-size: 16px; background: #fff; color: var(--fg); }
+textarea { min-height: 72px; resize: vertical; line-height: 1.45; }
+input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { min-height: 38px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--line-2); background: #fff; color: var(--fg); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.seg { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line-2); border-radius: 6px; overflow: hidden; }
+.seg button { flex: 1 1 auto; min-height: 42px; border: 0; border-right: 1px solid var(--line); background: #fff; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; padding: 0 10px; white-space: nowrap; } .seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: #fff; font-weight: 700; }
+.tokens { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; border: 1px solid var(--line-2); border-radius: 6px; padding: 6px 8px; min-height: 44px; background: #fff; cursor: text; }
+.tokens .tok { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); color: var(--accent); border-radius: 4px; padding: 3px 8px; font-size: 14px; font-weight: 600; }
+.tokens .tok button { all: unset; cursor: pointer; font-weight: 700; padding: 0 2px; } .tokens .tok.bad { background: var(--warn-soft); color: var(--warn); }
+.tokens input { flex: 1 1 8rem; min-height: 30px; border: 0; padding: 4px 2px; font-size: 16px; } .tokens input:focus { outline: 0; }
+.rows { display: flex; flex-direction: column; gap: 8px; }
+.crow { display: grid; grid-template-columns: 1.1fr .9fr 1.3fr 1fr auto; gap: 6px; align-items: center; } .crow input, .crow select { min-height: 40px; font-size: 15px; padding: 7px 9px; }
+@media (max-width: 640px) { .crow { grid-template-columns: 1fr 1fr; } .crow .x { grid-column: 2; justify-self: end; } }
+.crow .x { all: unset; cursor: pointer; color: var(--muted); font-size: 18px; padding: 4px 8px; } .crow .x:hover { color: var(--bad); }
+.add { all: unset; cursor: pointer; color: var(--accent); font-weight: 600; font-size: 13.5px; padding: 6px 0; } .add:hover { text-decoration: underline; }
+details.fold { border: 1px solid var(--line); border-radius: 6px; padding: 0 12px; margin-top: 12px; } details.fold summary { cursor: pointer; font-weight: 700; font-size: 14px; padding: 11px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; } details.fold summary::after { content: '펼치기'; font-weight: 500; color: var(--accent); font-size: 12.5px; } details.fold[open] summary::after { content: '접기'; } details.fold summary small { color: var(--muted); font-weight: 400; margin-left: 8px; } details.fold > .grid { padding-bottom: 14px; }
+.stars { display: flex; gap: 2px; } .star { width: 40px; height: 40px; border: 0; background: none; font-size: 26px; line-height: 1; color: var(--line-2); cursor: pointer; padding: 0; } .star.on { color: var(--warn); }
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.btn { min-height: 46px; padding: 0 20px; border-radius: 6px; border: 1px solid transparent; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.btn.primary { background: var(--accent); color: #fff; } .btn.primary:disabled { opacity: .55; cursor: default; }
+.btn.ghost { background: transparent; color: var(--accent); border-color: var(--accent); }
+.btn.dark { background: var(--fg); color: #fff; }
+.msg { border-radius: 6px; padding: 10px 12px; font-size: 14px; display: none; } .msg.err { display: block; background: var(--bad-soft); color: var(--bad); } .msg.ok { display: block; background: var(--ok-soft); color: var(--ok); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; } th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--panel-2); }
+.tbox { overflow: auto; border: 1px solid var(--line); border-radius: 6px; }
+.tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; } .tag.wait { background: var(--warn-soft); color: var(--warn); } .tag.done { background: var(--ok-soft); color: var(--ok); }
 .empty { color: var(--muted); font-size: 14px; padding: 10px 0; }
-.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--navy); color: #fff; padding: 12px 18px; border-radius: 10px; font-size: 14.5px; font-weight: 700; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); max-width: calc(100vw - 32px); z-index: 10; }
+.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: #fff; padding: 12px 18px; border-radius: 8px; font-size: 14.5px; font-weight: 600; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); max-width: calc(100vw - 32px); z-index: 10; }
 footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16px 32px; }
 .who { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } @media (max-width: 560px) { .who { grid-template-columns: 1fr; } }
-.topnote { font-size: 13px; color: var(--muted); margin: 0; }
-.drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 120px; border: 2px dashed var(--line); border-radius: 12px; padding: 18px; text-align: center; cursor: pointer; background: #fafcfd; } .drop.over { border-color: var(--teal); background: var(--teal-soft); } .drop b { font-size: 15px; } .drop small { color: var(--muted); font-size: 12.5px; } .drop input { display: none; }
-.prev { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: #fafcfd; display: flex; flex-direction: column; gap: 8px; }
-.prev ul { margin: 0; padding-left: 18px; font-size: 13px; } .prev .err { color: var(--red); } .prev .warn { color: var(--orange); }
-.stat { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; } .stat b { font-size: 20px; color: var(--teal); }
-.two { display: flex; gap: 10px; flex-wrap: wrap; }
+.drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 118px; border: 2px dashed var(--line-2); border-radius: 8px; padding: 18px; text-align: center; cursor: pointer; background: var(--panel-2); } .drop.over { border-color: var(--accent); background: var(--accent-soft); } .drop b { font-size: 15px; } .drop small { color: var(--muted); font-size: 12.5px; } .drop input { display: none; }
+.prev { margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: var(--panel); display: flex; flex-direction: column; gap: 10px; }
+.prev ul { margin: 0; padding-left: 18px; font-size: 13px; } .prev .err { color: var(--bad); } .prev .warn { color: var(--warn); } .prev h3 { margin: 0; font-size: 14px; }
+.stat { display: flex; gap: 6px 18px; flex-wrap: wrap; font-size: 13.5px; color: var(--muted); } .stat b { font-size: 20px; color: var(--fg); font-weight: 700; margin-right: 4px; }
+.map td select { min-height: 36px; font-size: 14px; padding: 5px 8px; } .map td.h { font-weight: 600; } .map td.s { color: var(--muted); font-size: 12.5px; max-width: 18rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.two { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 6px 14px; font-size: 13px; } .cols b { display: block; font-size: 11.5px; color: var(--muted); font-weight: 600; }
+.banner { background: var(--accent-soft); border: 1px solid #cfe0f7; border-radius: 6px; padding: 9px 12px; font-size: 13.5px; }
 </style>
 </head>
 <body>
-<header><div class="wrap"><div class="eyebrow">Global Business · Partner CRM</div><h1>대리상 정보 제출</h1><p>제출하면 글로벌사업부 CRM에 자동 반영됩니다. 로그인 없이 30초.</p></div></header>
+<header><div class="wrap"><div class="eyebrow">Global Business · Partner CRM</div><h1>대리상 정보 제출</h1><p>쓰던 엑셀 그대로 올리면 끝. 글로벌사업부 CRM에 자동 반영됩니다. 로그인 없음.</p></div></header>
 <main class="wrap">
   <section class="card">
     <h2>제출자</h2>
-    <p class="hint">이름과 팀은 이 기기에 기억됩니다.</p>
     <div class="who">
       <label class="f">이름 <span class="req">*</span><input id="who-name" maxlength="50" autocomplete="name" placeholder="홍길동"></label>
       <label class="f">팀<select id="who-team"><option value="">선택</option><option value="글로벌영업1팀">글로벌영업1팀</option><option value="글로벌영업2팀">글로벌영업2팀</option><option value="글로벌영업3팀">글로벌영업3팀</option><option value="미용성형TF">미용성형TF</option><option value="인니TF">인니TF</option><option value="글로벌사업부">글로벌사업부</option><option value="기타">기타</option></select></label>
     </div>
   </section>
 
-  <section class="card">
-    <h2><span class="n">1</span>대리상 빠른 입력</h2>
-    <p class="hint">필수는 회사명·국가·구분·취급 카테고리 4칸. 나머지는 아는 만큼만. 같은 회사를 다시 보내면 기존 정보가 갱신됩니다.</p>
-    <form id="form" novalidate>
-      <div class="grid">
-        <label class="f">회사명 <span class="req">*</span><input id="f-name" maxlength="200" autocomplete="organization"></label>
-        <label class="f">국가 <span class="req">*</span><select id="f-country"><option value="">선택</option><optgroup label="APAC"><option value="일본">일본</option><option value="베트남">베트남</option><option value="태국">태국</option><option value="인도네시아">인도네시아</option><option value="말레이시아">말레이시아</option><option value="싱가포르">싱가포르</option><option value="필리핀">필리핀</option><option value="인도">인도</option><option value="호주">호주</option><option value="뉴질랜드">뉴질랜드</option><option value="캄보디아">캄보디아</option><option value="미얀마">미얀마</option><option value="파키스탄">파키스탄</option><option value="방글라데시">방글라데시</option><option value="스리랑카">스리랑카</option></optgroup><optgroup label="중화권"><option value="중국">중국</option><option value="대만">대만</option><option value="홍콩">홍콩</option><option value="마카오">마카오</option></optgroup><optgroup label="중동"><option value="사우디아라비아">사우디아라비아</option><option value="UAE">UAE</option><option value="카타르">카타르</option><option value="쿠웨이트">쿠웨이트</option><option value="오만">오만</option><option value="바레인">바레인</option><option value="요르단">요르단</option><option value="튀르키예">튀르키예</option></optgroup><optgroup label="유럽"><option value="독일">독일</option><option value="프랑스">프랑스</option><option value="영국">영국</option><option value="이탈리아">이탈리아</option><option value="스페인">스페인</option><option value="네덜란드">네덜란드</option><option value="벨기에">벨기에</option><option value="스위스">스위스</option><option value="오스트리아">오스트리아</option><option value="스웨덴">스웨덴</option><option value="덴마크">덴마크</option><option value="노르웨이">노르웨이</option><option value="핀란드">핀란드</option><option value="포르투갈">포르투갈</option><option value="그리스">그리스</option><option value="아일랜드">아일랜드</option></optgroup><optgroup label="CEE"><option value="폴란드">폴란드</option><option value="체코">체코</option><option value="헝가리">헝가리</option><option value="루마니아">루마니아</option><option value="불가리아">불가리아</option><option value="슬로바키아">슬로바키아</option><option value="크로아티아">크로아티아</option><option value="세르비아">세르비아</option><option value="슬로베니아">슬로베니아</option></optgroup><optgroup label="CIS"><option value="러시아">러시아</option><option value="카자흐스탄">카자흐스탄</option><option value="우즈베키스탄">우즈베키스탄</option><option value="우크라이나">우크라이나</option><option value="아제르바이잔">아제르바이잔</option><option value="조지아">조지아</option><option value="키르기스스탄">키르기스스탄</option></optgroup><optgroup label="아프리카"><option value="남아프리카공화국">남아프리카공화국</option><option value="이집트">이집트</option><option value="모로코">모로코</option><option value="나이지리아">나이지리아</option><option value="케냐">케냐</option><option value="알제리">알제리</option><option value="튀니지">튀니지</option><option value="가나">가나</option></optgroup><optgroup label="북미"><option value="미국">미국</option><option value="캐나다">캐나다</option></optgroup><optgroup label="중남미"><option value="멕시코">멕시코</option><option value="브라질">브라질</option><option value="콜롬비아">콜롬비아</option><option value="아르헨티나">아르헨티나</option><option value="칠레">칠레</option><option value="페루">페루</option><option value="에콰도르">에콰도르</option><option value="과테말라">과테말라</option><option value="도미니카공화국">도미니카공화국</option><option value="파나마">파나마</option><option value="코스타리카">코스타리카</option><option value="우루과이">우루과이</option></optgroup><option value="__direct">직접 입력</option></select></label>
-        <label class="f" id="f-country-direct-wrap" hidden>국가 직접 입력<input id="f-country-direct" maxlength="60" placeholder="국가명"></label>
-        <label class="f">구분 <span class="req">*</span><select id="f-status"><option value="후보 대리상" selected>후보 대리상</option><option value="현재 대리상">현재 대리상</option><option value="초기 접촉">초기 접촉</option><option value="거래종료">거래종료</option></select></label>
-        <label class="f">파트너 유형<small>해외법인이면 꼭 골라 주세요</small><select id="f-ptype"><option value="">선택</option><option value="총판">총판</option><option value="의료기기유통">의료기기유통</option><option value="수입유통">수입유통</option><option value="클리닉체인">클리닉체인</option><option value="에이전트">에이전트</option><option value="온라인셀러">온라인셀러</option><option value="해외법인">해외법인</option></select></label>
-        <div class="g wide">취급 카테고리 <span class="req">*</span><div class="chips" id="f-cats"><button type="button" class="chip" aria-pressed="false" data-v="에너지기기">에너지기기</button><button type="button" class="chip" aria-pressed="false" data-v="스킨부스터">스킨부스터</button><button type="button" class="chip" aria-pressed="false" data-v="수술·시술용">수술·시술용</button><button type="button" class="chip" aria-pressed="false" data-v="소모품">소모품</button><button type="button" class="chip" aria-pressed="false" data-v="기타">기타</button></div></div>
-        <div class="g wide">유통 채널<div class="chips" id="f-channels"><button type="button" class="chip" aria-pressed="false" data-v="피부과">피부과</button><button type="button" class="chip" aria-pressed="false" data-v="성형외과">성형외과</button><button type="button" class="chip" aria-pressed="false" data-v="에스테틱">에스테틱</button><button type="button" class="chip" aria-pressed="false" data-v="병원">병원</button><button type="button" class="chip" aria-pressed="false" data-v="온라인">온라인</button><button type="button" class="chip" aria-pressed="false" data-v="기타">기타</button></div></div>
-        <div class="g">파트너 평가 <small>감으로 1–5</small><div class="stars" id="f-rating" data-value=""><button type="button" class="star" data-v="1" aria-label="1점">★</button><button type="button" class="star" data-v="2" aria-label="2점">★</button><button type="button" class="star" data-v="3" aria-label="3점">★</button><button type="button" class="star" data-v="4" aria-label="4점">★</button><button type="button" class="star" data-v="5" aria-label="5점">★</button></div></div>
-        <div class="g">강점 <small>해당만</small><div class="chips" id="f-strengths"><button type="button" class="chip" aria-pressed="false" data-v="인허가">인허가</button><button type="button" class="chip" aria-pressed="false" data-v="재무">재무</button><button type="button" class="chip" aria-pressed="false" data-v="커버리지">커버리지</button><button type="button" class="chip" aria-pressed="false" data-v="마케팅">마케팅</button><button type="button" class="chip" aria-pressed="false" data-v="물류·CS">물류·CS</button></div></div>
-        <label class="f">담당자명<input id="f-contact" maxlength="100"></label>
-        <label class="f">이메일<input id="f-email" type="email" maxlength="255" inputmode="email"></label>
-        <label class="f">전화<input id="f-phone" type="tel" maxlength="50" inputmode="tel"></label>
-        <label class="f">최근 접촉일<input id="f-date" type="date"></label>
-        <div class="g wide">당사 취급 제품<div class="chips" id="f-products"><button type="button" class="chip" aria-pressed="false" data-v="Facetem">Facetem</button><button type="button" class="chip" aria-pressed="false" data-v="Novosis">Novosis</button><button type="button" class="chip" aria-pressed="false" data-v="AiLEENE">AiLEENE</button><button type="button" class="chip" aria-pressed="false" data-v="Surgical">Surgical</button></div></div>
-        <label class="f wide">메모 한 줄<input id="f-notes" maxlength="500" placeholder="예: 하노이 피부과 30곳 거래, 독점 요구"></label>
-      </div>
-      <div class="msg" id="msg" role="alert"></div>
-      <div class="actions"><button class="btn primary" id="btn-submit" type="submit">제출</button><button class="btn ghost" id="btn-reset" type="button">지우기</button></div>
-    </form>
+  <section class="card" id="card-file">
+    <h2><span class="n">1</span>파일 올리기 <span class="tag">가장 빠름</span></h2>
+    <p class="hint">지금 쓰는 대리점 현황 엑셀을 <b>그대로</b> 올리세요. 열 제목이 달라도 자동으로 읽고, 한 칸에 여러 국가·여러 담당자·이메일·전화·단가가 줄바꿈으로 들어 있어도 알아서 나눕니다. 올리기 전에 어떻게 읽었는지 보여 드립니다.</p>
+    <label class="drop" id="drop"><b>엑셀 파일 끌어다 놓기 / 눌러서 선택</b><small>.xlsx · .xls · .csv — 여러 파일 가능 · 업체명과 국가 열만 있으면 됩니다</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
+    <div id="prev"></div>
+    <div class="two" style="margin-top:12px"><a class="btn ghost" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 받기 (.xlsx)</a><button class="btn ghost" id="btn-cols" type="button">읽을 수 있는 열 이름 보기</button></div>
+    <div id="cols" class="cols" hidden style="margin-top:10px"></div>
   </section>
 
   <section class="card">
-    <h2><span class="n">2</span>엑셀로 한꺼번에</h2>
-    <p class="hint">대리상이 많으면 양식을 받아 채운 뒤 올리세요. 시트 1장, 필수는 회사명·국가·구분·취급 카테고리. 여러 값은 세미콜론(;)으로 구분. 같은 회사명+국가는 기존 정보가 갱신됩니다.</p>
-    <div class="two"><button class="btn ghost" id="btn-template" type="button">간편 양식 받기 (.xlsx)</button></div>
-    <label class="drop" id="drop" style="margin-top:12px"><b>엑셀 파일 끌어다 놓기 / 눌러서 선택</b><small>.xlsx · .xls · .csv — 여러 파일 가능. 올리기 전에 내용을 보여 드립니다.</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
-    <div id="prev"></div>
+    <h2><span class="n">2</span>한 곳만 직접 입력</h2>
+    <p class="hint">필수 4칸이면 제출됩니다. 나머지는 아는 만큼만 펼쳐서 적으세요. 같은 회사를 다시 보내면 기존 정보가 갱신됩니다.</p>
+    <form id="form" novalidate>
+      <div class="grid">
+        <label class="f">업체명 <span class="req">*</span><input id="f-name" maxlength="200" autocomplete="organization"></label>
+        <div class="g">관할 국가 <span class="req">*</span><small>여러 나라면 계속 입력 — 한글·영문 모두 가능</small><div class="tokens" id="f-countries"><input id="f-country-in" list="country-list" placeholder="국가 입력 후 Enter" autocomplete="off"></div><datalist id="country-list"><option value="일본"><option value="베트남"><option value="태국"><option value="인도네시아"><option value="말레이시아"><option value="싱가포르"><option value="필리핀"><option value="인도"><option value="호주"><option value="뉴질랜드"><option value="캄보디아"><option value="미얀마"><option value="파키스탄"><option value="방글라데시"><option value="스리랑카"><option value="중국"><option value="대만"><option value="홍콩"><option value="마카오"><option value="사우디아라비아"><option value="UAE"><option value="카타르"><option value="쿠웨이트"><option value="오만"><option value="바레인"><option value="요르단"><option value="튀르키예"><option value="이란"><option value="이라크"><option value="이스라엘"><option value="레바논"><option value="시리아"><option value="예멘"><option value="독일"><option value="프랑스"><option value="영국"><option value="이탈리아"><option value="스페인"><option value="네덜란드"><option value="벨기에"><option value="스위스"><option value="오스트리아"><option value="스웨덴"><option value="덴마크"><option value="노르웨이"><option value="핀란드"><option value="포르투갈"><option value="그리스"><option value="아일랜드"><option value="폴란드"><option value="체코"><option value="헝가리"><option value="루마니아"><option value="불가리아"><option value="슬로바키아"><option value="크로아티아"><option value="세르비아"><option value="슬로베니아"><option value="러시아"><option value="카자흐스탄"><option value="우즈베키스탄"><option value="우크라이나"><option value="아제르바이잔"><option value="조지아"><option value="키르기스스탄"><option value="남아프리카공화국"><option value="이집트"><option value="모로코"><option value="나이지리아"><option value="케냐"><option value="알제리"><option value="튀니지"><option value="가나"><option value="리비아"><option value="에티오피아"><option value="미국"><option value="캐나다"><option value="멕시코"><option value="브라질"><option value="콜롬비아"><option value="아르헨티나"><option value="칠레"><option value="페루"><option value="에콰도르"><option value="과테말라"><option value="도미니카공화국"><option value="파나마"><option value="코스타리카"><option value="우루과이"></datalist></div>
+        <div class="g wide">구분 <span class="req">*</span><div class="seg" id="f-status"><button type="button" aria-pressed="false" data-v="현재 대리상">현재 대리상</button><button type="button" aria-pressed="false" data-v="후보 대리상">후보 대리상</button><button type="button" aria-pressed="false" data-v="초기 접촉">초기 접촉</button><button type="button" aria-pressed="false" data-v="해외법인">해외법인</button></div></div>
+        <label class="f">영업담당자(당사) <span class="req">*</span><small>이 업체를 맡은 우리 직원 1명</small><input id="f-owner" maxlength="50"></label>
+        <label class="f">업체 유형<select id="f-ptype"><option value="">선택</option><option value="총판">총판</option><option value="의료기기유통">의료기기유통</option><option value="수입유통">수입유통</option><option value="클리닉체인">클리닉체인</option><option value="에이전트">에이전트</option><option value="온라인셀러">온라인셀러</option><option value="해외법인">해외법인</option></select></label>
+      </div>
+      <details class="fold" id="fold-contacts"><summary>업체 담당자 <small>대표·실무 여러 명 가능</small></summary>
+        <div class="grid"><div class="wide"><div class="rows" id="contacts"></div><button class="add" type="button" id="add-contact">+ 담당자 추가</button></div></div>
+      </details>
+      <details class="fold"><summary>회사 정보 <small>홈페이지·SNS·주소</small></summary>
+        <div class="grid">
+          <label class="f wide">홈페이지 / SNS<small>여러 개면 줄바꿈 — 인스타그램·페이스북 등은 자동으로 SNS로 구분</small><textarea id="f-web" rows="2" placeholder="www.example.com&#10;instagram.com/example"></textarea></label>
+          <label class="f wide">주소<small>본사·지사가 여러 곳이면 줄바꿈 (예: 본사: … / 지사: …)</small><textarea id="f-address" rows="2"></textarea></label>
+        </div>
+      </details>
+      <details class="fold"><summary>취급 품목 · 단가 <small>카테고리는 품목에서 자동</small></summary>
+        <div class="grid">
+          <div class="g wide">당사 취급 품목<div class="chips" id="f-products"><button type="button" class="chip" aria-pressed="false" data-v="Facetem">Facetem</button><button type="button" class="chip" aria-pressed="false" data-v="Novosis">Novosis</button><button type="button" class="chip" aria-pressed="false" data-v="AiLEENE">AiLEENE</button><button type="button" class="chip" aria-pressed="false" data-v="Surgical">Surgical</button></div></div>
+          <label class="f wide">그 외 취급 품목·브랜드<input id="f-products-other" maxlength="300" placeholder="예: 타사 필러, 의료용 레이저"></label>
+          <div class="g wide">카테고리 <small>품목에서 자동으로 채워집니다. 추가로 다루는 분야만 눌러 주세요</small><div class="chips" id="f-cats"><button type="button" class="chip" aria-pressed="false" data-v="에너지기기">에너지기기</button><button type="button" class="chip" aria-pressed="false" data-v="스킨부스터">스킨부스터</button><button type="button" class="chip" aria-pressed="false" data-v="수술·시술용">수술·시술용</button><button type="button" class="chip" aria-pressed="false" data-v="소모품">소모품</button><button type="button" class="chip" aria-pressed="false" data-v="기타">기타</button></div></div>
+          <label class="f wide">공급 단가<small>한 줄에 하나 — 규격과 금액을 함께 (예: 0.8cc $55 / 1Box $20 / Aileene: $20)</small><textarea id="f-prices" rows="3" placeholder="0.8cc $55&#10;1.5cc $53"></textarea></label>
+        </div>
+      </details>
+      <details class="fold"><summary>평가 · 채널 · 메모 <small>선택</small></summary>
+        <div class="grid">
+          <div class="g wide">유통 채널<div class="chips" id="f-channels"><button type="button" class="chip" aria-pressed="false" data-v="피부과">피부과</button><button type="button" class="chip" aria-pressed="false" data-v="성형외과">성형외과</button><button type="button" class="chip" aria-pressed="false" data-v="에스테틱">에스테틱</button><button type="button" class="chip" aria-pressed="false" data-v="병원">병원</button><button type="button" class="chip" aria-pressed="false" data-v="온라인">온라인</button><button type="button" class="chip" aria-pressed="false" data-v="기타">기타</button></div></div>
+          <div class="g">파트너 평가 <small>감으로 1–5</small><div class="stars" id="f-rating" data-value=""><button type="button" class="star" data-v="1" aria-label="1점">★</button><button type="button" class="star" data-v="2" aria-label="2점">★</button><button type="button" class="star" data-v="3" aria-label="3점">★</button><button type="button" class="star" data-v="4" aria-label="4점">★</button><button type="button" class="star" data-v="5" aria-label="5점">★</button></div></div>
+          <div class="g">강점 <small>해당만</small><div class="chips" id="f-strengths"><button type="button" class="chip" aria-pressed="false" data-v="인허가">인허가</button><button type="button" class="chip" aria-pressed="false" data-v="재무">재무</button><button type="button" class="chip" aria-pressed="false" data-v="커버리지">커버리지</button><button type="button" class="chip" aria-pressed="false" data-v="마케팅">마케팅</button><button type="button" class="chip" aria-pressed="false" data-v="물류·CS">물류·CS</button></div></div>
+          <label class="f">최근 접촉일<input id="f-date" type="date"></label>
+          <label class="f wide">메모<input id="f-notes" maxlength="500" placeholder="예: 하노이 피부과 30곳 거래, 독점 요구"></label>
+        </div>
+      </details>
+      <div class="msg" id="msg" role="alert" style="margin-top:12px"></div>
+      <div class="actions"><button class="btn primary" id="btn-submit" type="submit">제출</button><button class="btn ghost" id="btn-reset" type="button">지우기</button></div>
+    </form>
   </section>
 
   <section class="card">
@@ -114,34 +148,356 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16
 (() => {
   'use strict';
   const SUPA = "https://oksmjiloekekbhdoxzkq.supabase.co", KEY = "sb_publishable_i8pKVYVTELEvNUoCa-R7-Q_HSwvR6CB";
-  const $ = (s) => document.querySelector(s);
+  const $ = (s, r) => (r || document).querySelector(s);
   const H = {apikey: KEY, 'Content-Type': 'application/json'};
   const get = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
   const set = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } };
   const cid = get('gp_client_id') || (() => { const v = (crypto.randomUUID ? crypto.randomUUID() : 'c-' + Date.now().toString(36) + Math.random().toString(36).slice(2)); set('gp_client_id', v); return v; })();
   const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   let toastT = null; const toast = (t) => { let n = $('.toast'); if (!n) { n = document.createElement('div'); n.className = 'toast'; document.body.append(n); } n.textContent = t; n.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { n.hidden = true; }, 3200); };
-  // remembered submitter
+  const CODES = {status: ["현재 대리상", "후보 대리상", "초기 접촉", "거래종료"], category: ["에너지기기", "스킨부스터", "수술·시술용", "소모품", "기타"], channel: ["피부과", "성형외과", "에스테틱", "병원", "온라인", "기타"], strength: ["인허가", "재무", "커버리지", "마케팅", "물류·CS"], country: ["일본", "베트남", "태국", "인도네시아", "말레이시아", "싱가포르", "필리핀", "인도", "호주", "뉴질랜드", "캄보디아", "미얀마", "파키스탄", "방글라데시", "스리랑카", "중국", "대만", "홍콩", "마카오", "사우디아라비아", "UAE", "카타르", "쿠웨이트", "오만", "바레인", "요르단", "튀르키예", "이란", "이라크", "이스라엘", "레바논", "시리아", "예멘", "독일", "프랑스", "영국", "이탈리아", "스페인", "네덜란드", "벨기에", "스위스", "오스트리아", "스웨덴", "덴마크", "노르웨이", "핀란드", "포르투갈", "그리스", "아일랜드", "폴란드", "체코", "헝가리", "루마니아", "불가리아", "슬로바키아", "크로아티아", "세르비아", "슬로베니아", "러시아", "카자흐스탄", "우즈베키스탄", "우크라이나", "아제르바이잔", "조지아", "키르기스스탄", "남아프리카공화국", "이집트", "모로코", "나이지리아", "케냐", "알제리", "튀니지", "가나", "리비아", "에티오피아", "미국", "캐나다", "멕시코", "브라질", "콜롬비아", "아르헨티나", "칠레", "페루", "에콰도르", "과테말라", "도미니카공화국", "파나마", "코스타리카", "우루과이"], team: ["글로벌영업1팀", "글로벌영업2팀", "글로벌영업3팀", "미용성형TF", "인니TF", "글로벌사업부"]};
+  const COUNTRY_ALIAS = {"japan": "일본", "jp": "일본", "일본": "일본", "vietnam": "베트남", "viet nam": "베트남", "vn": "베트남", "베트남": "베트남", "thailand": "태국", "th": "태국", "타일랜드": "태국", "태국": "태국", "indonesia": "인도네시아", "id": "인도네시아", "인니": "인도네시아", "인도네시아": "인도네시아", "malaysia": "말레이시아", "my": "말레이시아", "말레이": "말레이시아", "말레이시아": "말레이시아", "singapore": "싱가포르", "sg": "싱가포르", "싱가포르": "싱가포르", "philippines": "필리핀", "ph": "필리핀", "필리핀": "필리핀", "india": "인도", "in": "인도", "인도": "인도", "australia": "호주", "au": "호주", "오스트레일리아": "호주", "호주": "호주", "new zealand": "뉴질랜드", "nz": "뉴질랜드", "뉴질랜드": "뉴질랜드", "cambodia": "캄보디아", "kh": "캄보디아", "캄보디아": "캄보디아", "myanmar": "미얀마", "burma": "미얀마", "mm": "미얀마", "미얀마": "미얀마", "pakistan": "파키스탄", "pk": "파키스탄", "파키스탄": "파키스탄", "bangladesh": "방글라데시", "bd": "방글라데시", "방글라데시": "방글라데시", "sri lanka": "스리랑카", "lk": "스리랑카", "스리랑카": "스리랑카", "china": "중국", "cn": "중국", "prc": "중국", "중화인민공화국": "중국", "중국": "중국", "taiwan": "대만", "tw": "대만", "타이완": "대만", "대만": "대만", "hong kong": "홍콩", "hongkong": "홍콩", "hk": "홍콩", "홍콩": "홍콩", "macau": "마카오", "macao": "마카오", "mo": "마카오", "마카오": "마카오", "saudi arabia": "사우디아라비아", "saudi": "사우디아라비아", "ksa": "사우디아라비아", "사우디": "사우디아라비아", "사우디 아라비아": "사우디아라비아", "사우디아라비아": "사우디아라비아", "united arab emirates": "UAE", "u.a.e.": "UAE", "아랍에미리트": "UAE", "dubai": "UAE", "두바이": "UAE", "아부다비": "UAE", "아랍에미레이트": "UAE", "uae": "UAE", "qatar": "카타르", "qa": "카타르", "카타르": "카타르", "kuwait": "쿠웨이트", "kw": "쿠웨이트", "쿠웨이트": "쿠웨이트", "oman": "오만", "om": "오만", "오만": "오만", "bahrain": "바레인", "bh": "바레인", "바레인": "바레인", "jordan": "요르단", "jo": "요르단", "요르단": "요르단", "turkey": "튀르키예", "türkiye": "튀르키예", "turkiye": "튀르키예", "tr": "튀르키예", "터키": "튀르키예", "터어키": "튀르키예", "튀르키예": "튀르키예", "iran": "이란", "ir": "이란", "이란": "이란", "iraq": "이라크", "iq": "이라크", "kurdistan": "이라크", "iraqi kurdistan": "이라크", "쿠르디스탄": "이라크", "북부 쿠르디스탄": "이라크", "북부쿠르디스탄": "이라크", "커디스탄": "이라크", "북부 커디스탄": "이라크", "북부커디스탄": "이라크", "이라크": "이라크", "israel": "이스라엘", "il": "이스라엘", "이스라엘": "이스라엘", "lebanon": "레바논", "lb": "레바논", "레바논": "레바논", "syria": "시리아", "sy": "시리아", "시리아": "시리아", "yemen": "예멘", "ye": "예멘", "예멘": "예멘", "germany": "독일", "de": "독일", "deutschland": "독일", "독일": "독일", "france": "프랑스", "fr": "프랑스", "프랑스": "프랑스", "uk": "영국", "united kingdom": "영국", "england": "영국", "great britain": "영국", "gb": "영국", "영국": "영국", "italy": "이탈리아", "it": "이탈리아", "italia": "이탈리아", "이탈리아": "이탈리아", "spain": "스페인", "es": "스페인", "españa": "스페인", "스페인": "스페인", "netherlands": "네덜란드", "holland": "네덜란드", "nl": "네덜란드", "네델란드": "네덜란드", "네덜란드": "네덜란드", "belgium": "벨기에", "be": "벨기에", "벨기에": "벨기에", "switzerland": "스위스", "ch": "스위스", "스위스": "스위스", "austria": "오스트리아", "at": "오스트리아", "오스트리아": "오스트리아", "sweden": "스웨덴", "se": "스웨덴", "스웨덴": "스웨덴", "denmark": "덴마크", "dk": "덴마크", "덴마크": "덴마크", "norway": "노르웨이", "no": "노르웨이", "노르웨이": "노르웨이", "finland": "핀란드", "fi": "핀란드", "핀란드": "핀란드", "portugal": "포르투갈", "pt": "포르투갈", "포르투갈": "포르투갈", "greece": "그리스", "gr": "그리스", "그리스": "그리스", "ireland": "아일랜드", "ie": "아일랜드", "아일랜드": "아일랜드", "poland": "폴란드", "pl": "폴란드", "폴란드": "폴란드", "czech republic": "체코", "czechia": "체코", "cz": "체코", "체코공화국": "체코", "체코": "체코", "hungary": "헝가리", "hu": "헝가리", "헝가리": "헝가리", "romania": "루마니아", "ro": "루마니아", "루마니아": "루마니아", "bulgaria": "불가리아", "bg": "불가리아", "불가리아": "불가리아", "slovakia": "슬로바키아", "sk": "슬로바키아", "슬로바키아": "슬로바키아", "croatia": "크로아티아", "hr": "크로아티아", "크로아티아": "크로아티아", "serbia": "세르비아", "rs": "세르비아", "세르비아": "세르비아", "slovenia": "슬로베니아", "si": "슬로베니아", "슬로베니아": "슬로베니아", "russia": "러시아", "russian federation": "러시아", "ru": "러시아", "러시아연방": "러시아", "러시아": "러시아", "kazakhstan": "카자흐스탄", "kz": "카자흐스탄", "카자흐": "카자흐스탄", "카자흐스탄": "카자흐스탄", "uzbekistan": "우즈베키스탄", "uz": "우즈베키스탄", "우즈벡": "우즈베키스탄", "우즈베키스탄": "우즈베키스탄", "ukraine": "우크라이나", "ua": "우크라이나", "우크라이나": "우크라이나", "azerbaijan": "아제르바이잔", "az": "아제르바이잔", "아제르바이잔": "아제르바이잔", "georgia": "조지아", "ge": "조지아", "그루지야": "조지아", "조지아": "조지아", "kyrgyzstan": "키르기스스탄", "kg": "키르기스스탄", "키르기스스탄": "키르기스스탄", "south africa": "남아프리카공화국", "za": "남아프리카공화국", "남아공": "남아프리카공화국", "남아프리카공화국": "남아프리카공화국", "egypt": "이집트", "eg": "이집트", "이집트": "이집트", "morocco": "모로코", "ma": "모로코", "모로코": "모로코", "nigeria": "나이지리아", "ng": "나이지리아", "나이지리아": "나이지리아", "kenya": "케냐", "ke": "케냐", "케냐": "케냐", "algeria": "알제리", "dz": "알제리", "알제리아": "알제리", "알제리": "알제리", "tunisia": "튀니지", "tn": "튀니지", "튀니스": "튀니지", "튀니시아": "튀니지", "튀니지": "튀니지", "ghana": "가나", "gh": "가나", "가나": "가나", "libya": "리비아", "ly": "리비아", "리비아": "리비아", "ethiopia": "에티오피아", "et": "에티오피아", "에티오피아": "에티오피아", "usa": "미국", "us": "미국", "united states": "미국", "united states of america": "미국", "america": "미국", "u.s.": "미국", "u.s.a.": "미국", "미국": "미국", "canada": "캐나다", "ca": "캐나다", "캐나다": "캐나다", "mexico": "멕시코", "mx": "멕시코", "méxico": "멕시코", "멕시코": "멕시코", "brazil": "브라질", "brasil": "브라질", "br": "브라질", "브라질": "브라질", "colombia": "콜롬비아", "co": "콜롬비아", "콜롬비아": "콜롬비아", "argentina": "아르헨티나", "ar": "아르헨티나", "아르헨티나": "아르헨티나", "chile": "칠레", "cl": "칠레", "칠레": "칠레", "peru": "페루", "pe": "페루", "페루": "페루", "ecuador": "에콰도르", "ec": "에콰도르", "에콰도르": "에콰도르", "guatemala": "과테말라", "gt": "과테말라", "과테말라": "과테말라", "dominican republic": "도미니카공화국", "do": "도미니카공화국", "도미니카": "도미니카공화국", "도미니카공화국": "도미니카공화국", "panama": "파나마", "pa": "파나마", "파나마": "파나마", "costa rica": "코스타리카", "cr": "코스타리카", "코스타리카": "코스타리카", "uruguay": "우루과이", "uy": "우루과이", "우루과이": "우루과이"};
+  const PRODUCTS = [{"id": "P01", "name": "Facetem", "category": "에너지기기"}, {"id": "P02", "name": "Novosis", "category": "에너지기기"}, {"id": "P03", "name": "AiLEENE", "category": "스킨부스터"}, {"id": "P04", "name": "Surgical", "category": "수술·시술용"}];
+  const FUNCS = ["대표", "영업", "마케팅", "물류·선적", "인허가", "주문·회계", "고객지원", "기타"];
+// ================= free-form partner sheets =================
+// Sales teams keep partner lists in whatever shape Excel allows: several countries in one cell ("사우디아라비아⏎UAE⏎카타르"),
+// several contacts stacked in one cell with their roles ("Ramy Fahmi (Vice president)"), the e-mails and phones for those
+// contacts stacked in the next cells, an "our rep" column, a CEO block, several addresses, price lines ("0.8cc $55⏎1.5cc $53"),
+// MOQ per contract year ("20,000 (T)⏎10,000 (I)"), contract columns. FREE turns such rows into the CRM's partner shape:
+//   country (primary) + coverage_countries (all) + coverage_note (what could not be read)
+//   contacts [{name, role, email, phone, is_ceo}] + contact_name/email/phone (primary) + extra_emails/extra_phones
+//   website + sns, addresses [{label, address}], products (ids) + products_other + categories (derived from products when absent)
+//   prices [{product, spec, price, currency, unit, note, raw}], moq [{year, qty, tag, raw}] + moq_unit, contracts [{...}]
+//   owner (our rep), team, status, partner_type, notes … plus the usual simple-template columns.
+// Shared verbatim by the HQ tool and the public submission page. Needs in scope: CODES.country, COUNTRY_ALIAS.
+const FREE = (() => {
+  const isDate = (v) => !!v && typeof v === 'object' && typeof v.getTime === 'function';
+  const S = (v) => (isDate(v) ? '' : String(v ?? '')).replace(/\r/g, '').trim();
+  const lines = (v) => S(v).split(/\n|;|\|/).map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  const multi = (v) => S(v).replace(/[,/\n|、]/g, ';').split(';').map((x) => x.trim()).filter(Boolean).join(';');
+  const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+  const KO_NAME = /^[가-힣]{2,4}$/;
+  const HEADERS = {
+    partner_name: ['회사명', '파트너명', '업체명', '업체', '대리점명', '대리점', '대리상명', '대리상', '파트너', '거래처', '거래처명', '회사', 'company', 'company name', 'partner', 'partner name', 'distributor', 'distributor name', 'agent', 'dealer'],
+    country: ['국가', '국가명', '담당국가', '담당 국가', '관할 국가', '관할국가', '국가(관할 전체)', '국가/지역', '지역', '국가(지역)', 'country', 'countries', 'territory', 'market', 'markets'],
+    status: ['구분', 'status', '상태', '거래상태', '거래 상태'],
+    team: ['team', '팀', '담당팀', '소속팀', '담당 팀'],
+    owner: ['영업담당자', '영업 담당자', '글로벌영업담당자', '당사 담당', '당사담당', '당사 담당자', '당사담당자', '영업담당', '영업 담당', '담당 영업', '본사 담당', '본사담당', 'owner', 'sales rep', 'our rep', 'pic', '담당자(당사)'],
+    partner_type: ['파트너 유형', '업체 유형', '업체유형', '유형', 'type', 'partner type'],
+    website: ['업체 공식 홈페이지/sns', '공식 홈페이지/sns', '홈페이지/sns', '홈페이지', '웹사이트', '공식 홈페이지', '업체 홈페이지', 'website', 'web', 'url', 'homepage', 'sns', '홈페이지 및 sns', 'website/sns'],
+    ceo_name: ['업체대표명', '업체 대표명', '대표명', '대표자', '대표자명', '업체 대표', '대표이사', 'ceo', 'ceo name', 'owner name'],
+    ceo_email: ['업체대표 이메일', '업체 대표 이메일', '대표 이메일', '대표자 이메일', 'ceo email', 'ceo e-mail'],
+    ceo_phone: ['업체대표 연락처', '업체 대표 연락처', '대표 연락처', '대표자 연락처', '대표 전화', 'ceo phone', 'ceo mobile'],
+    contact_name: ['실무담당자명', '실무담당자', '실무 담당자', '실무 담당자명', '담당자명', '담당자명(이름, 성)', '담당자명 (이름, 성)', '대리점 담당자', '파트너 담당자', '연락 담당자', '연락담당자', '현지 담당자', 'contact', 'contact name', 'contact person', 'name', 'person in charge', 'staff'],
+    contact_email: ['실무담당자 이메일', '실무 담당자 이메일', '담당자 이메일', '이메일', '이메일 주소', 'email', 'e-mail', 'mail', '메일', 'email address'],
+    contact_phone: ['실무담당자 연락처', '실무 담당자 연락처', '실무담당자 전화', '담당자 연락처', '전화', '연락처', '전화번호', '휴대폰', '핸드폰', 'phone', 'tel', 'mobile', 'contact number', 'phone number', 'telephone'],
+    address: ['주소', '업체 주소', '회사 주소', '본사 주소', '소재지', '주소(본사/지사)', 'address', 'addresses', 'location'],
+    categories: ['취급 카테고리', '카테고리', 'category', 'categories'],
+    our_products: ['품목', '취급 품목', '취급품목', '취급 제품', '당사 취급 제품', '당사 제품', '제품', 'products', 'product', 'items', 'item'],
+    price: ['단가', '공급 단가', '공급단가', '공급가', '가격', 'price', 'unit price', 'prices'],
+    unit: ['단위', 'unit', 'uom'],
+    moq_y1: ['1년차', '1년차 moq', 'moq 1년차', '1차년도', 'year 1', 'y1', '1년차(box)', '1st year'],
+    moq_y2: ['2년차', '2년차 moq', 'moq 2년차', '2차년도', 'year 2', 'y2', '2nd year'],
+    moq_y3: ['3년차', '3년차 moq', 'moq 3년차', '3차년도', 'year 3', 'y3', '3rd year'],
+    moq_total: ['계약 moq', '계약 moq (box)', 'moq', '최소주문량', '최소 주문량', '계약규모(수량)'],
+    contract_products: ['계약제품', '계약 제품', 'contract products', 'contracted products'],
+    contract_signed: ['계약 일자', '계약일자', '계약일', '계약 체결일', '체결일', '계약 시작일', '계약시작일', '계약 시작', 'contract date', 'signed date', 'start date'],
+    contract_end: ['계약 만료일', '계약만료일', '만료일', '계약 종료일', '계약종료일', '계약 만료', 'contract end', 'end date', 'expiry', 'expiration', 'expiry date'],
+    renewal: ['갱신방법', '갱신 방법', '갱신방법(자동/수동)', '갱신', '갱신 여부', 'renewal', 'renewal type'],
+    contract_type: ['계약 형태', '계약형태', '독점 여부', '독점여부', '독점', 'exclusivity', 'contract type', '계약 유형'],
+    contract_scale: ['계약규모', '계약 규모', '계약금액', '계약 금액', 'contract scale', 'contract value', 'contract amount'],
+    contract_term: ['계약기간', '계약 기간', 'term', 'contract term', 'duration'],
+    contract_flag: ['계약 체결', '계약체결', '체결 여부', '체결여부', 'signed', 'contracted'],
+    contract_terms: ['계약사항', '계약 사항', '계약 조건', '계약조건', '특이사항', '특약', 'terms', 'contract terms', 'conditions'],
+    channels: ['유통 채널', '채널', 'channel', 'channels'],
+    rating: ['파트너 평가', '평가', '평가(1-5)', '파트너 평가(1-5)', 'rating'],
+    strengths: ['강점', 'strengths'],
+    last_contact_date: ['최근 접촉일', '최근접촉일', '접촉일', 'last contact', 'last contact date'],
+    notes: ['메모', '메모 한 줄', '비고', 'notes', 'memo', 'note', 'remark', 'remarks'],
+    partner_id: ['파트너id', '파트너 id', 'partner_id', 'partner id', 'id'],
+    city: ['도시', 'city'],
+  };
+  const AMBIGUOUS = ['담당자', '담당', '담당자 이름'];
+  const normH = (h) => S(h).toLowerCase().replace(/\(1-5\)/g, '').replace(/\*/g, '').replace(/필수|선택/g, '').replace(/\s*[(（][^)）]*[)）]\s*$/, '').replace(/\s+/g, ' ').trim();
+  const PAIRS = []; for (const [k, names] of Object.entries(HEADERS)) for (const n of names) PAIRS.push([k, n]);
+  PAIRS.sort((a, b) => b[1].length - a[1].length);
+  // header row (+ a few sample rows for the ambiguous "담당자") → {key: column index}; exact names first, then prefixes
+  function mapHeaders(headerRow, sampleRows) {
+    const heads = (headerRow || []).map(normH), raw = (headerRow || []).map((h) => S(h).toLowerCase());
+    const map = {}, used = new Set();
+    const take = (k, i) => { map[k] = i; used.add(i); };
+    heads.forEach((h, i) => { if (!h) return; const hit = PAIRS.find(([k, n]) => n === h && map[k] === undefined) || PAIRS.find(([k, n]) => n === raw[i] && map[k] === undefined); if (hit) take(hit[0], i); });
+    heads.forEach((h, i) => { if (!h || used.has(i) || AMBIGUOUS.includes(h)) return; const hit = PAIRS.find(([k, n]) => n.length >= 3 && map[k] === undefined && h.startsWith(n)) || PAIRS.find(([k, n]) => n.length >= 4 && map[k] === undefined && h.includes(n)); if (hit) take(hit[0], i); });
+    heads.forEach((h, i) => {
+      if (used.has(i) || !AMBIGUOUS.includes(h)) return;
+      if (map.contact_name !== undefined && map.owner === undefined) return take('owner', i);
+      if (map.owner !== undefined && map.contact_name === undefined) return take('contact_name', i);
+      if (map.owner !== undefined && map.contact_name !== undefined) return;
+      const vals = (sampleRows || []).map((r) => S((r || [])[i])).filter(Boolean);
+      const ko = vals.filter((v) => KO_NAME.test(v)).length;
+      take(vals.length && ko / vals.length >= 0.6 ? 'owner' : 'contact_name', i);
+    });
+    return map;
+  }
+  const canon = (tok) => { const t = S(tok).replace(/\s*[(（][^)）]*[)）]\s*/g, ' ').replace(/\s+/g, ' ').trim(); if (!t) return ''; if (CODES.country.includes(t)) return t; return COUNTRY_ALIAS[t.toLowerCase()] || ''; };
+  // "사우디아라비아⏎UAE" / "터키, 이스라엘" / "이라크,북부커디스탄" → {primary, all, unknown}
+  function parseCountries(cell) {
+    const toks = S(cell).split(/\n|[;,、·|/]|\s{2,}/).map((x) => x.trim()).filter(Boolean);
+    const all = [], unknown = [];
+    for (const t of toks) { const c = canon(t); if (c) { if (!all.includes(c)) all.push(c); } else if (!unknown.includes(t)) unknown.push(t); }
+    return {primary: all[0] || (unknown.length === 1 && toks.length === 1 ? toks[0] : (all[0] || '')), all, unknown};
+  }
+  const pad2 = (n) => String(n).padStart(2, '0');
+  // dates in any of the shapes people type: 2028-06-25, 2028.6.25, 2028/06/25, 2028년 6월 25일, 20280625, Excel serial, Date
+  function toDate(v, fallback) {
+    if (v == null || v === '') return '';
+    if (isDate(v)) return Number.isNaN(v.getTime()) ? '' : `${v.getFullYear()}-${pad2(v.getMonth() + 1)}-${pad2(v.getDate())}`;
+    if (typeof v === 'number') { if (fallback) { const r = fallback(v); if (r) return r; } if (v > 20000 && v < 80000) { const d = new Date(Date.UTC(1899, 11, 30) + Math.round(v) * 864e5); return d.toISOString().slice(0, 10); } return String(v); }
+    const s = S(v); let m = s.match(/(\d{4})\s*[-./년]\s*(\d{1,2})\s*[-./월]\s*(\d{1,2})/); if (m) return `${m[1]}-${pad2(+m[2])}-${pad2(+m[3])}`;
+    m = s.match(/^(\d{4})(\d{2})(\d{2})$/); if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+    m = s.match(/^(\d{4})\s*[-./년]\s*(\d{1,2})\s*월?$/); if (m) return `${m[1]}-${pad2(+m[2])}-01`;
+    return fallback ? (fallback(v) || s) : s;
+  }
+  function nameRole(line) {
+    let s = line, role = '';
+    const m = s.match(/^(.*?)\s*[(（]([^)）]*)[)）]\s*$/);
+    if (m) { s = m[1]; role = m[2].trim(); }
+    else { const d = s.match(/^(.+?)\s+[-–]\s+([^-–]{2,40})$/); if (d && !/\d/.test(d[2])) { s = d[1]; role = d[2].trim(); } }
+    s = s.replace(/\s*[:：]\s*/g, ' ').replace(/[,，]\s*$/, '').replace(/\s+/g, ' ').trim();
+    return {name: s, role};
+  }
+  function phoneLine(line) {
+    let s = line, name = '';
+    let m = s.match(/^([^0-9+]{1,40}?)\s*[:：]\s*(.+)$/); if (m) { name = m[1].trim(); s = m[2].trim(); }
+    m = s.match(/^(.*?)\s*[(（]([^)）0-9]+)[)）]\s*$/); if (m) { s = m[1].trim(); name = name || m[2].trim(); }
+    return {phone: s.trim(), name};
+  }
+  function emailLines(cell) {
+    const out = [];
+    for (const line of lines(cell)) {
+      const found = line.match(EMAIL_RE) || []; if (!found.length) continue;
+      const label = line.replace(EMAIL_RE, '').replace(/[:：()（）,]/g, ' ').trim();
+      for (const e of found) out.push({email: e.toLowerCase(), label});
+    }
+    return out;
+  }
+  const latinTokens = (s) => S(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter((t) => t.length >= 2);
+  const lev1 = (a, b) => { if (a === b) return true; if (Math.abs(a.length - b.length) > 1) return false; let i = 0, j = 0, d = 0; while (i < a.length && j < b.length) { if (a[i] === b[j]) { i++; j++; continue; } if (++d > 1) return false; if (a.length > b.length) i++; else if (a.length < b.length) j++; else { i++; j++; } } return d + (a.length - i) + (b.length - j) <= 1; };
+  // business functions a contact can hold — used to pair generic mailboxes (logistics@) with the right person and for coverage analysis
+  const FUNCTIONS = [['대표', /대표|ceo|president|director|owner|general manager|\bgm\b|managing|chairman|사장|이사|founder/i], ['물류·선적', /물류|선적|logistic|shipping|shipment|warehouse|supply/i], ['인허가', /허가|인허가|regulat|\bra\b|registration|compliance|qa/i], ['영업', /세일즈|영업|sales|commercial|business dev/i], ['마케팅', /마케팅|marketing|brand|교육|training|kol/i], ['주문·회계', /주문|회계|재무|order|purchas|account|finance|payment|invoice/i], ['고객지원', /고객|cs|support|service|a\/s|as\b/i]];
+  const functionOf = (role) => { const f = FUNCTIONS.find(([, re]) => re.test(role || '')); return f ? f[0] : (role ? '기타' : ''); };
+  // how well a hint (e-mail local part, phone label) points at a contact: 3 exact token, 2 fuzzy/role, 0 none
+  function hintScore(contact, hint) {
+    const h = S(hint).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
+    const toks = latinTokens(contact.name);
+    if (h && toks.length) {
+      if (toks.some((t) => t.length >= 3 && h === t) || toks.join('') === h) return 3;
+      if (toks.some((t) => t.length >= 4 && (h.includes(t) || lev1(h, t)))) return 2;
+      if (toks.length >= 2) { for (const t of toks.slice(1)) if (lev1(h, toks[0][0] + t)) return 2; }
+    }
+    if (contact.role && h && FUNCTIONS.some(([, re]) => re.test(h) && re.test(contact.role))) return 2;
+    return 0;
+  }
+  function assign(contacts, items, key, hintOf) {
+    const left = [];
+    for (const it of items) {
+      let best = null, bs = 0;
+      for (const c of contacts) { if (c[key]) continue; const sc = hintScore(c, hintOf(it)); if (sc > bs) { bs = sc; best = c; } }
+      if (best && bs >= 2) best[key] = it[key]; else left.push(it);
+    }
+    const open = contacts.filter((c) => !c[key]);
+    if (left.length && open.length === left.length && (left.length === 1 || !left.some((it) => hintOf(it)))) { left.forEach((it, i) => { open[i][key] = it[key]; }); return []; }
+    return left;
+  }
+  // name cell + e-mail cell + phone cell → {contacts, extra_emails, extra_phones}
+  function parseContacts(nameCell, emailCell, phoneCell) {
+    const contacts = lines(nameCell).map(nameRole).map((c) => ({...c, email: '', phone: ''}));
+    const emails = emailLines(emailCell);
+    const phones = lines(phoneCell).map(phoneLine).filter((p) => /\d{3,}/.test(p.phone));
+    if (!contacts.length && (emails.length || phones.length)) contacts.push({name: '', role: '', email: '', phone: ''});
+    const leftE = assign(contacts, emails, 'email', (it) => it.label || it.email.split('@')[0]);
+    const leftP = assign(contacts, phones, 'phone', (it) => it.name);
+    return {contacts: contacts.filter((c) => c.name || c.email || c.phone).map((c) => ({...c, func: functionOf(c.role)})), extra_emails: [...new Set(leftE.map((e) => e.email))], extra_phones: leftP.map((p) => p.phone)};
+  }
+  const isPrimary = (c) => c.is_ceo || /대표|ceo|president|managing|director|owner|general manager|\bgm\b|chairman|사장|이사/i.test(c.role || '');
+  // "www.x.com⏎instagram.com/x" → {website, sns[]}
+  const SNS_RE = /instagram|facebook|fb\.com|linkedin|tiktok|youtube|youtu\.be|twitter|x\.com|threads\.net|kakao|line\.me|wechat|weixin|whatsapp|telegram|t\.me|vk\.com|naver\.me|blog\./i;
+  function parseWeb(cell) {
+    const toks = S(cell).split(/[\s,;|]+/).map((t) => t.replace(/^[(\[]|[)\],.]+$/g, '')).filter((t) => /\.[a-z]{2,}(\/|$)/i.test(t) || /^https?:\/\//i.test(t));
+    const web = [], sns = [];
+    for (const t of toks) { const u = /^https?:\/\//i.test(t) ? t : 'https://' + t; if (SNS_RE.test(u)) { if (!sns.includes(u)) sns.push(u); } else if (!web.includes(u)) web.push(u); }
+    return {website: web[0] || '', website_more: web.slice(1), sns};
+  }
+  // "본사: Dubai …⏎지사: Riyadh …" → [{label, address}]
+  function parseAddresses(cell) {
+    return lines(cell).map((l, i) => { const m = l.match(/^\s*[(（\[]?\s*(본사|지사|지점|창고|공장|사무소|hq|head office|branch|warehouse|office|factory)\s*[)）\]]?\s*[:：\-–]?\s*(.+)$/i); return m ? {label: m[1].toUpperCase() === 'HQ' || /head/i.test(m[1]) ? '본사' : /branch|office/i.test(m[1]) ? '지사' : /warehouse/i.test(m[1]) ? '창고' : /factory/i.test(m[1]) ? '공장' : m[1], address: m[2].trim()} : {label: i === 0 ? '본사' : '', address: l}; });
+  }
+  const CUR = [['USD', /\$|usd|us\$|dollar|달러|불/i], ['EUR', /€|eur\b|euro|유로/i], ['KRW', /₩|krw|원\b|won/i], ['JPY', /¥|jpy|yen|엔/i], ['GBP', /£|gbp|pound/i], ['AED', /aed|dirham|디르함/i], ['SAR', /sar\b|riyal|리얄/i], ['CNY', /cny|rmb|yuan|위안/i], ['TRY', /try\b|lira|리라/i]];
+  const SPEC_RE = /\b\d+(?:[.,]\d+)?\s?(?:cc|ml|mL|g|mg|ea|pcs?|box(?:es)?|syringes?|vial|kit|unit|set|pack|u)\b|\b\d+\s?(?:box|syringe|vial|kit|set|pack)\b/i;
+  const UNIT_RE = /\b(box(?:es)?|syringes?|vial|ea|pcs?|kit|set|pack|unit)\b/i;
+  const num = (s) => { const m = String(s).replace(/,/g, '').match(/\d+(?:\.\d+)?/); return m ? Number(m[0]) : null; };
+  // a typed product name → master entry: exact, then the shortest name the text starts with, then containment (so "Facetem" is Facetem, not "Facetem Next")
+  function matchProduct(text, prods) {
+    const w = S(text).toLowerCase().replace(/\s+/g, ' '); if (!w) return null;
+    const names = (prods || []).filter((p) => p.name).map((p) => ({p, n: p.name.toLowerCase()}));
+    const exact = names.find((x) => x.n === w); if (exact) return exact.p;
+    const starts = names.filter((x) => w.startsWith(x.n) || x.n.startsWith(w) && w.length >= 4).sort((a, b) => a.n.length - b.n.length); if (starts.length) return starts[0].p;
+    const incl = names.filter((x) => w.includes(x.n) || (x.n.includes(w) && w.length >= 4)).sort((a, b) => a.n.length - b.n.length); return incl.length ? incl[0].p : null;
+  }
+  // price lines → [{product, spec, price, currency, unit, note, raw}]; product names come from the product master passed in
+  function parsePrices(cell, products) {
+    const out = [];
+    for (const raw of lines(cell)) {
+      let s = raw, product = '', spec = '', unit = '', currency = '', note = '';
+      const cands = (products || []).filter((p) => p.name && new RegExp('\\b' + p.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(s)).sort((a, b) => b.name.length - a.name.length); const pm = cands[0]; if (pm) { product = pm.name; s = s.replace(new RegExp(pm.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), ' ').replace(/^\s*[:：\-–]\s*/, ''); }
+      const sm = s.match(SPEC_RE); if (sm) { spec = sm[0].replace(/\s+/g, ''); s = s.replace(sm[0], ' '); }
+      const cm = CUR.find(([, re]) => re.test(s)); if (cm) currency = cm[0];
+      const um = s.match(UNIT_RE); if (um) { unit = um[1].toLowerCase().replace(/es$|s$/, ''); s = s.replace(um[0], ' '); }
+      const pct = (s.match(/\d+(?:\.\d+)?\s*%/g) || []).join(' '); s = s.replace(/\d+(?:\.\d+)?\s*%/g, ' ');
+      const pm2 = s.match(/(?:[$€₩¥£]|usd|eur|krw|aed|sar|cny|try)?\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*(?:[$€₩¥£]|usd|eur|krw|aed|sar|cny|won|원|달러|불)?/i);
+      const price = pm2 ? num(pm2[1]) : null;
+      if (pm2) s = s.replace(pm2[0], ' ');
+      note = [pct, s.replace(/[()（）]/g, ' ')].join(' ').replace(/^\s*[+:：\-–]+\s*|\s*[+:：\-–]+\s*$/g, '').replace(/\s+/g, ' ').trim();
+      if (price === null && !spec && !product) { if (raw) out.push({product: '', spec: '', price: null, currency: '', unit: '', note: raw, raw}); continue; }
+      out.push({product, spec, price, currency: currency || (price !== null ? 'USD' : ''), unit, note, raw});
+    }
+    return out;
+  }
+  // "20,000 (T)⏎10,000 (I)" / "15,000 (K) 3,500 (U) 0 (Q)" → [{year, qty, tag, raw}]
+  function parseMoq(cell, year) {
+    const out = [];
+    for (const l of lines(cell)) {
+      const parts = l.split(/(?<=\))\s+(?=[\d])/);
+      for (const part of parts) { const m = part.match(/(\d{1,3}(?:,\d{3})+|\d+)(?:\s*[(（]\s*([^)）]+)\s*[)）])?/); if (m) out.push({year, qty: Number(m[1].replace(/,/g, '')), tag: (m[2] || '').trim(), raw: part.trim()}); }
+    }
+    return out;
+  }
+  const yesNo = (v) => { const s = S(v).toLowerCase(); if (!s) return ''; return /^(o|y|yes|예|체결|완료|true|1|●|○|v)$/i.test(s) ? 'O' : /^(x|n|no|아니오|미체결|false|0|-|–)$/i.test(s) ? 'X' : s; };
+  const renewalOf = (v) => { const s = S(v); if (!s) return ''; if (/자동|auto/i.test(s)) return '자동'; if (/수동|manual/i.test(s)) return '수동'; return s; };
+  const ctypeOf = (v) => { const s = S(v); if (!s) return ''; if (/비독점|non[- ]?excl/i.test(s)) return '비독점'; if (/독점|exclusive/i.test(s)) return '독점'; return s; };
+  // raw row + header map → canonical partner row (strings; contacts/addresses/prices/moq/contracts are arrays)
+  function normalizeRow(raw, map, opts) {
+    const o = opts || {}; const get = (k) => (map[k] === undefined ? '' : raw[map[k]]);
+    const dateOf = (v) => toDate(v, o.toDate);
+    const row = {};
+    for (const k of Object.keys(HEADERS)) { const v = get(k); row[k] = (k === 'last_contact_date' || k === 'contract_signed' || k === 'contract_end') ? dateOf(v) : (k === 'categories' || k === 'channels' || k === 'strengths' || k === 'contract_products') ? multi(v) : isDate(v) ? dateOf(v) : S(v); }
+    const cc = parseCountries(get('country'));
+    row.country = cc.primary; row.coverage_countries = cc.all.join(';'); row.coverage_note = cc.unknown.join(', ');
+    const ct = parseContacts(get('contact_name'), get('contact_email'), get('contact_phone'));
+    const ceo = S(get('ceo_name')) || S(get('ceo_email')) || S(get('ceo_phone')) ? parseContacts(get('ceo_name'), get('ceo_email'), get('ceo_phone')) : null;
+    let contacts = ct.contacts;
+    if (ceo) { const cs = ceo.contacts.map((c) => ({...c, role: c.role || '대표', func: '대표', is_ceo: true})); contacts = [...cs, ...contacts.filter((c) => !cs.some((x) => x.name && latinTokens(x.name).join('') === latinTokens(c.name).join('') && latinTokens(c.name).length))]; ct.extra_emails.push(...ceo.extra_emails); ct.extra_phones.push(...ceo.extra_phones); }
+    const prim = contacts.find(isPrimary) || contacts[0] || null;
+    row.contacts = contacts; row.extra_emails = [...new Set(ct.extra_emails)].join(';'); row.extra_phones = [...new Set(ct.extra_phones)].join(';');
+    row.contact_name = prim ? [prim.name, prim.role ? `(${prim.role})` : ''].filter(Boolean).join(' ') : ''; row.contact_email = prim && prim.email ? prim.email : (ct.extra_emails[0] || ''); row.contact_phone = prim && prim.phone ? prim.phone : (ct.extra_phones[0] || '');
+    const ceoC = contacts.find((c) => c.is_ceo) || null; row.ceo_name = ceoC ? ceoC.name : ''; row.ceo_email = ceoC ? ceoC.email : ''; row.ceo_phone = ceoC ? ceoC.phone : '';
+    const web = parseWeb(get('website')); row.website = web.website; row.sns = web.sns.join(';'); row.website_more = web.website_more.join(';');
+    row.addresses = parseAddresses(get('address')); row.address = row.addresses.map((a) => (a.label ? a.label + ': ' : '') + a.address).join(' / ');
+    // products: names from the master (ids when known) + anything else kept as text; categories derive from matched products
+    const prods = o.products || [];
+    const want = S(get('our_products')).split(/\n|[;,、|/]/).map((x) => x.trim()).filter(Boolean);
+    const ids = [], names = [], other = [];
+    for (const w of want) { const hit = matchProduct(w, prods); if (hit) { if (!ids.includes(hit.id)) { ids.push(hit.id); names.push(hit.name); } } else other.push(w); }
+    row.our_products = names.join(';'); row.product_ids = ids; row.products_other = other.join(';');
+    const catsFromProducts = [...new Set(ids.map((id) => (prods.find((p) => p.id === id) || {}).category).filter(Boolean))];
+    const catsGiven = S(row.categories).split(';').map((x) => x.trim()).filter(Boolean);
+    const known = catsGiven.filter((c) => (o.codes && o.codes.category ? o.codes.category.includes(c) : true));
+    row.category_code = catsGiven.filter((c) => !known.includes(c)).join(';');
+    row.categories = [...new Set([...known, ...catsFromProducts])].join(';');
+    row.prices = parsePrices(get('price'), prods); row.unit = S(get('unit'));
+    row.moq = [...parseMoq(get('moq_y1'), 1), ...parseMoq(get('moq_y2'), 2), ...parseMoq(get('moq_y3'), 3), ...parseMoq(get('moq_total'), 0)];
+    const ctr = {products: row.contract_products || row.our_products, signed: row.contract_signed, end: row.contract_end, renewal: renewalOf(get('renewal')), type: ctypeOf(get('contract_type')), scale: S(get('contract_scale')), term: S(get('contract_term')), flag: yesNo(get('contract_flag')), terms: S(get('contract_terms')), moq: row.moq, moq_unit: row.unit};
+    row.renewal = ctr.renewal; row.contract_type = ctr.type; row.contract_flag = ctr.flag;
+    row.contracts = (ctr.signed || ctr.end || ctr.terms || ctr.scale || ctr.flag === 'O' || row.moq.length) ? [{...ctr, status: ctr.flag === 'X' ? '미체결' : ctr.end && ctr.end < new Date().toISOString().slice(0, 10) ? '만료' : '체결'}] : [];
+    // status / type: '해외법인' in 구분 means our own subsidiary (a partner_type), status defaults to 현재
+    const st = S(get('status'));
+    if (/해외법인|법인|subsidiary|branch office/i.test(st)) { row.partner_type = '해외법인'; row.status = '현재 대리상'; }
+    else if (/현재|기존|거래중|active|current/i.test(st)) row.status = '현재 대리상';
+    else if (/후보|candidate|prospect/i.test(st)) row.status = '후보 대리상';
+    else if (/초기|접촉|contact|lead/i.test(st)) row.status = '초기 접촉';
+    else if (/종료|해지|terminated|ended|closed/i.test(st)) row.status = '거래종료';
+    else row.status = st;
+    row.owner = S(get('owner')); row.team = S(get('team')); row.notes = S(get('notes')); row.partner_name = S(get('partner_name')).replace(/\s+/g, ' ');
+    return row;
+  }
+  // shared checks → pushes into errors/warnings; returns the row (status defaulted when a status column exists)
+  function validate(row, where, codes, errors, warnings, hasStatusCol) {
+    if (!row.partner_name) errors.push(`${where}: 회사명 없음`);
+    if (!row.country) errors.push(`${where}: 국가 없음`); else if (!codes.country.includes(row.country)) warnings.push(`${where}: 국가 '${row.country}' 코드표에 없음 (팀 미지정)`);
+    if (row.coverage_note) warnings.push(`${where}: 국가 표기 '${row.coverage_note}'를 알아보지 못해 비고에만 남김`);
+    if (!row.categories) warnings.push(`${where}: 취급 카테고리·품목 없음 — 팀은 국가 기준으로 배정, 카테고리는 본사에서 보완`);
+    if (row.products_other) warnings.push(`${where}: 품목 '${row.products_other}'은 제품 마스터에 없어 메모로만 보관`);
+    if (row.status && !codes.status.includes(row.status)) errors.push(`${where}: 구분 '${row.status}'은 ${codes.status.join('/')} 중 하나여야 합니다`);
+    if (!row.status && hasStatusCol) row.status = '후보 대리상';
+    if (row.team && codes.team && !codes.team.includes(row.team)) { warnings.push(`${where}: 팀 '${row.team}'은 목록에 없어 국가 규칙으로 배정`); row.team = ''; }
+    for (const [k, code, label] of [['categories', 'category', '취급 카테고리'], ['channels', 'channel', '유통 채널'], ['strengths', 'strength', '강점']]) { const bad = row[k] ? row[k].split(';').filter((x) => !codes[code].includes(x)) : []; if (bad.length) errors.push(`${where}: ${label}의 '${bad.join(', ')}'은 허용 값이 아닙니다 (${codes[code].join('/')})`); }
+    if (row.rating !== '' && row.rating !== undefined) { const n = Math.round(Number(String(row.rating).replace(/[^0-9.]/g, ''))); if (!(n >= 1 && n <= 5)) errors.push(`${where}: 평가는 1–5 ('${row.rating}')`); else row.rating = n; }
+    for (const [k, label] of [['last_contact_date', '최근 접촉일'], ['contract_signed', '계약 일자'], ['contract_end', '계약 만료일']]) if (row[k] && !/^\d{4}-\d{2}-\d{2}$/.test(String(row[k]))) errors.push(`${where}: ${label}은 YYYY-MM-DD ('${row[k]}')`);
+    return row;
+  }
+  // a sheet (array of arrays) → {rows, hasStatusCol, map} or null when it is not a partner list
+  function parseSheet(aoa, where, codes, errors, warnings, opts) {
+    if (!aoa || !aoa.length) return null;
+    let h = 0; while (h < Math.min(aoa.length, 6) && mapHeaders(aoa[h] || [], aoa.slice(h + 1, h + 25)).partner_name === undefined) h++;
+    if (h >= Math.min(aoa.length, 6)) return null;
+    const map = mapHeaders(aoa[h] || [], aoa.slice(h + 1, h + 25));
+    if (map.partner_name === undefined || map.country === undefined) return null;
+    const hasStatusCol = map.status !== undefined, rows = [];
+    for (let r = h + 1; r < aoa.length; r++) {
+      const raw = aoa[r] || []; if (raw.every((c) => c == null || S(c) === '')) continue;
+      const row = normalizeRow(raw, map, {...(opts || {}), codes}); row._row = r + 1;
+      if (!row.partner_name && !row.country) continue;
+      rows.push(validate(row, `${where} ${r + 1}행`, codes, errors, warnings, hasStatusCol));
+    }
+    return {rows, hasStatusCol, map, headerRow: h};
+  }
+  const coverageOf = (p) => { const out = []; for (const c of [p && p.country, ...String((p && p.coverage_countries) || '').split(';')]) { const t = S(c); if (t && !out.includes(t)) out.push(t); } return out; };
+  const LABELS = {partner_name: '업체명', country: '국가', status: '구분', team: '팀', owner: '영업담당자(당사)', partner_type: '업체 유형', website: '홈페이지/SNS', ceo_name: '업체대표명', ceo_email: '대표 이메일', ceo_phone: '대표 연락처', contact_name: '실무담당자', contact_email: '실무담당자 이메일', contact_phone: '실무담당자 연락처', address: '주소', categories: '카테고리', our_products: '품목', price: '단가', unit: '단위', moq_y1: 'MOQ 1년차', moq_y2: 'MOQ 2년차', moq_y3: 'MOQ 3년차', moq_total: 'MOQ', contract_products: '계약 제품', contract_signed: '계약 일자', contract_end: '계약 만료일', renewal: '갱신방법', contract_type: '계약 형태', contract_scale: '계약 규모', contract_term: '계약 기간', contract_flag: '계약 체결', contract_terms: '계약사항', channels: '유통 채널', rating: '평가', strengths: '강점', last_contact_date: '최근 접촉일', notes: '메모/비고', partner_id: '파트너ID', city: '도시'};
+  return {HEADERS, LABELS, FUNCTIONS, functionOf, matchProduct, mapHeaders, parseCountries, parseContacts, parseWeb, parseAddresses, parsePrices, parseMoq, toDate, normalizeRow, validate, parseSheet, coverageOf, nameRole, phoneLine};
+})();
+
+  // ---------- submitter (remembered) ----------
   $('#who-name').value = get('gp_name'); $('#who-team').value = get('gp_team');
-  $('#who-name').addEventListener('input', (e) => set('gp_name', e.target.value.trim()));
+  $('#who-name').addEventListener('input', (e) => { set('gp_name', e.target.value.trim()); if (!$('#f-owner').dataset.touched) $('#f-owner').value = e.target.value.trim(); });
   $('#who-team').addEventListener('change', (e) => set('gp_team', e.target.value));
-  // chips, stars, country direct input
-  document.querySelectorAll('.chips').forEach((box) => box.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (!b) return; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); }));
+  $('#f-owner').value = get('gp_name'); $('#f-owner').addEventListener('input', (e) => { e.target.dataset.touched = '1'; });
+  // ---------- quick form widgets ----------
+  document.querySelectorAll('.chips').forEach((box) => box.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (!b) return; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); if (box.id === 'f-products') syncCats(); }));
+  const seg = $('#f-status'); seg.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; [...seg.children].forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false')); });
   const stars = $('#f-rating'); stars.addEventListener('click', (e) => { const b = e.target.closest('.star'); if (!b) return; const v = Number(b.dataset.v); const cur = Number(stars.dataset.value || 0); const nv = cur === v ? 0 : v; stars.dataset.value = nv ? String(nv) : ''; [...stars.children].forEach((c, i) => c.classList.toggle('on', i < nv)); });
-  $('#f-country').addEventListener('change', (e) => { $('#f-country-direct-wrap').hidden = e.target.value !== '__direct'; if (e.target.value === '__direct') $('#f-country-direct').focus(); });
   $('#f-date').value = today();
   const picked = (id) => [...document.querySelectorAll(id + ' .chip[aria-pressed="true"]')].map((b) => b.dataset.v);
+  function syncCats() { const cats = new Set(picked('#f-products').map((n) => (PRODUCTS.find((p) => p.name === n) || {}).category).filter(Boolean)); document.querySelectorAll('#f-cats .chip').forEach((b) => { if (cats.has(b.dataset.v)) { b.setAttribute('aria-pressed', 'true'); b.dataset.auto = '1'; } else if (b.dataset.auto) { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; } }); }
+  // countries as tokens: typed text is canonicalised with the same alias table the HQ tool uses
+  const tokBox = $('#f-countries'), tokIn = $('#f-country-in'); const countries = [];
+  const drawTokens = () => { tokBox.querySelectorAll('.tok').forEach((t) => t.remove()); countries.forEach((c, i) => { const t = document.createElement('span'); t.className = 'tok' + (CODES.country.includes(c) ? '' : ' bad'); t.innerHTML = esc(c) + (CODES.country.includes(c) ? '' : ' <small>?</small>') + ' <button type="button" aria-label="삭제">×</button>'; t.querySelector('button').addEventListener('click', () => { countries.splice(i, 1); drawTokens(); }); tokBox.insertBefore(t, tokIn); }); };
+  const addCountry = (raw) => { for (const part of String(raw).split(/[,;\n/]/)) { const t = part.trim(); if (!t) continue; const c = FREE.parseCountries(t); const v = c.all[0] || t; if (!countries.includes(v)) countries.push(v); } drawTokens(); tokIn.value = ''; };
+  tokIn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ',' || e.key === 'Tab' && tokIn.value.trim()) { e.preventDefault(); addCountry(tokIn.value); } else if (e.key === 'Backspace' && !tokIn.value && countries.length) { countries.pop(); drawTokens(); } });
+  tokIn.addEventListener('change', () => { if (tokIn.value.trim() && CODES.country.includes(FREE.parseCountries(tokIn.value).all[0] || '')) addCountry(tokIn.value); });
+  tokIn.addEventListener('blur', () => { if (tokIn.value.trim()) addCountry(tokIn.value); });
+  tokBox.addEventListener('click', (e) => { if (e.target === tokBox) tokIn.focus(); });
+  // contacts: repeatable rows
+  const contactsBox = $('#contacts');
+  function addContactRow(v) {
+    const row = document.createElement('div'); row.className = 'crow';
+    row.innerHTML = `<input placeholder="이름" maxlength="100" data-k="name"><select data-k="func"><option value="">업무</option>${FUNCS.map((f) => `<option>${f}</option>`).join('')}</select><input placeholder="이메일" type="email" inputmode="email" maxlength="255" data-k="email"><input placeholder="전화" type="tel" inputmode="tel" maxlength="50" data-k="phone"><button type="button" class="x" aria-label="삭제">×</button>`;
+    if (v) for (const k of ['name', 'func', 'email', 'phone']) row.querySelector(`[data-k="${k}"]`).value = v[k] || '';
+    row.querySelector('.x').addEventListener('click', () => { row.remove(); if (!contactsBox.children.length) addContactRow(); });
+    contactsBox.append(row);
+  }
+  addContactRow(); $('#add-contact').addEventListener('click', () => { addContactRow(); contactsBox.lastChild.querySelector('input').focus(); });
+  const readContacts = () => [...contactsBox.querySelectorAll('.crow')].map((r) => ({name: $('[data-k="name"]', r).value.trim(), role: $('[data-k="func"]', r).value, func: $('[data-k="func"]', r).value, email: $('[data-k="email"]', r).value.trim().toLowerCase(), phone: $('[data-k="phone"]', r).value.trim(), is_ceo: $('[data-k="func"]', r).value === '대표'})).filter((c) => c.name || c.email || c.phone);
   const msg = (kind, text) => { const m = $('#msg'); m.className = 'msg' + (kind ? ' ' + kind : ''); m.textContent = text || ''; };
-  const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => b.setAttribute('aria-pressed', 'false')); stars.dataset.value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); $('#f-country-direct-wrap').hidden = true; $('#f-date').value = today(); msg('', ''); };
+  const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; }); [...seg.children].forEach((x) => x.setAttribute('aria-pressed', 'false')); stars.dataset.value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); countries.length = 0; drawTokens(); contactsBox.innerHTML = ''; addContactRow(); $('#f-date').value = today(); $('#f-owner').value = $('#who-name').value.trim(); delete $('#f-owner').dataset.touched; msg('', ''); };
   $('#btn-reset').addEventListener('click', resetForm);
-  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? String(iso).slice(0, 16) : `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
-  // my submissions: the server list for this browser's client id, falling back to what this browser remembers
+  // ---------- my submissions ----------
   const localHist = () => { try { return JSON.parse(get('gp_history') || '[]'); } catch (e) { return []; } };
   const renderHist = (rows) => {
     const box = $('#hist');
     if (!rows.length) { box.innerHTML = '<p class="empty">아직 제출한 내역이 없습니다.</p>'; return; }
-    box.innerHTML = '<table><thead><tr><th>시각</th><th>내용</th><th>상태</th></tr></thead><tbody>' + rows.map((r) => { const rr = r.relay_result || null; const extra = rr && (rr.added !== undefined || rr.inserted !== undefined) ? ` <small>신규 ${rr.added ?? rr.inserted ?? 0} · 갱신 ${rr.updated ?? 0}</small>` : ''; return `<tr><td style="white-space:nowrap">${fmt(r.created_at)}</td><td>${esc(r.summary)}</td><td>${r.relayed_at ? '<span class="tag done">반영됨</span>' : '<span class="tag wait">접수됨</span>'}${extra}</td></tr>`; }).join('') + '</tbody></table>';
+    box.innerHTML = '<div class="tbox"><table><thead><tr><th>시각</th><th>내용</th><th>상태</th></tr></thead><tbody>' + rows.map((r) => { const rr = r.relay_result || null; const extra = rr && (rr.added !== undefined || rr.inserted !== undefined) ? ` <small>신규 ${rr.added ?? rr.inserted ?? 0} · 갱신 ${rr.updated ?? 0}</small>` : ''; return `<tr><td style="white-space:nowrap">${fmt(r.created_at)}</td><td>${esc(r.summary)}</td><td>${r.relayed_at ? '<span class="tag done">반영됨</span>' : '<span class="tag wait">접수됨</span>'}${extra}</td></tr>`; }).join('') + '</tbody></table></div>';
   };
   async function refresh() {
     try { const r = await fetch(SUPA + '/rest/v1/rpc/my_submissions', {method: 'POST', headers: H, body: JSON.stringify({p_client_id: cid})}); if (r.ok) { const rows = await r.json(); if (Array.isArray(rows)) { renderHist(rows); return; } } } catch (e) { /* offline */ }
@@ -149,110 +505,124 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16
   }
   $('#refresh').addEventListener('click', refresh);
   refresh();
-  // ---------- Excel: template + bulk upload (same column aliases and checks as the HQ tool) ----------
-  const COLS = [["회사명*", "partner_name"], ["국가*", "country"], ["구분*", "status"], ["취급 카테고리*", "categories"], ["유통 채널", "channels"], ["파트너 평가(1-5)", "rating"], ["강점", "strengths"], ["담당자명", "contact_name"], ["이메일", "contact_email"], ["전화", "contact_phone"], ["최근 접촉일", "last_contact_date"], ["당사 취급 제품", "our_products"], ["메모", "notes"], ["파트너ID(기존이면)", "partner_id"]];
-  const ALIASES = {"partner_name": ["회사명", "파트너명", "업체명", "company", "partner"], "country": ["국가", "country"], "status": ["구분", "status", "상태"], "categories": ["취급 카테고리", "카테고리", "취급품목", "category", "categories"], "channels": ["유통 채널", "채널", "channel", "channels"], "rating": ["파트너 평가", "평가", "평가(1-5)", "파트너 평가(1-5)", "rating"], "strengths": ["강점", "strengths"], "contact_name": ["담당자명", "담당자", "contact", "contact name"], "contact_email": ["이메일", "email", "e-mail"], "contact_phone": ["전화", "phone", "연락처"], "last_contact_date": ["최근 접촉일", "최근접촉일", "접촉일", "last contact"], "our_products": ["당사 취급 제품", "취급 제품", "당사 제품", "our products", "products"], "notes": ["메모", "메모 한 줄", "비고", "notes", "memo"], "partner_id": ["파트너id", "파트너 id", "partner_id", "id"], "city": ["도시", "city"], "partner_type": ["파트너 유형", "유형", "type"]};
-  const CODES = {status: ["현재 대리상", "후보 대리상", "초기 접촉", "거래종료"], category: ["에너지기기", "스킨부스터", "수술·시술용", "소모품", "기타"], channel: ["피부과", "성형외과", "에스테틱", "병원", "온라인", "기타"], strength: ["인허가", "재무", "커버리지", "마케팅", "물류·CS"]};
-  const MULTI = {categories: 'category', channels: 'channel', strengths: 'strength'};
-  const normH = (h) => String(h ?? '').trim().toLowerCase().replace(/\(1-5\)/g, '').replace(/[*()]/g, '').replace(/필수|선택/g, '').trim();
-  const multi = (v) => String(v ?? '').replace(/[,/]/g, ';').split(';').map((x) => x.trim()).filter(Boolean).join(';');
-  const pad2 = (n) => String(n).padStart(2, '0');
-  const toDate = (v) => { if (v == null || v === '') return ''; if (v instanceof Date) return isNaN(v) ? '' : `${v.getFullYear()}-${pad2(v.getMonth() + 1)}-${pad2(v.getDate())}`; if (typeof v === 'number' && window.XLSX) { const p = XLSX.SSF.parse_date_code(v); return p ? `${p.y}-${pad2(p.m)}-${pad2(p.d)}` : ''; } const m = String(v).trim().match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/); return m ? `${m[1]}-${pad2(+m[2])}-${pad2(+m[3])}` : ''; };
-  function mapHeaders(headers) { const norm = headers.map(normH); const used = new Set(); const map = {}; for (const [k, names] of Object.entries(ALIASES)) { let i = norm.findIndex((h, idx) => !used.has(idx) && h && names.includes(h)); if (i < 0) i = norm.findIndex((h, idx) => !used.has(idx) && h && names.some((n) => n.length >= 3 && h.startsWith(n))); if (i >= 0) { used.add(i); map[k] = i; } } return map; }
-  // sheets: [{name, rows: array-of-arrays}] → {rows, errors, warnings, skipped}
-  function parseSheets(sheets, fileName) {
-    const out = {rows: [], errors: [], warnings: [], skipped: []};
-    for (const sh of sheets) {
-      const aoa = sh.rows || []; if (!aoa.length) continue;
-      const map = mapHeaders(aoa[0] || []);
-      if (map.partner_name === undefined || map.country === undefined || map.categories === undefined) { out.skipped.push(sh.name); continue; }
-      for (let r = 1; r < aoa.length; r++) {
-        const raw = aoa[r] || []; if (raw.every((c) => c == null || String(c).trim() === '')) continue;
-        const row = {}; for (const k of Object.keys(ALIASES)) { const i = map[k]; const v = i === undefined ? '' : raw[i]; row[k] = k === 'last_contact_date' ? toDate(v) : MULTI[k] ? multi(v) : (v instanceof Date ? toDate(v) : String(v ?? '').trim()); }
-        const where = `${fileName} · ${sh.name} ${r + 1}행`;
-        if (!row.partner_name) out.errors.push(`${where}: 회사명 없음`);
-        if (!row.country) out.errors.push(`${where}: 국가 없음`);
-        if (!row.categories) out.errors.push(`${where}: 취급 카테고리 없음`);
-        if (!row.status) row.status = '후보 대리상'; else if (!CODES.status.includes(row.status)) out.errors.push(`${where}: 구분 '${row.status}'은 ${CODES.status.join('/')} 중 하나여야 합니다`);
-        for (const [k, code] of Object.entries(MULTI)) { const bad = row[k] ? row[k].split(';').filter((x) => !CODES[code].includes(x)) : []; if (bad.length) out.errors.push(`${where}: ${k === 'categories' ? '취급 카테고리' : k === 'channels' ? '유통 채널' : '강점'}의 '${bad.join(', ')}'은 허용 값이 아닙니다 (${CODES[code].join('/')})`); }
-        if (row.rating !== '') { const n = Math.round(Number(String(row.rating).replace(/[^0-9.]/g, ''))); if (!(n >= 1 && n <= 5)) out.errors.push(`${where}: 평가는 1–5 ('${row.rating}')`); else row.rating = n; }
-        out.rows.push(row);
-      }
-    }
+  async function post(rowsOut) {
+    const r = await fetch(SUPA + '/rest/v1/submissions', {method: 'POST', headers: {...H, Prefer: 'return=minimal'}, body: JSON.stringify(rowsOut)});
+    if (!r.ok) { let t = ''; try { t = (await r.json()).message || ''; } catch (e) { /* no body */ } throw new Error(t || ('HTTP ' + r.status)); }
+    const hist = [...rowsOut.map((x) => ({created_at: new Date().toISOString(), summary: x.summary, relayed_at: null})), ...localHist()].slice(0, 50); set('gp_history', JSON.stringify(hist));
+  }
+  // ---------- files: parse with the shared reader, show the column mapping, let the rep fix it, submit in batches ----------
+  const toDate = (v) => FREE.toDate(v, (x) => (typeof x === 'number' && window.XLSX && XLSX.SSF ? (() => { const p = XLSX.SSF.parse_date_code(x); return p ? `${p.y}-${String(p.m).padStart(2, '0')}-${String(p.d).padStart(2, '0')}` : ''; })() : ''));
+  const clip = (s) => { s = String(s ?? '').replace(/\s+/g, ' ').trim(); return s.length > 40 ? s.slice(0, 40) + '…' : s; };
+  // one sheet with an optional user override of the column map → parsed rows
+  function parseOne(sh, fileName, override) {
+    const out = {rows: [], errors: [], warnings: [], map: null, headerRow: 0, headers: [], samples: [], noStatus: false};
+    const aoa = sh.rows || []; if (!aoa.length) return out;
+    const auto = FREE.parseSheet(aoa, `${fileName} · ${sh.name}`, CODES, [], [], {toDate, products: PRODUCTS});
+    if (!auto && !override) return out;
+    const h = auto ? auto.headerRow : (override.headerRow || 0);
+    const map = {...(auto ? auto.map : {}), ...(override ? override.map : {})}; for (const k of Object.keys(map)) if (map[k] === undefined || map[k] === null) delete map[k];
+    out.headers = aoa[h] || []; out.samples = aoa.slice(h + 1, h + 4); out.headerRow = h; out.map = map; out.noStatus = map.status === undefined;
+    if (map.partner_name === undefined || map.country === undefined) return out;
+    for (let r = h + 1; r < aoa.length; r++) { const raw = aoa[r] || []; if (raw.every((c) => c == null || String(c).trim() === '')) continue; const row = FREE.normalizeRow(raw, map, {toDate, products: PRODUCTS, codes: CODES}); if (!row.partner_name && !row.country) continue; FREE.validate(row, `${fileName} · ${sh.name} ${r + 1}행`, CODES, out.errors, out.warnings, !out.noStatus); out.rows.push(row); }
     return out;
   }
-  window.__parseSheets = parseSheets;
+  function parseSheets(sheets, fileName, overrides) {
+    const f = {name: fileName, sheets: [], rows: [], errors: [], warnings: [], skipped: [], noStatus: false, countries: 0, contacts: 0};
+    for (const sh of sheets) {
+      const o = overrides && overrides[sh.name];
+      const r = parseOne(sh, fileName, o);
+      if (!r.map) { if ((sh.rows || []).length) f.skipped.push(sh.name); continue; }
+      f.sheets.push({name: sh.name, ...r}); f.rows.push(...r.rows); f.errors.push(...r.errors); f.warnings.push(...r.warnings); if (r.noStatus && r.rows.length) f.noStatus = true;
+    }
+    f.countries = new Set(f.rows.flatMap((r) => FREE.coverageOf(r))).size;
+    f.contacts = f.rows.reduce((s, r) => s + ((r.contacts || []).length || (r.contact_name ? 1 : 0)), 0);
+    return f;
+  }
+  window.__parseSheets = (sheets, fileName) => parseSheets(sheets, fileName);
   const chunk = (arr, n) => { const o = []; for (let i = 0; i < arr.length; i += n) o.push(arr.slice(i, i + n)); return o; };
   async function submitParsed(files) {
     const who = $('#who-name').value.trim(), team = $('#who-team').value;
     if (!who) { msgP('err', '제출자 이름을 먼저 입력해 주세요.'); $('#who-name').focus(); return false; }
+    const defStatus = ($('#bulk-status') || {}).value || '현재 대리상';
     const rowsOut = [];
-    for (const f of files) for (const c of chunk(f.rows, 150)) rowsOut.push({type: 'batch', submitter: who, team, summary: `${f.name} · 파트너 ${c.length}행`, payload: {simple: c.map((r) => ({...r, owner: r.owner || who, updated_by: who}))}, client_id: cid});
-    const r = await fetch(SUPA + '/rest/v1/submissions', {method: 'POST', headers: {...H, Prefer: 'return=minimal'}, body: JSON.stringify(rowsOut)});
-    if (!r.ok) { let t = ''; try { t = (await r.json()).message || ''; } catch (e) { /* no body */ } throw new Error(t || ('HTTP ' + r.status)); }
-    const hist = [...rowsOut.map((x) => ({created_at: new Date().toISOString(), summary: x.summary, relayed_at: null})), ...localHist()].slice(0, 50); set('gp_history', JSON.stringify(hist));
+    for (const f of files) for (const c of chunk(f.rows, 150)) rowsOut.push({type: 'batch', submitter: who, team, summary: `${f.name} · 파트너 ${c.length}행`, payload: {simple: c.map((r) => { const o = {...r, status: r.status || defStatus, owner: r.owner || who, updated_by: who}; delete o._row; return o; })}, client_id: cid});
+    await post(rowsOut);
     return rowsOut.length;
   }
   window.__submitParsed = submitParsed;
   const prevBox = $('#prev');
   const msgP = (kind, text) => { prevBox.innerHTML = `<div class="msg ${kind}" style="display:block">${esc(text)}</div>`; };
-  let parsedFiles = [];
+  let parsedFiles = [], rawFiles = [], overrides = {};
+  const LABEL = FREE.LABELS;
   function renderPreview() {
     if (!parsedFiles.length) { prevBox.innerHTML = ''; return; }
     const errors = parsedFiles.flatMap((f) => f.errors), warnings = parsedFiles.flatMap((f) => f.warnings), n = parsedFiles.reduce((s, f) => s + f.rows.length, 0);
     const skipped = parsedFiles.flatMap((f) => f.skipped.map((s) => `${f.name} · ${s}`));
-    prevBox.innerHTML = `<div class="prev"><div class="stat"><span><b>${n}</b> 건 대리상</span><span>${parsedFiles.map((f) => esc(f.name) + ' ' + f.rows.length + '행').join(' · ')}</span></div>` +
+    const nC = new Set(parsedFiles.flatMap((f) => f.rows.flatMap((r) => FREE.coverageOf(r)))).size, nP = parsedFiles.reduce((s, f) => s + (f.contacts || 0), 0), noStatus = parsedFiles.some((f) => f.noStatus);
+    const nK = parsedFiles.reduce((s, f) => s + f.rows.filter((r) => (r.contracts || []).length).length, 0), nPr = parsedFiles.reduce((s, f) => s + f.rows.reduce((a, r) => a + (r.prices || []).filter((x) => x.price !== null).length, 0), 0);
+    const mapTables = parsedFiles.flatMap((f) => f.sheets.map((sh) => `<div><h3>열 읽기 결과 — ${esc(f.name)}${f.sheets.length > 1 ? ' · ' + esc(sh.name) : ''}</h3><div class="tbox"><table class="map"><thead><tr><th>엑셀 열</th><th>이렇게 읽음</th><th>예시 값</th></tr></thead><tbody>${sh.headers.map((h, i) => { if (String(h ?? '').trim() === '' && !sh.samples.some((r) => String((r || [])[i] ?? '').trim())) return ''; const cur = Object.keys(sh.map).find((k) => sh.map[k] === i) || ''; return `<tr><td class="h">${esc(h)}</td><td><select data-file="${esc(f.name)}" data-sheet="${esc(sh.name)}" data-col="${i}"><option value="">사용 안 함</option>${Object.keys(LABEL).map((k) => `<option value="${k}"${k === cur ? ' selected' : ''}>${esc(LABEL[k])}</option>`).join('')}</select></td><td class="s">${esc(clip(sh.samples.map((r) => (r || [])[i]).find((v) => v !== undefined && String(v).trim() !== '')))}</td></tr>`; }).join('')}</tbody></table></div></div>`));
+    const sample = parsedFiles.flatMap((f) => f.rows).slice(0, 6);
+    const rowTable = sample.length ? `<div><h3>읽은 내용 (처음 ${sample.length}건)</h3><div class="tbox"><table><thead><tr><th>업체명</th><th>국가</th><th>구분</th><th>담당자</th><th>품목</th><th>계약 만료</th></tr></thead><tbody>${sample.map((r) => { const cov = FREE.coverageOf(r); return `<tr><td><b>${esc(r.partner_name)}</b>${r.owner ? `<br><small>${esc(r.owner)}</small>` : ''}</td><td>${esc(cov[0] || '')}${cov.length > 1 ? ` <small>+${cov.length - 1}</small>` : ''}${r.coverage_note ? `<br><small class="warn">? ${esc(r.coverage_note)}</small>` : ''}</td><td>${esc(r.status || (noStatus ? '(선택값)' : ''))}${r.partner_type ? `<br><small>${esc(r.partner_type)}</small>` : ''}</td><td>${(r.contacts || []).length}명${(r.contacts || [])[0] ? `<br><small>${esc((r.contacts[0].name || '') + (r.contacts[0].email ? ' · ' + r.contacts[0].email : ''))}</small>` : ''}</td><td>${esc(r.our_products || r.products_other || '')}${(r.prices || []).filter((x) => x.price !== null).length ? `<br><small>단가 ${(r.prices || []).filter((x) => x.price !== null).length}건</small>` : ''}</td><td>${esc((r.contracts || [])[0] ? (r.contracts[0].end || '—') : '')}</td></tr>`; }).join('')}</tbody></table></div></div>` : '';
+    prevBox.innerHTML = `<div class="prev"><div class="stat"><span><b>${n}</b>대리상</span><span><b>${nC}</b>개국</span><span><b>${nP}</b>담당자</span>${nPr ? `<span><b>${nPr}</b>단가</span>` : ''}${nK ? `<span><b>${nK}</b>계약</span>` : ''}<span>${parsedFiles.map((f) => esc(f.name) + ' ' + f.rows.length + '행').join(' · ')}</span></div>` +
+      (noStatus ? `<div class="banner" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><span>구분(현재/후보) 열이 없는 파일입니다. 이 대리상들은</span><select id="bulk-status" style="width:auto;min-height:36px;padding:4px 8px"><option>현재 대리상</option><option>후보 대리상</option><option>초기 접촉</option></select><span>으로 제출합니다.</span></div>` : '') +
       (skipped.length ? `<div class="warn">대리상 시트가 아니라 건너뜀: ${esc(skipped.join(', '))}</div>` : '') +
       (errors.length ? `<div class="err"><b>오류 ${errors.length}건 — 고친 뒤 다시 올려 주세요</b><ul>${errors.slice(0, 30).map((e) => '<li>' + esc(e) + '</li>').join('')}</ul></div>` : '') +
-      (warnings.length ? `<div class="warn"><b>경고 ${warnings.length}건 (제출은 가능)</b><ul>${warnings.slice(0, 15).map((e) => '<li>' + esc(e) + '</li>').join('')}</ul></div>` : '') +
+      (warnings.length ? `<details><summary class="warn" style="cursor:pointer"><b>확인 ${warnings.length}건 (제출은 가능)</b></summary><ul class="warn">${warnings.slice(0, 40).map((e) => '<li>' + esc(e) + '</li>').join('')}</ul></details>` : '') +
+      rowTable + mapTables.join('') +
       `<div class="actions"><button class="btn primary" id="btn-bulk" type="button" ${errors.length || !n ? 'disabled' : ''}>제출 (대리상 ${n}건)</button><button class="btn ghost" id="btn-bulk-cancel" type="button">취소</button></div></div>`;
-    $('#btn-bulk-cancel').addEventListener('click', () => { parsedFiles = []; renderPreview(); });
-    $('#btn-bulk').addEventListener('click', async () => { const b = $('#btn-bulk'); b.disabled = true; b.textContent = '보내는 중…'; try { const k = await submitParsed(parsedFiles); parsedFiles = []; renderPreview(); toast('제출했습니다 — 글로벌사업부 CRM에 자동 반영됩니다'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); } catch (e) { b.disabled = false; b.textContent = '제출'; msgP('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e)); } });
+    prevBox.querySelectorAll('select[data-col]').forEach((sel) => sel.addEventListener('change', () => {
+      const fn = sel.dataset.file, sn = sel.dataset.sheet, col = Number(sel.dataset.col), key = sel.value;
+      const f = parsedFiles.find((x) => x.name === fn), sh = f && f.sheets.find((x) => x.name === sn); if (!sh) return;
+      const map = {...sh.map}; for (const k of Object.keys(map)) if (map[k] === col) delete map[k]; if (key) map[key] = col;
+      overrides[fn] = overrides[fn] || {}; overrides[fn][sn] = {headerRow: sh.headerRow, map};
+      reparse();
+    }));
+    $('#btn-bulk-cancel').addEventListener('click', () => { parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); });
+    $('#btn-bulk').addEventListener('click', async () => { const b = $('#btn-bulk'); b.disabled = true; b.textContent = '보내는 중…'; try { const k = await submitParsed(parsedFiles); parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); toast('제출했습니다 — 글로벌사업부 CRM에 자동 반영됩니다'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); } catch (e) { b.disabled = false; b.textContent = '제출'; msgP('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e)); } });
   }
+  function reparse() { parsedFiles = rawFiles.map((rf) => parseSheets(rf.sheets, rf.name, overrides[rf.name])); renderPreview(); }
   async function readFiles(list) {
     if (!list || !list.length) return;
     if (!window.XLSX) { msgP('err', '엑셀 처리 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인하고 새로고침해 주세요.'); return; }
-    const out = [];
+    rawFiles = []; overrides = {};
     for (const file of Array.from(list)) {
-      try { const wb = XLSX.read(await file.arrayBuffer(), {cellDates: true}); const sheets = wb.SheetNames.map((nm) => ({name: nm, rows: XLSX.utils.sheet_to_json(wb.Sheets[nm], {header: 1, defval: '', raw: true})})); out.push({name: file.name, ...parseSheets(sheets, file.name)}); }
-      catch (e) { out.push({name: file.name, rows: [], errors: [`${file.name}: 파일을 읽을 수 없습니다`], warnings: [], skipped: []}); }
+      try { const wb = XLSX.read(await file.arrayBuffer(), {cellDates: true}); rawFiles.push({name: file.name, sheets: wb.SheetNames.map((nm) => ({name: nm, rows: XLSX.utils.sheet_to_json(wb.Sheets[nm], {header: 1, defval: '', raw: true})}))}); }
+      catch (e) { rawFiles.push({name: file.name, sheets: [], error: `${file.name}: 파일을 읽을 수 없습니다`}); }
     }
-    parsedFiles = out; renderPreview();
+    reparse();
+    for (const rf of rawFiles) if (rf.error) { const f = parsedFiles.find((x) => x.name === rf.name); if (f) f.errors.push(rf.error); }
+    if (rawFiles.some((rf) => rf.error)) renderPreview();
   }
+  window.__readSheets = (name, sheets) => { rawFiles = [{name, sheets}]; overrides = {}; reparse(); };
   const drop = $('#drop');
   $('#file').addEventListener('change', (e) => { readFiles(e.target.files); e.target.value = ''; });
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); }); drop.addEventListener('dragleave', () => drop.classList.remove('over'));
   drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); readFiles(e.dataTransfer.files); });
-  $('#btn-template').addEventListener('click', () => {
-    if (!window.XLSX) { msgP('err', '엑셀 라이브러리를 불러오지 못했습니다. 새로고침해 주세요.'); return; }
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet([COLS.map((c) => c[0]), ['Example Medical Trading', 'UAE', '후보 대리상', '에너지기기;스킨부스터', '피부과;에스테틱', 4, '인허가;커버리지', 'Ahmed', 'ahmed@example.com', '+971-4-000-0000', today(), 'Facetem;Novosis', '두바이 클리닉 30곳 거래', '']]);
-    ws['!cols'] = COLS.map(([l]) => ({wch: /회사명|이메일|메모|카테고리/.test(l) ? 26 : 14}));
-    XLSX.utils.book_append_sheet(wb, ws, '파트너');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['대리상 간편 양식 — 1행 머리글은 그대로 두고 2행부터 입력, 예시 행은 지우세요'], [''], ['필수', '회사명 · 국가 · 구분 · 취급 카테고리'], ['구분', CODES.status.join(' / ')], ['취급 카테고리', CODES.category.join(' / ') + ' (여러 개면 ; 로 구분)'], ['유통 채널', CODES.channel.join(' / ')], ['강점', CODES.strength.join(' / ')], ['파트너 평가', '1–5 숫자 하나'], ['최근 접촉일', 'YYYY-MM-DD'], ['국가', '한글 또는 영문 표기 모두 가능 (예: 베트남, Vietnam)'], ['제출', '이 페이지에 파일을 올리면 끝. 글로벌사업부 CRM에 자동 반영']]), '안내');
-    XLSX.writeFile(wb, '대리상_간편양식.xlsx');
-  });
-  // submit
+  $('#btn-cols').addEventListener('click', () => { const b = $('#cols'); b.hidden = !b.hidden; if (!b.innerHTML) b.innerHTML = Object.keys(LABEL).map((k) => `<div><b>${esc(LABEL[k])}</b>${esc(FREE.HEADERS[k].slice(0, 6).join(' · '))}</div>`).join(''); });
+  // ---------- quick form submit ----------
   let busy = false;
   $('#form').addEventListener('submit', async (ev) => {
     ev.preventDefault(); if (busy) return;
     const who = $('#who-name').value.trim(), team = $('#who-team').value;
-    const name = $('#f-name').value.trim(); let country = $('#f-country').value; if (country === '__direct') country = $('#f-country-direct').value.trim();
-    const status = $('#f-status').value, cats = picked('#f-cats');
+    if (tokIn.value.trim()) addCountry(tokIn.value);
+    const name = $('#f-name').value.trim(), status = ([...seg.children].find((b) => b.getAttribute('aria-pressed') === 'true') || {}).dataset?.v || '', owner = $('#f-owner').value.trim();
     const errs = [];
-    if (!who) errs.push('제출자 이름');
-    if (!name) errs.push('회사명'); if (!country) errs.push('국가'); if (!status) errs.push('구분'); if (!cats.length) errs.push('취급 카테고리');
-    const email = $('#f-email').value.trim(); if (email && !/^\S+@\S+\.\S+$/.test(email)) { msg('err', '이메일 형식을 확인해 주세요.'); return; }
+    if (!who) errs.push('제출자 이름'); if (!name) errs.push('업체명'); if (!countries.length) errs.push('관할 국가'); if (!status) errs.push('구분'); if (!owner) errs.push('영업담당자');
+    const contacts = readContacts(); const badMail = contacts.find((c) => c.email && !/^\S+@\S+\.\S+$/.test(c.email)); if (badMail) { msg('err', `이메일 형식을 확인해 주세요: ${badMail.email}`); return; }
     if (errs.length) { msg('err', errs.join(' · ') + ' — 필수 항목입니다.'); if (!who) $('#who-name').focus(); return; }
-    const payload = {partner_name: name, country, status, partner_type: $('#f-ptype').value, categories: cats.join(';'), channels: picked('#f-channels').join(';'), rating: stars.dataset.value ? Number(stars.dataset.value) : '', strengths: picked('#f-strengths').join(';'),
-      contact_name: $('#f-contact').value.trim(), contact_email: email, contact_phone: $('#f-phone').value.trim(), last_contact_date: $('#f-date').value || '', our_products: picked('#f-products').join(';'), notes: $('#f-notes').value.trim(), owner: who, updated_by: who};
-    const row = {type: 'partner', submitter: who, team, summary: `${name} (${country} · ${status})`, payload, client_id: cid};
+    const isSub = status === '해외법인'; const st = isSub ? '현재 대리상' : status;
+    const web = FREE.parseWeb($('#f-web').value), addrs = FREE.parseAddresses($('#f-address').value), prices = FREE.parsePrices($('#f-prices').value, PRODUCTS);
+    const prodNames = picked('#f-products'), cats = [...new Set([...picked('#f-cats'), ...prodNames.map((n) => (PRODUCTS.find((p) => p.name === n) || {}).category).filter(Boolean)])];
+    const prim = contacts.find((c) => c.is_ceo) || contacts[0] || null;
+    const payload = {partner_name: name, country: countries[0], coverage_countries: countries.join(';'), status: st, partner_type: isSub ? '해외법인' : $('#f-ptype').value, owner, team, categories: cats.join(';'), channels: picked('#f-channels').join(';'), rating: stars.dataset.value ? Number(stars.dataset.value) : '', strengths: picked('#f-strengths').join(';'),
+      contacts, contact_name: prim ? [prim.name, prim.func ? `(${prim.func})` : ''].filter(Boolean).join(' ') : '', contact_email: prim ? prim.email : '', contact_phone: prim ? prim.phone : '', ceo_name: (contacts.find((c) => c.is_ceo) || {}).name || '', ceo_email: (contacts.find((c) => c.is_ceo) || {}).email || '', ceo_phone: (contacts.find((c) => c.is_ceo) || {}).phone || '',
+      website: web.website, website_more: web.website_more.join(';'), sns: web.sns.join(';'), addresses: addrs, address: addrs.map((a) => (a.label ? a.label + ': ' : '') + a.address).join(' / '),
+      our_products: prodNames.join(';'), product_ids: prodNames.map((n) => (PRODUCTS.find((p) => p.name === n) || {}).id).filter(Boolean), products_other: $('#f-products-other').value.trim(), prices, last_contact_date: $('#f-date').value || '', notes: $('#f-notes').value.trim(), updated_by: who};
+    const row = {type: 'partner', submitter: who, team, summary: `${name} (${countries[0]}${countries.length > 1 ? ' 외 ' + (countries.length - 1) : ''} · ${status})`, payload, client_id: cid};
     busy = true; $('#btn-submit').disabled = true; $('#btn-submit').textContent = '보내는 중…'; msg('', '');
     try {
-      const r = await fetch(SUPA + '/rest/v1/submissions', {method: 'POST', headers: {...H, Prefer: 'return=minimal'}, body: JSON.stringify([row])});
-      if (!r.ok) { let t = ''; try { t = (await r.json()).message || ''; } catch (e) { /* no body */ } throw new Error(t || ('HTTP ' + r.status)); }
-      const hist = [{created_at: new Date().toISOString(), summary: row.summary, relayed_at: null}, ...localHist()].slice(0, 50); set('gp_history', JSON.stringify(hist));
-      toast('제출했습니다 — 글로벌사업부 CRM에 자동 반영됩니다'); msg('ok', `제출 완료: ${row.summary}. 한 건 더 입력할 수 있습니다.`);
+      await post([row]);
+      toast('제출했습니다 — 글로벌사업부 CRM에 자동 반영됩니다');
       const keep = {who, team}; resetForm(); msg('ok', `제출 완료: ${row.summary}. 한 건 더 입력할 수 있습니다.`); $('#who-name').value = keep.who; $('#who-team').value = keep.team; $('#f-name').focus();
       refresh();
     } catch (e) { msg('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e) + ' — 잠시 후 다시 시도해 주세요.'); }
