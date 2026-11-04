@@ -2841,7 +2841,7 @@ async function putCustomers(docs) {
   for (const c of docs) state.customers[c.customer_id] = c;
 }
 // a partner id typed by sales on a lead is kept only when it exists in the master list
-const cleanAtt = (r) => ({...r, partner_id: r && r.partner_id && state.partners[String(r.partner_id).trim()] ? String(r.partner_id).trim() : ''});
+const cleanAtt = (r) => { const ref = r && r.partner_id ? String(r.partner_id).trim() : ''; const hit = ref ? (state.partners[ref] || findPartnerByName(ref, canonCountry(r.country) || '')) : null; return {...r, partner_id: hit ? hit.partner_id : '', source_partner: String((r && r.source_partner) || (!hit && ref) || '').trim().slice(0, 120)}; };
 async function applyInboxItem(item) {
   const d = item.data || {};
   const who = item.by_name ? `영업 제출(${item.by_name})` : '영업 제출';
@@ -3003,13 +3003,12 @@ async function relayPull(manual) {
     let res;
     try { res = await relayCall(`select id, created_at, type, submitter, team, summary, payload from public.${cfg.table} where relayed_at is null order by created_at asc limit 200`); }
     catch (e) { if (e && e.retryable && !manual) { await new Promise((r) => setTimeout(r, Math.min(60000, (e.retryAfterMs || 3000) + Math.random() * 2000))); res = await relayCall(`select id, created_at, type, submitter, team, summary, payload from public.${cfg.table} where relayed_at is null order by created_at asc limit 200`); } else throw e; }
-    const rows = rowsOf(res && res.payload).filter((r) => uuidOk(r.id) && ['partner', 'batch'].includes(r.type)); // sales send partner info only; anything else stays unrelayed
+    const rows = rowsOf(res && res.payload).filter((r) => uuidOk(r.id) && ['partner', 'batch'].includes(r.type)); // partner info and file batches (partner rows · D2D attendance); anything else stays unrelayed
     const fresh = rows.filter((r) => !state.inbox[`lovable/${r.id}`]);
     if (fresh.length) {
       await db.doc('inbox/lovable').set({updated_at: new Date().toISOString(), by: 'lovable', by_name: '영업 제출 페이지'});
       for (const r of fresh) {
         let data = r.payload; if (typeof data === 'string') { try { data = JSON.parse(data); } catch (e) { data = {}; } }
-        if (r.type === 'batch' && data && data.attendance) { data = {...data}; delete data.attendance; }
         const who = [r.submitter, r.team].map((x) => String(x || '').trim()).filter(Boolean).join(' · ') || '영업';
         await db.doc(`inbox/lovable/items/${r.id}`).set({type: r.type, data: data || {}, summary: r.summary || '', status: 'new', at: pgToIso(r.created_at), by: 'lovable', by_name: who, source: 'lovable'});
       }
