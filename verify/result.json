@@ -1,7 +1,13 @@
 {
  "url": "https://amy0559.github.io/GLOBAL-CGBIO/crm.html",
- "at": "2026-11-04T02:24:48.491Z",
+ "at": "2026-11-04T02:29:04.186Z",
+ "commit_sha256": "dcf716b2c9e9ae490741edc25dbbd1902aeb774a81389cbf07695a2dfc5eda72",
  "steps": [
+  {
+   "name": "live page is this commit's crm.html (sha256 match)",
+   "ok": true,
+   "detail": "555355 bytes · dcf716b2c9e9ae49…"
+  },
   {
    "name": "page served and team-code gate rendered",
    "ok": true
@@ -22,6 +28,8 @@
    "detail": ""
   }
  ],
+ "page_bytes": 555355,
+ "page_sha256": "dcf716b2c9e9ae490741edc25dbbd1902aeb774a81389cbf07695a2dfc5eda72",
  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/129.0.6668.29 Safari/537.36",
  "pageErrors": [],
  "ok": true
