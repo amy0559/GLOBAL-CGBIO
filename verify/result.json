@@ -1,0 +1,28 @@
+{
+ "url": "https://amy0559.github.io/GLOBAL-CGBIO/crm.html",
+ "at": "2026-11-04T01:01:04.392Z",
+ "steps": [
+  {
+   "name": "page served and team-code gate rendered",
+   "ok": true
+  },
+  {
+   "name": "browser fetch to the shared store passes CORS and reaches the server",
+   "ok": true,
+   "detail": "{\"status\":400,\"body\":\"{\\\"code\\\":\\\"P0001\\\",\\\"details\\\":null,\\\"hint\\\":null,\\\"message\\\":\\\"bad_code\\\"}\",\"acao\":null}"
+  },
+  {
+   "name": "gate round trip: wrong code is refused by the server (not a network error)",
+   "ok": true,
+   "detail": "접속 코드가 맞지 않습니다."
+  },
+  {
+   "name": "no page errors",
+   "ok": true,
+   "detail": ""
+  }
+ ],
+ "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/129.0.6668.29 Safari/537.36",
+ "pageErrors": [],
+ "ok": true
+}
