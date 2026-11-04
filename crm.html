@@ -688,6 +688,64 @@ function demandByCountry(pr) {
   for (const c of cs) { if (c.stage === '주문완료' && hit(c)) { const r = m.get(c.country) || {valid: 0, sql: 0, pipeline: 0, won: 0}; r.won += 1; m.set(c.country, r); } }
   return m;
 }
+// product lines a partner touches: through its categories, its carried products and the products it names
+function partnerLines(p, products, pp) {
+  const ls = new Set();
+  for (const c of split(p.categories)) for (const q of products) if (q.category === c && q.line) ls.add(q.line);
+  for (const x of pp) if (x.partner_id === p.partner_id) { const q = products.find((y) => y.product_id === x.product_id); if (q && q.line) ls.add(q.line); }
+  for (const nm of split(p.our_products)) for (const q of productsByName(nm)) if (q.line) ls.add(q.line);
+  return ls;
+}
+// what our own selection record says a good partner looks like, for one product × country (used by the 신규 후보 발굴 brief)
+function idealProfile(pr, country, weights) {
+  const hist = rows('selection_history'), products = rows('products');
+  const sameCat = (h) => { const q = products.find((x) => x.product_id === h.product_id); return q && q.category === pr.category; };
+  const reasons = (dec) => hist.filter((h) => h.decision === dec && (h.decision_reason || '').trim()).sort((a, b) => (sameCat(b) - sameCat(a)) || String(b.decision_date).localeCompare(String(a.decision_date))).slice(0, 4).map((h) => h.decision_reason.trim());
+  const topW = weights.slice().sort((a, b) => b.weight - a.weight).slice(0, 3);
+  const here = rows('partners').filter((p) => p.status !== '거래종료' && FREE.coverageOf(p).includes(country));
+  const excl = here.filter((p) => p.status === '기존 대리상' && p.exclusivity === 'Y' && split(p.categories).includes(pr.category)).map((p) => p.partner_name);
+  const ls = launchesFor(pr, country); const l = ls[0] || null;
+  const demand = demandByCountry(pr).get(country) || {valid: 0, sql: 0, pipeline: 0, won: 0};
+  return {category: pr.category, line: pr.line || '', channels: split(pr.target_channels), topW, selectedReasons: reasons('선정'), rejectedReasons: reasons('탈락'), exclusive: excl, existing: here.map((p) => `${p.partner_name}(${p.status})`), launch: l ? {step: Number(l.step) || 0, step_name: stepLabel(Number(l.step) || 0), partner: l.partner || '', route: l.route || '', rival: l.rival || ''} : null, demand};
+}
+// the question we hand to an AI assistant (or a researcher) for new candidates — our criteria, in one message
+function discoveryPrompt(pr, country, prof) {
+  const lines = [];
+  lines.push(`${country}에서 당사 제품 「${productLabel(pr) || pr.product_name}」(${prof.category}${prof.line ? ' · ' + prof.line : ''}, 타깃 채널: ${prof.channels.join('/') || '미지정'})을 유통할 신규 대리상 후보 6곳을 찾아 주세요. 의료기기·에스테틱 분야의 수입·유통사, 총판, 클리닉 체인 공급사가 대상입니다.`);
+  lines.push('');
+  lines.push('우리가 대리상을 고를 때 중시하는 기준(과거 선정 이력에서 계산한 가중치 순):');
+  prof.topW.forEach((w, i) => lines.push(`${i + 1}. ${w.label} (가중치 ${w.weight})`));
+  if (prof.selectedReasons.length) lines.push('과거에 선정한 이유: ' + prof.selectedReasons.join(' / '));
+  if (prof.rejectedReasons.length) lines.push('과거에 탈락시킨 이유(피할 것): ' + prof.rejectedReasons.join(' / '));
+  if (prof.exclusive.length) lines.push(`주의: ${country}에는 같은 카테고리 독점 대리상(${prof.exclusive.join(', ')})이 있어 독점 조건이 충돌하지 않는 후보여야 합니다.`);
+  if (prof.existing.length) lines.push('이미 알고 있는 업체(제외): ' + prof.existing.join(', '));
+  if (prof.launch) lines.push(`현재 진출 단계: ${prof.launch.step_name}${prof.launch.partner ? ' · 거래처 ' + prof.launch.partner : ''}${prof.launch.route ? ' · 인허가 경로 ' + prof.launch.route : ''}${prof.launch.rival ? ' · 경쟁사 ' + prof.launch.rival : ''}`);
+  if (prof.demand.valid) lines.push(`이 나라에는 이미 ${prof.category} 관심 유효리드 ${prof.demand.valid}건(Pipeline ${won(prof.demand.pipeline)})이 있습니다 — 이 의사·기관에 공급할 수 있는 업체가 좋습니다.`);
+  lines.push('');
+  lines.push('답은 아래 머리글의 표 한 개로만 주세요 (회사명은 정확한 법인명, 웹사이트는 실제 주소, 근거에는 위 기준 중 무엇을 충족하는지와 출처):');
+  lines.push('| 회사명 | 도시 | 취급 분야 | 채널 | 웹사이트 | 근거 |');
+  return lines.join('\n');
+}
+// pasted answer (markdown table, tab- or pipe-separated lines) → candidate rows; header row optional
+function parseCandidates(text) {
+  const ALIAS = {name: ['회사명', '회사', '업체명', '업체', 'company', 'name', 'distributor'], city: ['도시', 'city', '지역', 'location'], focus: ['취급 분야', '취급분야', '분야', 'focus', 'products', 'category', '취급'], channel: ['채널', 'channel', 'channels'], website: ['웹사이트', '웹', 'website', 'url', 'site', '홈페이지'], notes: ['근거', '비고', 'notes', 'why', 'reason', 'evidence', 'rationale'], contact: ['연락처', 'contact', 'email', '이메일']};
+  const rowsIn = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !/^\|?\s*:?-{2,}/.test(l));
+  const cells = (l) => (l.includes('|') ? l.replace(/^\|/, '').replace(/\|$/, '').split('|') : l.includes('\t') ? l.split('\t') : l.split(/\s{2,}|;/)).map((c) => c.trim());
+  if (!rowsIn.length) return [];
+  let map = null; let start = 0;
+  const head = cells(rowsIn[0]).map((h) => norm(h));
+  const isHead = head.some((h) => ALIAS.name.includes(h));
+  if (isHead) { map = {}; head.forEach((h, i) => { for (const [k, names] of Object.entries(ALIAS)) if (names.includes(h) && map[k] === undefined) map[k] = i; }); start = 1; }
+  const out = [];
+  for (let i = start; i < rowsIn.length; i++) {
+    const c = cells(rowsIn[i]); if (!c.length) continue;
+    const get = (k, pos) => (map ? (map[k] === undefined ? '' : c[map[k]] || '') : (c[pos] || ''));
+    const name = get('name', 0).replace(/^\d+[.)]\s*/, '').replace(/\*\*/g, '').trim(); if (!name || /^(회사명|company|name)$/i.test(name)) continue;
+    const website = (get('website', 4).match(/https?:\/\/\S+|[a-z0-9.-]+\.[a-z]{2,}(\/\S*)?/i) || [''])[0];
+    out.push({partner_name: name, city: get('city', 1), focus: get('focus', 2), channel: get('channel', 3), website: website ? (website.startsWith('http') ? website : 'https://' + website) : '', notes: get('notes', 5), contact: get('contact', 6)});
+  }
+  return out;
+}
 function scoreProduct(pr, partners, products, pp, history, weights, demand) {
   const w = Object.fromEntries(weights.map((r) => [r.criterion, Number(r.weight)]));
   const asOf = partners.reduce((m, p) => ((p.updated_at || '') > m ? p.updated_at : m), todayISO());
@@ -702,8 +760,9 @@ function scoreProduct(pr, partners, products, pp, history, weights, demand) {
   for (const p of partners) for (const pc of (FREE.coverageOf(p).length ? FREE.coverageOf(p) : [p.country || ''])) {
     const cats = split(p.categories), pch = split(p.channels);
     const catHit = cats.includes(pr.category);
+    const lineHit = !catHit && !!pr.line && partnerLines(p, products, pp).has(pr.line); // same product line (Aesthetic · Spine …) without the exact category: half credit
     const chHit = chans.filter((c) => pch.includes(c)).length;
-    const fit = 0.6 * (catHit ? 1 : 0) + 0.4 * (chans.length ? chHit / chans.length : 0);
+    const fit = 0.6 * (catHit ? 1 : lineHit ? 0.5 : 0) + 0.4 * (chans.length ? chHit / chans.length : 0);
     const capScore = capW ? (w.regulatory * cap(p, 'cap_regulatory') + w.finance * cap(p, 'cap_finance') + w.coverage * cap(p, 'cap_coverage') + w.marketing * cap(p, 'cap_marketing') + w.logistics * cap(p, 'cap_logistics')) / capW : 0;
     const core = w.fit * fit + capW * capScore;
     const mine = pp.filter((x) => x.partner_id === p.partner_id);
@@ -720,7 +779,7 @@ function scoreProduct(pr, partners, products, pp, history, weights, demand) {
     const myWon = myLeads.filter((c) => c.stage === '주문완료').length, myValid = myLeads.filter((c) => c.valid).length;
     const leadConv = Math.min(1, myWon / 2) * 0.6 + Math.min(1, myValid / 5) * 0.4;
     const ev = [];
-    ev.push(catHit ? ['pos', `동일 카테고리 취급(${pr.category})`] : ['neg', `카테고리 미취급(${cats.join(', ') || '미입력'})`]);
+    ev.push(catHit ? ['pos', `동일 카테고리 취급(${pr.category})`] : lineHit ? ['', `같은 제품군(${pr.line}) 취급 · ${pr.category} 카테고리는 미취급`] : ['neg', `카테고리 미취급(${cats.join(', ') || '미입력'})`]);
     ev.push([chHit ? 'pos' : '', `채널 일치 ${chHit}/${chans.length}`]);
     if (capOf(p, 'cap_regulatory') >= 4) ev.push(['pos', `인허가 ${capOf(p, 'cap_regulatory')}/5`]);
     if (capOf(p, 'cap_coverage') >= 4) ev.push(['pos', `커버리지 ${capOf(p, 'cap_coverage')}/5`]);
@@ -1418,6 +1477,25 @@ const COVERAGE_ORDER = {gap: 0, candidate: 1, covered: 2};
 const coverageLabel = (c) => c === 'covered' ? '커버' : c === 'candidate' ? '후보만' : '공백';
 const coverageDot = (b) => el('span', {class: 'st'}, el('i', {class: 'dot ' + (b.coverage === 'gap' ? (b.valid ? 'bad' : 'warn') : b.coverage === 'candidate' ? 'warn' : 'ok')}), coverageLabel(b.coverage));
 const actionRow = (title, count, sub, tone, onclick) => el('button', {type: 'button', class: 'act', onclick}, el('i', {class: 'dot ' + (count ? tone : '')}), el('span', {}, el('b', {}, title), el('small', {}, sub || '')), el('span', {class: 'n' + (count ? '' : ' zero')}, fmtInt(count)));
+// the overview's AI picks run the recommendation engine over every product; cached until the data changes
+let picksCache = {key: '', rows: []};
+function overviewPicks() {
+  const stamp = (coll) => rows(coll).reduce((m, r) => ((r.updated_at || '') > m ? r.updated_at : m), '');
+  const key = ['partners', 'products', 'launches', 'customers', 'selection_history', 'partner_products'].map((c) => rows(c).length + ':' + stamp(c)).join('|');
+  if (picksCache.key === key) return picksCache.rows;
+  const picks = [];
+  const live = new Set(rows('launches').filter((l) => (Number(l.step) || 0) >= 3).map((l) => l.product));
+  for (const pr of rows('products')) {
+    const liveHere = rows('launches').some((l) => live.has(l.product) && launchMatchesProduct(l, pr)); const dem = demandByCountry(pr);
+    if (!liveHere && !dem.size) continue;
+    const r = recoForProduct(pr);
+    for (const c of r.prio) { if (!c.top && !c.valid) continue; picks.push({product: productLabel(pr) || pr.product_name, product_name: pr.product_name, country: c.country, step: c.step, step_name: c.step_name, priority: c.priority, top: c.top, valid: c.valid, action: c.action, launch_action: c.launch_action}); }
+  }
+  picks.sort((a, b) => b.priority - a.priority || (b.top ? b.top.score : 0) - (a.top ? a.top.score : 0));
+  const seen = new Set(); const out = picks.filter((x) => { const k = x.product + '|' + x.country; if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 10);
+  picksCache = {key, rows: out};
+  return out;
+}
 function renderOverview() {
   const sec = $('#overview'); clear(sec);
   const ps = rows('partners'), cs = customersView(), ls = leadStats(cs), board = countryBoard(), prog = programStats(cs);
@@ -1451,6 +1529,15 @@ function renderOverview() {
           actionRow('허가·PO 이후 시장 — 대리상 영업 개시', lst.licensed.length, lst.licensed.slice(0, 4).map((l) => `${l.product}/${l.market}`).join(' · '), 'ok', () => goto('reco')))),
       panel('품목별 진출 단계', '02 / BY PRODUCT', `${fmtInt(prodRows.length)}개 품목 전체. 가장 앞선 시장의 단계, 허가·PO 이후 시장 수, 정체 수. 행을 누르면 그 품목의 추천 화면으로 이동합니다.`,
         el('div', {class: 'tablebox'}, table([{k: 'product', l: '품목', b: 1}, {k: 'n', l: '시장', r: 1}, {k: 'max', l: '최고 단계', nw: 1, render: (r) => el('span', {class: 'chip ' + (r.max >= 10 ? 'ok' : r.max >= 8 ? 'warn' : '')}, stepLabel(r.max))}, {k: 'licensed', l: '허가·PO', r: 1}, {k: 'stale', l: '정체', r: 1, render: (r) => el('span', {class: r.stale ? 'warn' : ''}, fmtInt(r.stale))}], prodRows, {onRow: (r) => { ui.filters.recoProduct = r.product; goto('reco'); }})))));
+  }
+  // 1c) 추천 하이라이트 — product × country → 1순위 partner (recommendation engine over every product with a live market)
+  if (ps.length && rows('products').length) {
+    const rowsP = overviewPicks();
+    sec.append(panel('추천 하이라이트 — 제품 × 국가별 1순위 파트너', '02-1 / AI PICKS', '진출 중인 제품마다 국가 우선순위(수요 × 파트너 준비도 × 진출 단계)가 높은 순. 1순위 파트너는 제품 적합성·과거 선정 기준·실적·D2D 모객·리드 연결로 계산되며 근거가 함께 표시됩니다. 행을 누르면 04 탭에서 전체 순위와 산식을 봅니다.',
+      el('div', {class: 'tablebox'}, table([{k: 'product', l: '제품', b: 1, ell: 1}, {k: 'country', l: '국가', nw: 1}, {k: 'step_name', l: '진출 단계', nw: 1, sec: 1, render: (x) => (x.step ? el('span', {class: 'chip ' + (x.step >= 10 ? 'ok' : x.step >= 8 ? 'warn' : '')}, x.step_name) : el('span', {class: 'muted'}, '—'))}, {k: 'priority', l: '우선순위', r: 1, render: (x) => el('span', {class: 'num'}, String(x.priority))},
+        {k: 'top', l: '1순위 파트너', render: (x) => (x.top ? el('span', {}, el('b', {}, x.top.partner_name), ' ', statusChip(x.top.status), ' ', el('span', {class: 'num'}, String(x.top.score))) : el('span', {class: 'muted'}, '대리상 없음 — 발굴 필요'))},
+        {k: 'ev', l: '근거', render: (x) => el('span', {title: x.top ? x.top.evidence.map((e) => e[1]).join(' · ') : ''}, x.top ? x.top.evidence.filter((e) => e[0] === 'pos').slice(0, 2).map((e) => e[1]).join(' · ') || x.top.evidence.slice(0, 2).map((e) => e[1]).join(' · ') : (x.valid ? `유효리드 ${x.valid}건` : ''))},
+        {k: 'action', l: '권고', sec: 1, ell: 1, render: (x) => x.launch_action || x.action}], rowsP, {onRow: (x) => { ui.filters.recoProduct = x.product_name; ui.filters.recoCountry = x.country; goto('reco'); }, emptyText: '진출 중인 제품과 대리상이 등록되면 여기에 1순위 파트너가 나타납니다'}))));
   }
   // 2) actions + team intake
   const tm = new Map();
@@ -1966,14 +2053,14 @@ function renderReco() {
   renderRecoBody();
 }
 function recoProduct() { return ui.sim || state.products[$('#rf-product').value] || null; }
-function recoCompute() {
-  const pr = recoProduct(); if (!pr) return null;
+function recoForProduct(pr) {
   const weights = computeWeights(rows('selection_history'));
   const demand = demandByCountry(pr);
   const all = scoreProduct(pr, rows('partners').filter((p) => p.status !== '거래종료'), rows('products'), rows('partner_products'), rows('selection_history'), weights, demand);
   const prio = countryPriority(pr, all, demand);
   return {pr, weights, demand, all, prio};
 }
+function recoCompute() { const pr = recoProduct(); return pr ? recoForProduct(pr) : null; }
 function renderRecoBody() {
   const r = recoCompute(); const main = $('#r-main'); clear(main); const sm = $('#r-summary'); clear(sm); const k = $('#r-kpis'); clear(k); const bottom = $('#r-bottom'); clear(bottom);
   if (!r) { sm.textContent = '제품 마스터에 제품을 등록하면 추천을 계산합니다.'; return; }
@@ -2006,6 +2093,7 @@ function renderRecoBody() {
         {k: 'evidence', l: '추천 근거', render: (x) => el('div', {class: 'ev'}, x.evidence.map(([cls, t]) => el('span', {class: cls}, t)))}], list,
         {sortKey: ui.rSort, sortDir: ui.rSort === 'score' ? -1 : 1, onSort: (kk) => { ui.rSort = kk; renderRecoBody(); }, onRow: (x) => { ui.pSel = x.partner_id; ui.pMode = null; goto('partners'); }, emptyText: '조건에 맞는 대리상이 없습니다'}))));
   }
+  renderDiscoveryPanel(main, pr, prio, weights, co);
   const wBox = el('div', {class: 'chart'});
   bottom.append(panel('우리가 과거에 중시한 선정 기준', '05 / LEARNED WEIGHTS', '선정 이력의 기준별 평균 점수(1–5)를 선정 건과 탈락 건으로 비교해 차이를 가중치로 환산(하한 0.1, 합계 1). 이력이 쌓일수록 자동 갱신됩니다.',
     el('div', {class: 'legend'}, el('span', {}, el('i', {class: 'sw', style: 'background: var(--teal)'}), '선정 평균'), el('span', {}, el('i', {class: 'sw', style: 'background: var(--pink)'}), '탈락 평균')), wBox,
@@ -2013,11 +2101,52 @@ function renderRecoBody() {
   bottom.append(panel('산식과 조정 규칙', '06 / METHOD', '', el('div', {class: 'formula'},
     el('b', {}, '국가 우선순위'), ' = 0.4 × 수요 + 0.3 × 파트너 준비도 + 0.3 × 진출 단계 준비도. 수요 = 0.6 × min(1, 유효리드/5) + 0.4 × min(1, Pipeline/5억). 파트너 준비도 = 1순위 파트너 점수/100. 진출 단계 준비도 = STEP10 이상 1.0 · STEP8–9 0.75 · STEP5–7 0.5 · STEP3–4 0.35 · STEP1–2 0.2 · 기록 없음 0.', el('br'),
     el('b', {}, '파트너 종합'), ' = 100 × (0.6 × 기준점수 + 0.15 × 실적 + 0.1 × 접점 + 0.15 × 리드 연결) + 이력 조정.', el('br'),
-    el('b', {}, '기준점수'), ' = Σ 가중치 × 기준값. 제품적합성 = 0.6 × 카테고리 일치 + 0.4 × 타깃 채널 일치율. 나머지 다섯 역량(1–5)은 0–1로 환산.', el('br'),
+    el('b', {}, '기준점수'), ' = Σ 가중치 × 기준값. 제품적합성 = 0.6 × 카테고리 일치(같은 제품군만 취급하면 0.5) + 0.4 × 타깃 채널 일치율. 나머지 다섯 역량(1–5)은 0–1로 환산.', el('br'),
     el('b', {}, '실적'), ' = 0.5 × min(1, 거래연수/5) + 0.5 × 매출 성장 구간(2025 vs 2024: +10% 이상 1, 0% 이상 0.6, 역성장 0.3, 비교 불가 0.5). 기존 대리상만.', el('br'),
     el('b', {}, '접점'), ' = 0.5 × min(1, D2D 참석/3) + 0.5 × 최근 접촉(90일 1 · 180일 0.6 · 365일 0.3).  ', el('b', {}, '리드 연결'), ' = 0.6 × min(1, 연결 주문/2) + 0.4 × min(1, 연결 유효리드/5).', el('br'),
     el('b', {}, '이력 조정'), ' = 같은 카테고리 선정 +10 · 다른 제품 선정 +5 · 선정 후 12개월 미달 −5 · 3년 내 탈락 −15 · 계약종료 −25. 같은 국가에 해당 카테고리 독점 대리상이 있으면 "독점 충돌 검토" 표시.')));
   weightsChart(wBox, weights);
+}
+// 신규 후보 발굴: countries where nobody adequate exists → our criteria as a brief + AI query, and the answer pasted back as 잠재 대리상
+function renderDiscoveryPanel(main, pr, prio, weights, co) {
+  const need = prio.filter((p) => p.coverage !== 'covered' || !p.top || p.top.score < 50);
+  const pick = co && need.some((p) => p.country === co) ? co : (ui.discCountry && need.some((p) => p.country === ui.discCountry) ? ui.discCountry : (need[0] ? need[0].country : ''));
+  const sel = el('select', {'aria-label': '발굴 국가'}, ...need.map((p) => new Option(`${p.country} — ${p.coverage === 'gap' ? '대리상 없음' : p.coverage === 'candidate' ? '후보만' : '1순위 점수 ' + (p.top ? p.top.score : 0)}${p.valid ? ' · 유효리드 ' + p.valid : ''}${p.step ? ' · ' + p.step_name : ''}`, p.country)));
+  if (pick) sel.value = pick;
+  const body = el('div');
+  const draw = () => {
+    clear(body); const country = sel.value; if (!country) { body.append(el('p', {class: 'note'}, '모든 평가 국가에 50점 이상의 대리상이 있습니다. 국가를 추가로 보려면 06 탭에서 전략툴 파일을 올리거나 D2D 참석자를 등록하세요.')); return; }
+    ui.discCountry = country;
+    const prof = idealProfile(pr, country, weights); const prompt = discoveryPrompt(pr, country, prof);
+    const kv = (k, v) => el('div', {}, el('span', {class: 'k'}, k), v || '—');
+    const profBox = el('div', {class: 'kv'},
+      kv('찾는 업체', `${prof.category}${prof.line ? ' · ' + prof.line : ''} 취급 · 채널 ${prof.channels.join('/') || '미지정'}`),
+      kv('우리가 중시하는 기준', prof.topW.map((w) => `${w.label} ${w.weight}`).join(' · ') + (weights[0] && /이력 부족/.test(weights[0].basis) ? ' (이력 부족 → 균등)' : '')),
+      kv('과거 선정 이유', prof.selectedReasons.join(' / ') || '선정 이력 없음'), kv('피할 것 (탈락 이유)', prof.rejectedReasons.join(' / ') || '탈락 이력 없음'),
+      kv('이 나라 상황', [prof.launch ? prof.launch.step_name + (prof.launch.partner ? ' · 거래처 ' + prof.launch.partner : '') : '진출 행 없음', prof.demand.valid ? `유효리드 ${prof.demand.valid}건 · ${won(prof.demand.pipeline)}` : '유효리드 없음', prof.exclusive.length ? '독점 주의: ' + prof.exclusive.join(', ') : ''].filter(Boolean).join(' · ')),
+      kv('이미 아는 업체', prof.existing.join(', ') || '없음'));
+    const ta = el('textarea', {rows: 7, readonly: true, 'aria-label': 'AI 질의문', style: 'width: 100%; font-family: inherit; font-size: 12.5px'}); ta.value = prompt;
+    const paste = el('textarea', {rows: 5, placeholder: 'AI 답변의 표(또는 회사명 | 도시 | 분야 | 채널 | 웹사이트 | 근거 형식의 줄)를 그대로 붙여넣으세요', 'aria-label': '후보 붙여넣기', style: 'width: 100%; font-family: inherit; font-size: 12.5px'});
+    const prev = el('div');
+    const preview = () => {
+      clear(prev); const cands = parseCandidates(paste.value); if (!cands.length) { prev.append(el('p', {class: 'note'}, '읽을 수 있는 행이 없습니다. 첫 줄이 머리글(회사명 …)이거나 각 줄이 「회사명 | 도시 | 분야 | 채널 | 웹사이트 | 근거」 순이어야 합니다.')); return; }
+      const dup = (c) => !!findPartnerByName(c.partner_name, country) || !!findPartnerByName(c.partner_name, '');
+      const fresh = cands.filter((c) => !dup(c));
+      prev.append(el('div', {class: 'tablebox'}, table([{k: 'partner_name', l: '회사명', b: 1}, {k: 'city', l: '도시', nw: 1, sec: 1}, {k: 'focus', l: '취급 분야', ell: 1}, {k: 'channel', l: '채널', sec: 1, ell: 1}, {k: 'website', l: '웹사이트', ell: 1, sec: 1}, {k: 'notes', l: '근거', ell: 1}, {k: '_', l: '', nw: 1, render: (c) => (dup(c) ? el('span', {class: 'chip warn'}, '이미 등록') : el('span', {class: 'chip ok'}, '신규'))}], cands, {emptyText: ''})),
+        el('div', {class: 'actions'}, el('button', {type: 'button', class: 'primary small', disabled: ui.readOnly || !fresh.length || null, onclick: async () => {
+          const today = todayISO(); const taken = []; const docs = fresh.map((c) => { const id = nextPartnerId(teamFor(country, pr.category, ''), taken); taken.push(id); const ch = CODES.channel.filter((x) => norm(c.channel).includes(norm(x))).join(';');
+            return {partner_id: id, partner_name: c.partner_name, country, city: c.city || '', status: '잠재 대리상', partner_type: '', team: teamFor(country, pr.category, ''), owner: '', categories: pr.category, channels: ch, our_products: '', website: c.website || '', contact_name: '', contact_email: /@/.test(c.contact || '') ? c.contact : '', notes: `AI 발굴 후보 (${today}) · ${productLabel(pr) || pr.product_name}${c.focus ? ' · 취급: ' + c.focus : ''}${c.notes ? ' · 근거: ' + c.notes : ''}`, source: '리서치', contacts: [], prices: [], contracts: [], updated_at: today, updated_by: ui.meName || 'AI 발굴'}; });
+          if (await tryWrite(() => store.putMany('partners', docs, (d) => d.partner_id), `${docs.length}곳을 잠재 대리상으로 등록했습니다 — 02 탭에서 평가 점수를 채우면 추천 순위에 오릅니다`)) { paste.value = ''; clear(prev); renderRecoBody(); }
+        }}, `잠재 대리상으로 등록 (${fresh.length}곳)`), el('span', {class: 'note'}, dup(cands[0]) || cands.length !== fresh.length ? `이미 등록된 ${cands.length - fresh.length}곳은 건너뜁니다` : '등록 후 02 탭에서 담당자·평가(1–5)를 채우세요')));
+    };
+    paste.addEventListener('input', preview);
+    body.append(el('div', {class: 'g2'},
+      el('div', {class: 'sub-panel'}, el('h3', {}, `${country} · 어떤 업체를 찾아야 하나 (우리 기준으로 자동 작성)`), profBox),
+      el('div', {class: 'sub-panel'}, el('h3', {}, 'AI에게 물을 질의문 — 복사해서 Claude·ChatGPT 등에 붙여넣기'), ta, el('div', {class: 'actions'}, el('button', {type: 'button', class: 'small', onclick: async () => { try { await navigator.clipboard.writeText(ta.value); toast('질의문을 복사했습니다'); } catch (e) { ta.select(); toast('선택된 내용을 Ctrl+C로 복사하세요'); } }}, '질의문 복사')))),
+      el('div', {class: 'sub-panel', style: 'margin-top: 10px'}, el('h3', {}, 'AI 답변 붙여넣기 → 잠재 대리상으로 등록'), paste, prev));
+  };
+  sel.addEventListener('change', draw); draw();
+  main.append(panel('신규 후보 발굴 — 대리상이 없거나 부족한 나라', '05 / NEW CANDIDATES', `${need.length}개국이 대상입니다(대리상 없음 · 후보만 · 1순위 50점 미만). 우리 선정 기준으로 찾을 업체의 프로필과 AI 질의문을 만들고, 답을 붙여넣으면 잠재 대리상으로 등록되어 바로 순위에 들어갑니다.`, el('div', {class: 'toolbar'}, el('span', {class: 'lbl'}, '국가'), sel), body));
 }
 function renderSimForm() {
   const box = $('#sim-form'); clear(box);
