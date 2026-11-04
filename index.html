@@ -56,7 +56,7 @@ details.fold { border: 1px solid var(--line); border-radius: 6px; padding: 0 12p
 .stars { display: flex; gap: 2px; } .star { width: 40px; height: 40px; border: 0; background: none; font-size: 26px; line-height: 1; color: var(--line-2); cursor: pointer; padding: 0; } .star.on { color: var(--warn); }
 .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
 .btn { min-height: 46px; padding: 0 20px; border-radius: 6px; border: 1px solid transparent; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
-.btn.primary { background: var(--accent); color: #fff; min-height: 50px; font-size: 16px; padding: 0 28px; box-shadow: 0 1px 2px rgba(0,0,0,.15); } .btn.primary:disabled { opacity: .55; cursor: default; box-shadow: none; }
+.btn.primary { background: var(--accent); color: #fff; min-height: 50px; font-size: 16px; padding: 0 28px; box-shadow: 0 1px 2px rgba(0,0,0,.15); } .btn.primary:disabled { background: #9aa6b8; color: #fff; opacity: 1; cursor: default; box-shadow: none; }
 .sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--panel); border-top: 2px solid var(--accent); box-shadow: 0 -6px 18px rgba(0,0,0,.10); padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .sticky .in { max-width: 860px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
 .sticky .what { font-size: 14px; color: var(--muted); min-width: 0; line-height: 1.35; } .sticky .what b { color: var(--fg); } .sticky .what .bad { color: var(--bad); }
@@ -790,7 +790,7 @@ const FREE = (() => {
   drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); readFiles(e.dataTransfer.files); });
   // method picker: show only the chosen method (①②③); 「방법 변경」 brings the picker back. Nothing is hidden until a choice is made.
   const mainEl = document.querySelector('main');
-  const setMode = (m) => { if (m) mainEl.dataset.mode = m; else delete mainEl.dataset.mode; document.querySelectorAll('.pick-c').forEach((a) => { if (a.dataset.pick === m) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); };
+  const setMode = (m) => { if (m) mainEl.dataset.mode = m; else delete mainEl.dataset.mode; document.querySelectorAll('.pick-c').forEach((a) => { if (a.dataset.pick === m) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); if (window.__updateSticky) window.__updateSticky(); };
   document.querySelectorAll('.pick-c').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); setMode(a.dataset.pick); const t = document.querySelector(a.getAttribute('href')); if (t) t.scrollIntoView({block: 'start', behavior: 'smooth'}); }));
   document.querySelectorAll('[data-chg]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); setMode(''); $('#top').scrollIntoView({block: 'start', behavior: 'smooth'}); }));
   window.__setMode = setMode;
@@ -812,12 +812,17 @@ const FREE = (() => {
       sticky.hidden = false; stickyBtn.dataset.mode = 'form';
       stickyWhat.innerHTML = `직접 입력 → <b>${esc($('#f-name').value.trim() || '업체명 미입력')}</b>${countries.length ? ` · ${esc(countries[0])}${countries.length > 1 ? ' 외 ' + (countries.length - 1) : ''}` : ''}`;
       stickyBtn.textContent = '제출'; stickyBtn.disabled = busy;
-    } else { sticky.hidden = true; }
+    } else {
+      sticky.hidden = false; stickyBtn.dataset.mode = 'none';
+      const m = mainEl.dataset.mode;
+      stickyWhat.innerHTML = m === '1' ? '① 파일 업로드 → <b>엑셀을 올리면</b> 이 「제출」 버튼이 켜집니다' : m === '2' ? '② 붙여넣기 → <b>표를 붙여넣으면</b> 이 「제출」 버튼이 켜집니다' : m === '3' ? '③ 직접 입력 → <b>업체명·국가를 입력하면</b> 이 「제출」 버튼이 켜집니다' : '<b>제출 버튼은 여기 있습니다</b> — ① 파일을 올리거나 ② 표를 붙여넣거나 ③ 직접 입력하면 켜집니다';
+      stickyBtn.textContent = '제출'; stickyBtn.disabled = true;
+    }
     document.body.classList.toggle('has-sticky', !sticky.hidden);
   }
-  stickyBtn.addEventListener('click', () => { if (stickyBtn.dataset.mode === 'file') { if (bulkSubmit && $('#btn-bulk')) bulkSubmit(); else updateSticky(); } else { $('#form').requestSubmit ? $('#form').requestSubmit() : $('#form').dispatchEvent(new Event('submit', {cancelable: true})); } });
+  stickyBtn.addEventListener('click', () => { if (stickyBtn.dataset.mode === 'none') return; if (stickyBtn.dataset.mode === 'file') { if (bulkSubmit && $('#btn-bulk')) bulkSubmit(); else updateSticky(); } else { $('#form').requestSubmit ? $('#form').requestSubmit() : $('#form').dispatchEvent(new Event('submit', {cancelable: true})); } });
   $('#form').addEventListener('input', updateSticky); $('#form').addEventListener('change', updateSticky); $('#form').addEventListener('click', (e) => { if (e.target.closest('.chip, .seg button, .star')) updateSticky(); });
-  window.__updateSticky = updateSticky;
+  window.__updateSticky = updateSticky; updateSticky();
   $('#form').addEventListener('submit', async (ev) => {
     ev.preventDefault(); if (busy) return;
     const who = $('#who-name').value.trim(), team = $('#who-team').value;
