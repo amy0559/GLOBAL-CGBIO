@@ -122,9 +122,10 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
     <div class="steps" data-m="1"><span><i>1</i>파일 업로드</span><span><i>2</i>열 인식 결과 확인 (잘못 인식된 열은 드롭다운으로 변경)</span><span><i>3</i>제출 → CRM 자동 반영</span></div>
     <label class="drop" id="drop" data-m="1"><b>엑셀 파일을 끌어다 놓거나 클릭하여 선택</b><small>.xlsx · .xls · .csv — 여러 파일, 여러 시트 가능</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
     <div class="tplrow" data-m="1"><div><b>정식 양식</b><small>19개 항목 · 드롭다운 · 작성 예시 시트 포함. 양식에 작성 후 위에 업로드하십시오.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 내려받기 (.xlsx)</a></div>
-    <div class="tplrow" data-m="1"><div><b>D2D 참석자 명단 양식</b><small>행사일 · 프로그램 · 행사명 · 참석자명 · 국가 · 관심제품 · 모객 대리상 (영문 머리글도 인식)</small></div><a class="btn tpl" id="btn-template-d2d" href="https://amy0559.github.io/GLOBAL-CGBIO/d2d_attendees.xlsx" download>참석자 양식 내려받기 (.xlsx)</a></div>
+    <div class="tplrow" data-m="1"><div><b>D2D 참석자 명단 양식</b><small>7칸 — 참석자명 · 국가 · 이메일 · 관심제품 · D2D 프로그램 · 행사일 · 모객 대리상 (영문 머리글도 인식, 그 외 칸은 선택)</small></div><a class="btn tpl" id="btn-template-d2d" href="https://amy0559.github.io/GLOBAL-CGBIO/d2d_attendees.xlsx" download>참석자 양식 내려받기 (.xlsx)</a></div>
     <h3 class="or" id="card-paste" data-m="2"><span class="n">2</span>복사·붙여넣기 <span class="muted-s">— 파일 대신 엑셀 범위를 붙여넣는 경우</span><a href="#top" class="chg" data-chg>방법 변경</a></h3>
     <label class="f" data-m="2">엑셀에서 <b>머리글 행을 포함하여</b> 범위를 선택해 복사(Ctrl+C)한 뒤 아래 칸에 붙여넣기(Ctrl+V)<small>파일 업로드와 동일하게 처리됩니다. ①을 진행하셨다면 생략하십시오.</small><textarea id="paste" rows="3" placeholder="국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
+    <div class="msg" id="prev-msg" role="alert" style="margin-top:10px"></div>
     <div id="prev"></div>
     <div class="two" style="margin-top:12px"><button class="btn ghost" id="btn-cols" type="button">인식 가능한 열 이름 보기</button><span class="muted-s">국가·담당자·이메일·연락처·주소·품목·단가·계약·MOQ 등 한글·영문 열 이름</span></div>
     <div id="cols" class="cols" hidden style="margin-top:10px"></div>
@@ -591,14 +592,17 @@ const FREE = (() => {
   const whoMsg = (t) => { const box = $('#who-msg'); if (!box) return; box.textContent = t || ''; box.className = 'msg' + (t ? ' err' : ''); };
   $('#who-name').addEventListener('input', () => whoMsg('')); $('#who-team').addEventListener('change', () => whoMsg(''));
   const msg = (kind, text) => { const m = $('#msg'); m.className = 'msg' + (kind ? ' ' + kind : ''); m.textContent = text || ''; };
+  // what the salesperson reads when a submit fails: plain Korean, what to do next, and that nothing typed was lost
+  const humanErr = (e) => { const t = String(e && e.message ? e.message : e || ''); if (/failed to fetch|networkerror|load failed|network request failed|aborted|timeout|TypeError/i.test(t) || (e && e.name === 'TypeError')) return '서버에 연결하지 못했습니다. 인터넷 연결(사내망·VPN)을 확인한 뒤 「제출」을 다시 눌러 주십시오. 입력한 내용은 그대로 남아 있습니다.'; const m = t.match(/^HTTP (\d+)$/); if (m) return `서버가 요청을 받지 못했습니다 (코드 ${m[1]}). 잠시 후 「제출」을 다시 눌러 주십시오. 계속되면 글로벌사업부에 알려 주십시오.`; return `제출하지 못했습니다 (${t.slice(0, 120)}). 잠시 후 「제출」을 다시 눌러 주십시오. 계속되면 글로벌사업부에 알려 주십시오.`; };
   const resetForm = () => { $('#form').reset(); document.querySelectorAll('.chip').forEach((b) => { b.setAttribute('aria-pressed', 'false'); delete b.dataset.auto; }); defaultStatus(); stars.dataset.value = ''; $('#autofill').value = ''; [...stars.children].forEach((c) => c.classList.remove('on')); countries.length = 0; drawTokens(); contactsBox.innerHTML = ''; addContactRow(); $('#f-date').value = today(); $('#f-owner').value = $('#who-name').value.trim(); delete $('#f-owner').dataset.touched; ['#f-ceo-name', '#f-ceo-email', '#f-ceo-phone'].forEach((id) => { $(id).value = ''; }); msg('', ''); if (window.__updateSticky) window.__updateSticky(); };
   $('#btn-reset').addEventListener('click', resetForm);
   const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? String(iso).slice(0, 16) : `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
   // ---------- my submissions ----------
   const localHist = () => { try { return JSON.parse(get('gp_history') || '[]'); } catch (e) { return []; } };
-  const renderHist = (rows) => {
+  const renderHist = (rows, offline) => {
     const box = $('#hist');
-    if (!rows.length) { box.innerHTML = '<p class="empty">아직 제출한 내역이 없습니다.</p>'; return; }
+    if (!rows.length) { box.innerHTML = offline ? '<p class="empty">제출 내역을 불러오지 못했습니다 — 인터넷 연결을 확인한 뒤 「새로고침」을 눌러 주십시오.</p>' : '<p class="empty">아직 제출한 내역이 없습니다.</p>'; return; }
+    if (offline) rows = rows.slice();
     box.innerHTML = '<div class="tbox"><table><thead><tr><th>시각</th><th>내용</th><th>상태</th></tr></thead><tbody>' + rows.map((r) => { const rr = r.relay_result || null; const extra = rr && (rr.added !== undefined || rr.inserted !== undefined) ? ` <small>신규 ${rr.added ?? rr.inserted ?? 0} · 갱신 ${rr.updated ?? 0}</small>` : ''; return `<tr><td style="white-space:nowrap">${fmt(r.created_at)}</td><td>${esc(r.summary)}</td><td>${r.relayed_at ? '<span class="tag done">반영됨</span>' : '<span class="tag wait">접수됨</span>'}${extra}</td></tr>`; }).join('') + '</tbody></table></div>';
   };
   // submitter names from the roster the HQ keeps (names + teams only): exact names make the 미제출 count reliable, and the team fills itself
@@ -612,8 +616,8 @@ const FREE = (() => {
   window.__setRoster = (rows) => { ROSTER = rows; $('#who-list').innerHTML = rows.map((x) => `<option value="${esc(x.name)}">${esc(x.team || '')}</option>`).join(''); syncTeam(); };
   loadRoster();
   async function refresh() {
-    try { const r = await fetch(SUPA + '/rest/v1/rpc/my_submissions', {method: 'POST', headers: H, body: JSON.stringify({p_client_id: cid})}); if (r.ok) { const rows = await r.json(); if (Array.isArray(rows)) { renderHist(rows); return; } } } catch (e) { /* offline */ }
-    renderHist(localHist());
+    try { const r = await fetch(SUPA + '/rest/v1/rpc/my_submissions', {method: 'POST', headers: H, body: JSON.stringify({p_client_id: cid})}); if (r.ok) { const rows = await r.json(); if (Array.isArray(rows)) { renderHist(rows, false); return; } } } catch (e) { /* offline */ }
+    renderHist(localHist(), true);
   }
   $('#refresh').addEventListener('click', refresh);
   refresh();
@@ -696,11 +700,13 @@ const FREE = (() => {
   }
   window.__submitParsed = submitParsed;
   const prevBox = $('#prev');
-  const msgP = (kind, text) => { prevBox.innerHTML = `<div class="msg ${kind}" style="display:block">${esc(text)}</div>`; };
+  const msgP = (kind, text) => { const m = $('#prev-msg'); m.className = 'msg' + (kind ? ' ' + kind : ''); m.textContent = text || ''; if (kind && text) m.scrollIntoView({block: 'center', behavior: 'smooth'}); };
+  const whatLabel = () => { const n = parsedFiles.reduce((s, f) => s + f.rows.length, 0), nA = parsedFiles.reduce((s, f) => s + (f.att || []).length, 0); return [n ? `대리상 ${n}건` : '', nA ? `D2D 참석자 ${nA}행` : ''].filter(Boolean).join(' · ') || '대리상 0건'; };
   let parsedFiles = [], rawFiles = [], overrides = {}, bulkSubmit = null;
   const LABEL = FREE.LABELS;
   function renderPreview() {
     if (!parsedFiles.length) { prevBox.innerHTML = ''; bulkSubmit = null; updateSticky(); return; }
+    msgP('', '');
     const errors = parsedFiles.flatMap((f) => f.errors), warnings = parsedFiles.flatMap((f) => f.warnings), notices = parsedFiles.flatMap((f) => f.notices), n = parsedFiles.reduce((s, f) => s + f.rows.length, 0), partial = parsedFiles.some((f) => f.partial);
     const skipped = parsedFiles.flatMap((f) => f.skipped.map((s) => `${f.name} · ${s}`));
     const nA = parsedFiles.reduce((s, f) => s + (f.att || []).length, 0), nAS = parsedFiles.reduce((s, f) => s + (f.att || []).filter((r) => r.source_partner).length, 0);
@@ -711,10 +717,10 @@ const FREE = (() => {
     const sample = parsedFiles.flatMap((f) => f.rows).slice(0, 6);
     const rowTable = sample.length ? `<div><h3>읽은 내용 (처음 ${sample.length}건)</h3><div class="tbox"><table><thead><tr><th>업체명</th><th>국가</th><th>구분</th><th>담당자</th><th>품목</th><th>계약 만료</th></tr></thead><tbody>${sample.map((r) => { const cov = FREE.coverageOf(r); return `<tr><td><b>${esc(r.partner_name)}</b>${r.owner ? `<br><small>${esc(r.owner)}</small>` : ''}</td><td>${esc(cov[0] || '')}${cov.length > 1 ? ` <small>+${cov.length - 1}</small>` : ''}${r.coverage_note ? `<br><small class="warn">? ${esc(r.coverage_note)}</small>` : ''}</td><td>${esc(r.status || (noStatus ? '(선택값)' : ''))}${r.partner_type ? `<br><small>${esc(r.partner_type)}</small>` : ''}</td><td>${(r.contacts || []).length}명${(r.contacts || [])[0] ? `<br><small>${esc((r.contacts[0].name || '') + (r.contacts[0].email ? ' · ' + r.contacts[0].email : ''))}</small>` : ''}</td><td>${esc(r.our_products || r.products_other || '')}${(r.prices || []).filter((x) => x.price !== null).length ? `<br><small>단가 ${(r.prices || []).filter((x) => x.price !== null).length}건</small>` : ''}</td><td>${esc((r.contracts || [])[0] ? (r.contracts[0].end || '—') : '')}</td></tr>`; }).join('')}</tbody></table></div></div>` : '';
     const attSample = parsedFiles.flatMap((f) => f.att || []).slice(0, 6);
-    const attTable = attSample.length ? `<div><h3>D2D 참석자 (처음 ${attSample.length}행)</h3><div class="tbox"><table><thead><tr><th>참석자</th><th>국가</th><th>프로그램 · 행사</th><th>행사일</th><th>관심제품</th><th>모객 대리상</th></tr></thead><tbody>${attSample.map((r) => `<tr><td><b>${esc(r.person)}</b></td><td>${esc(r.country || '')}</td><td>${esc([r.program, r.event].filter(Boolean).join(' · '))}</td><td>${esc(r.date)}</td><td>${esc(r.product || '')}</td><td>${esc(r.source_partner || r.partner_id || '')}</td></tr>`).join('')}</tbody></table></div></div>` : '';
+    const attTable = attSample.length ? `<div><h3>D2D 참석자 (처음 ${attSample.length}행)</h3><div class="tbox"><table><thead><tr><th>참석자</th><th>국가</th><th>프로그램 · 행사</th><th>행사일</th><th>관심제품</th><th>모객 대리상</th></tr></thead><tbody>${attSample.map((r) => `<tr><td><b>${esc(r.person)}</b></td><td>${esc(r.country || '')}</td><td>${esc([r.program, r.event].filter(Boolean).join(' · '))}</td><td style="white-space:nowrap">${esc(r.date)}</td><td>${esc(r.product || '')}</td><td>${esc(r.source_partner || r.partner_id || '')}</td></tr>`).join('')}</tbody></table></div></div>` : '';
     const canSubmit = !errors.length && (n > 0 || nA > 0);
     const actions = (id) => `<div class="actions"><button class="btn primary" id="${id}" type="button" ${canSubmit ? '' : 'disabled'}>제출 (${what}${partial ? ' · 보완 필요 항목 있음' : ''})</button><button class="btn ghost" data-cancel type="button">취소</button>${!canSubmit ? `<span class="muted-s">${n || nA ? '오류를 수정한 뒤 제출할 수 있습니다' : '읽을 수 있는 대리상·참석자 행이 없습니다'}</span>` : ''}</div>`;
-    prevBox.innerHTML = `<div class="prev"><div class="stat"><span><b>${n}</b>대리상</span>${nA ? `<span><b>${nA}</b>D2D 참석자${nAS ? ` <small>(모객 ${nAS})</small>` : ''}</span>` : ''}<span><b>${nC}</b>개국</span><span><b>${nP}</b>담당자</span>${nPr ? `<span><b>${nPr}</b>단가</span>` : ''}${nK ? `<span><b>${nK}</b>계약</span>` : ''}<span>${parsedFiles.map((f) => esc(f.name) + ' ' + f.rows.length + '행').join(' · ')}</span></div>` +
+    prevBox.innerHTML = `<div class="prev"><div class="stat"><span><b>${n}</b>대리상</span>${nA ? `<span><b>${nA}</b>D2D 참석자${nAS ? ` <small>(모객 ${nAS})</small>` : ''}</span>` : ''}<span><b>${nC}</b>개국</span><span><b>${nP}</b>담당자</span>${nPr ? `<span><b>${nPr}</b>단가</span>` : ''}${nK ? `<span><b>${nK}</b>계약</span>` : ''}<span>${parsedFiles.map((f) => esc(f.name) + ' ' + ([f.rows.length ? `대리상 ${f.rows.length}행` : '', (f.att || []).length ? `D2D ${f.att.length}행` : ''].filter(Boolean).join(' · ') || '0행')).join(' · ')}</span></div>` +
       actions('btn-bulk') +
       (notices.length ? `<div class="banner">${notices.map((t) => '<div>' + esc(t) + '</div>').join('')}</div>` : '') +
       (noStatus ? `<div class="banner" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><span>업체 구분 열이 없는 파일입니다. 이 업체들의 구분:</span><select id="bulk-status" style="width:auto;min-height:36px;padding:4px 8px"><option>기존 대리상</option><option>후보 대리상</option><option>잠재 대리상</option></select><span>으로 제출합니다.</span></div>` : '') +
@@ -730,7 +736,13 @@ const FREE = (() => {
       reparse();
     }));
     prevBox.querySelectorAll('[data-cancel]').forEach((c) => c.addEventListener('click', () => { parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); }));
-    const bulk = async () => { const b = $('#btn-bulk'); const b2 = $('#btn-bulk-2'); if (b2) b2.disabled = true; b.disabled = true; b.textContent = '보내는 중…'; try { const k = await submitParsed(parsedFiles); if (k === false) { b.disabled = false; b.textContent = `제출 (대리상 ${parsedFiles.reduce((s, f) => s + f.rows.length, 0)}건)`; if (b2) { b2.disabled = false; b2.textContent = b.textContent; } updateSticky(); return; } parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); toast('제출되었습니다. 글로벌사업부 CRM에 자동 반영됩니다.'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); } catch (e) { b.disabled = false; b.textContent = '제출'; if (b2) b2.disabled = false; msgP('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e)); } };
+    let sending = false;
+    const bulk = async () => {
+      if (sending) return; const b = $('#btn-bulk'), b2 = $('#btn-bulk-2'); const label = `제출 (${whatLabel()})`; const set = (dis, txt) => { for (const x of [b, b2]) if (x) { x.disabled = dis; x.textContent = txt; } stickyBtn.disabled = dis; if (txt !== label) stickyBtn.textContent = txt; };
+      sending = true; set(true, '보내는 중…'); msgP('', '');
+      try { const k = await submitParsed(parsedFiles); if (k === false) { sending = false; set(false, label); updateSticky(); return; } sending = false; parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); toast('제출되었습니다. 글로벌사업부 CRM에 자동 반영됩니다.'); msgP('ok', `엑셀 ${k}건 묶음을 제출했습니다. 아래 내역에서 반영 상태를 볼 수 있습니다.`); refresh(); }
+      catch (e) { sending = false; set(false, label); updateSticky(); msgP('err', humanErr(e)); } // the rows, tables and buttons stay: the person fixes the connection and presses 제출 again
+    };
     $('#btn-bulk').addEventListener('click', bulk); const b2 = $('#btn-bulk-2'); if (b2) b2.addEventListener('click', bulk);
     bulkSubmit = bulk; updateSticky();
   }
@@ -803,7 +815,7 @@ const FREE = (() => {
     } else { sticky.hidden = true; }
     document.body.classList.toggle('has-sticky', !sticky.hidden);
   }
-  stickyBtn.addEventListener('click', () => { if (stickyBtn.dataset.mode === 'file') { if (bulkSubmit) bulkSubmit(); } else { $('#form').requestSubmit ? $('#form').requestSubmit() : $('#form').dispatchEvent(new Event('submit', {cancelable: true})); } });
+  stickyBtn.addEventListener('click', () => { if (stickyBtn.dataset.mode === 'file') { if (bulkSubmit && $('#btn-bulk')) bulkSubmit(); else updateSticky(); } else { $('#form').requestSubmit ? $('#form').requestSubmit() : $('#form').dispatchEvent(new Event('submit', {cancelable: true})); } });
   $('#form').addEventListener('input', updateSticky); $('#form').addEventListener('change', updateSticky); $('#form').addEventListener('click', (e) => { if (e.target.closest('.chip, .seg button, .star')) updateSticky(); });
   window.__updateSticky = updateSticky;
   $('#form').addEventListener('submit', async (ev) => {
@@ -839,7 +851,7 @@ const FREE = (() => {
       toast('제출되었습니다. 글로벌사업부 CRM에 자동 반영됩니다.');
       const keep = {who, team}; resetForm(); msg('ok', `제출 완료: ${row.summary}. 계속해서 다른 업체를 입력할 수 있습니다.`); $('#who-name').value = keep.who; $('#who-team').value = keep.team; $('#f-name').focus();
       refresh();
-    } catch (e) { msg('err', '제출하지 못했습니다: ' + (e && e.message ? e.message : e) + ' — 잠시 후 다시 시도해 주십시오.'); }
+    } catch (e) { msg('err', humanErr(e)); }
     finally { busy = false; $('#btn-submit').disabled = false; $('#btn-submit').textContent = '제출'; updateSticky(); }
   });
 })();
