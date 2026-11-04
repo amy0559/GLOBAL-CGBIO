@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root { --bg: #eceff3; --panel: #ffffff; --panel-2: #f3f5f8; --fg: #0f1419; --muted: #475061; --line: #d8dde5; --line-2: #b6bfcb; --accent: #1a56db; --accent-soft: #e3ebfb; --ok: #15803d; --ok-soft: #e1f3e8; --warn: #a15c07; --warn-soft: #fbefd8; --bad: #b42318; --bad-soft: #fbe4e1; --radius: 8px; --head: #141a23; --head-ink: #ffffff; --head-dim: #aab4c3; }
+:root { --bg: #edf1f7; --panel: #ffffff; --panel-2: #f1f5fb; --fg: #0d1b2a; --muted: #4a5a70; --line: #d6deea; --line-2: #b3c0d3; --accent: #1e5eff; --accent-soft: #e2ebff; --ok: #0e7c3a; --ok-soft: #dcf3e4; --warn: #9a5a00; --warn-soft: #fff0d6; --bad: #c62828; --bad-soft: #fde3e1; --radius: 8px; --head: #0f2a5a; --head-ink: #ffffff; --head-dim: #b8c7e6; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; background: var(--bg); color: var(--fg); word-break: keep-all; overflow-wrap: anywhere; font: 15px/1.5 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif; -webkit-text-size-adjust: 100%; }
@@ -65,7 +65,7 @@ body.has-sticky main { padding-bottom: calc(132px + env(safe-area-inset-bottom, 
 .btn.ghost { background: transparent; color: var(--accent); border-color: var(--accent); }
 .btn.dark { background: var(--fg); color: #fff; }
 .msg { border-radius: 6px; padding: 10px 12px; font-size: 14px; display: none; } .msg.err { display: block; background: var(--bad-soft); color: var(--bad); } .msg.ok { display: block; background: var(--ok-soft); color: var(--ok); }
-table { width: 100%; border-collapse: collapse; font-size: 13.5px; } th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--panel-2); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; } th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { background: var(--accent-soft); color: #1b3f8f; font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--panel-2); }
 .tbox { overflow: auto; border: 1px solid var(--line); border-radius: 6px; } .tbox td:first-child { white-space: nowrap; }
 @media (max-width: 640px) { .tbox table { width: max-content; min-width: 100%; max-width: 230vw; } .tbox { box-shadow: inset -28px 0 18px -18px rgba(0, 0, 0, .18); } .tbox::after { content: '← 옆으로 밀어서 보기'; display: block; font-size: 12px; color: var(--muted); padding: 4px 8px; } }
 .tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; } .tag.wait { background: var(--warn-soft); color: var(--warn); } .tag.done { background: var(--ok-soft); color: var(--ok); }

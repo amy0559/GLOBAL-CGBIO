@@ -1,4 +1,5 @@
 <title>글로벌 파트너 & 리드 CRM</title>
+<script>document.documentElement.dataset.skin = "vivid"; document.documentElement.dataset.theme = "light";</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Barlow:wght@500;600;700&display=swap">
 <style>
@@ -34,6 +35,22 @@
   --blue: #9fb0c6; --pink: #8f9aab; --purple: #98a2b0; --blue-soft: #222a35; --pink-soft: #222a35; --purple-soft: #222a35;
   color-scheme: dark;
 }
+/* ---- skins (data-skin on <html>, set by the first script): "vivid" = light infographic (the default the client chose), "dark" = executive dark. ---- */
+:root[data-skin="vivid"] { --bg: #edf1f7; --panel: #ffffff; --panel-2: #f1f5fb; --fg: #0d1b2a; --muted: #4a5a70; --line: #d6deea; --line-2: #b3c0d3; --accent: #1e5eff; --accent-soft: #e2ebff; --ok: #0e7c3a; --ok-soft: #dcf3e4; --warn: #9a5a00; --warn-soft: #fff0d6; --bad: #c62828; --bad-soft: #fde3e1; --head: #0f2a5a; --head-dim: #b8c7e6; --shadow: 0 2px 6px rgba(15, 42, 90, .08); }
+:root[data-skin="vivid"] .kpi { background: var(--accent-soft); border-color: transparent; } :root[data-skin="vivid"] .kpi .v { color: var(--accent); } :root[data-skin="vivid"] .kpi .l, :root[data-skin="vivid"] .kpi .s { color: #2f4470; }
+:root[data-skin="vivid"] .kpi.red { background: var(--bad-soft); } :root[data-skin="vivid"] .kpi.red .v { color: var(--bad); } :root[data-skin="vivid"] .kpi.red .l, :root[data-skin="vivid"] .kpi.red .s { color: #7a2e2a; }
+:root[data-skin="vivid"] th { background: var(--accent-soft); color: #1b3f8f; border-bottom-color: #bfd0f5; }
+:root[data-skin="vivid"] .panel-head h2 { color: var(--head); } :root[data-skin="vivid"] .panel-head .code { color: var(--accent); opacity: 1; }
+:root[data-skin="vivid"] .tabs a[aria-current="page"] { background: var(--accent-soft); border-radius: 8px 8px 0 0; }
+:root[data-skin="vivid"] .chip.ok, :root[data-skin="vivid"] .chip.st5, :root[data-skin="vivid"] .chip.sel { background: #15803d; color: #fff; } :root[data-skin="vivid"] .chip.warn, :root[data-skin="vivid"] .chip.st4, :root[data-skin="vivid"] .chip.hold { background: #f59e0b; color: #1a1200; } :root[data-skin="vivid"] .chip.bad, :root[data-skin="vivid"] .chip.rej { background: #c62828; color: #fff; } :root[data-skin="vivid"] .chip.cur { background: var(--accent); color: #fff; }
+:root[data-skin="vivid"] .act .n { color: var(--accent); } :root[data-skin="vivid"] .act .n.zero { color: var(--muted); }
+:root[data-skin="vivid"] .bar-in { background: var(--accent); } :root[data-skin="vivid"] .frow .fill { background: var(--accent); }
+:root[data-skin="dark"] { --bg: #0b1220; --panel: #121a2b; --panel-2: #192338; --fg: #e9eef7; --muted: #9fb0c8; --line: #243049; --line-2: #34435f; --accent: #5b9cff; --accent-ink: #0b1220; --accent-soft: #1b2d4f; --ok: #3ddc84; --ok-soft: #123523; --warn: #f5b942; --warn-soft: #3a2c0e; --bad: #ff6b6b; --bad-soft: #3d1a1a; --head: #0b1220; --head-ink: #ffffff; --head-dim: #9fb0c8; --shadow: none; --navy: #e9eef7; --navy-2: #c6ccd6; --navy-ink: #0b1220; --navy-dim: #9fb0c8; --blue: #9fb0c6; --pink: #8f9aab; --purple: #9fb0c8; --blue-soft: #1b2d4f; --pink-soft: #1b2d4f; --purple-soft: #1b2d4f; color-scheme: dark; }
+:root[data-skin="dark"] .bar { border-bottom: 1px solid var(--line); } :root[data-skin="dark"] .kpi .v { color: #ffffff; } :root[data-skin="dark"] .kpi.red .v { color: var(--bad); }
+:root[data-skin="dark"] th { background: #1b2740; color: #dbe4f3; border-bottom-color: #34435f; } :root[data-skin="dark"] .panel-head .code { color: var(--accent); }
+:root[data-skin="dark"] .chip.ok, :root[data-skin="dark"] .chip.st5, :root[data-skin="dark"] .chip.sel { background: #14532d; color: #86efac; } :root[data-skin="dark"] .chip.warn, :root[data-skin="dark"] .chip.st4, :root[data-skin="dark"] .chip.hold { background: #4a3410; color: #fcd34d; } :root[data-skin="dark"] .chip.cur { background: #1e3a8a; color: #bfdbfe; }
+:root[data-skin="dark"] button { background: #192338; border-color: #34435f; color: var(--fg); } :root[data-skin="dark"] button.primary { background: #e9eef7; color: #0b1220; border-color: #e9eef7; } :root[data-skin="dark"] button.accent { background: var(--accent); color: #0b1220; border-color: var(--accent); }
+:root[data-skin="dark"] input, :root[data-skin="dark"] select, :root[data-skin="dark"] textarea { background: #0f172a; color: var(--fg); border-color: #34435f; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 14px; line-height: 1.45; word-break: keep-all; overflow-wrap: anywhere;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 56px; }
