@@ -12,7 +12,7 @@
 :root { --bg: #eceff3; --panel: #ffffff; --panel-2: #f3f5f8; --fg: #0f1419; --muted: #475061; --line: #d8dde5; --line-2: #b6bfcb; --accent: #1a56db; --accent-soft: #e3ebfb; --ok: #15803d; --ok-soft: #e1f3e8; --warn: #a15c07; --warn-soft: #fbefd8; --bad: #b42318; --bad-soft: #fbe4e1; --radius: 8px; --head: #141a23; --head-ink: #ffffff; --head-dim: #aab4c3; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html, body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif; -webkit-text-size-adjust: 100%; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); word-break: keep-all; overflow-wrap: anywhere; font: 15px/1.5 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif; -webkit-text-size-adjust: 100%; }
 header { background: var(--head); color: var(--head-ink); border-bottom: 1px solid var(--head); padding: 20px max(16px, env(safe-area-inset-left, 0px)) 18px max(16px, env(safe-area-inset-right, 0px)); }
 .wrap { max-width: 860px; margin: 0 auto; }
 .eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--head-dim); font-weight: 700; }
@@ -22,7 +22,7 @@ main { padding: 14px max(16px, env(safe-area-inset-left, 0px)) 48px max(16px, en
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 18px 20px; box-shadow: 0 1px 2px rgba(16, 24, 40, .06); }
 .card h2 { margin: 0 0 4px; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .card h2 .n, h3.or .n { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--fg); color: #fff; font-size: 12px; align-items: center; justify-content: center; flex: none; }
-.card h2 .tag { font-size: 11.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 1px 7px; }
+.card h2 .tag { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 1px 7px; }
 .hint { margin: 0 0 12px; color: var(--muted); font-size: 13.5px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
 .grid .wide { grid-column: 1 / -1; }
@@ -39,7 +39,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 .chip { min-height: 38px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--line-2); background: #fff; color: var(--fg); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
 .chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
 .seg { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line-2); border-radius: 6px; overflow: hidden; }
-.seg button { flex: 1 1 auto; min-height: 42px; border: 0; border-right: 1px solid var(--line); background: #fff; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; padding: 0 10px; white-space: nowrap; } .seg button:last-child { border-right: 0; }
+.seg button { flex: 1 1 auto; min-height: 42px; } @media (max-width: 480px) { .seg button { flex: 1 1 45%; border-bottom: 1px solid var(--line); } } .seg button { border: 0; border-right: 1px solid var(--line); background: #fff; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; padding: 0 10px; white-space: nowrap; } .seg button:last-child { border-right: 0; }
 .seg button[aria-pressed="true"] { background: var(--fg); color: #fff; font-weight: 700; }
 .defs { margin-top: 6px; line-height: 1.5; } .defs b { color: var(--fg); font-weight: 600; }
 .tokens { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; border: 1px solid var(--line-2); border-radius: 6px; padding: 6px 8px; min-height: 44px; background: #fff; cursor: text; }
@@ -50,33 +50,33 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 .crow { display: grid; grid-template-columns: 1.1fr .9fr 1.3fr 1fr auto; gap: 6px; align-items: center; } .crow input, .crow select { min-height: 40px; font-size: 15px; padding: 7px 9px; }
 @media (max-width: 640px) { .crow { grid-template-columns: 1fr 1fr; } .crow .x { grid-column: 2; justify-self: end; } }
 .lbl-s { display: block; font-size: 13px; font-weight: 600; margin: 4px 0 6px; }
-.crow .x { all: unset; cursor: pointer; color: var(--muted); font-size: 18px; padding: 4px 8px; } .crow .x:hover { color: var(--bad); }
+.crow .x { all: unset; cursor: pointer; color: var(--muted); font-size: 18px; padding: 4px 8px; } .crow .x:hover { color: var(--bad); } @media (max-width: 640px) { .crow .x { grid-column: 2; justify-self: end; } }
 .add { all: unset; cursor: pointer; color: var(--accent); font-weight: 600; font-size: 13.5px; padding: 6px 0; } .add:hover { text-decoration: underline; }
-details.fold { border: 1px solid var(--line); border-radius: 6px; padding: 0 12px; margin-top: 12px; } details.fold summary { cursor: pointer; font-weight: 700; font-size: 14px; padding: 11px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; } details.fold summary::after { content: '펼치기'; font-weight: 500; color: var(--accent); font-size: 12.5px; } details.fold[open] summary::after { content: '접기'; } details.fold summary small { color: var(--muted); font-weight: 400; margin-left: 8px; } details.fold > .grid { padding-bottom: 14px; }
-.stars { display: flex; gap: 2px; } .star { width: 40px; height: 40px; border: 0; background: none; font-size: 26px; line-height: 1; color: var(--line-2); cursor: pointer; padding: 0; } .star.on { color: var(--warn); }
+details.fold { border: 1px solid var(--line); border-radius: 6px; padding: 0 12px; margin-top: 12px; } details.fold summary { cursor: pointer; font-weight: 700; font-size: 14px; padding: 11px 0; list-style: none; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2px 8px; } details.fold summary .req { margin-right: auto; } details.fold summary::after { content: '펼치기'; font-weight: 500; color: var(--accent); font-size: 12.5px; white-space: nowrap; } details.fold[open] summary::after { content: '접기'; } details.fold summary small { color: var(--muted); font-weight: 400; font-size: 12.5px; flex-basis: 100%; order: 9; } details.fold > .grid { padding-bottom: 14px; }
+.stars { display: flex; gap: 2px; } .star { width: 40px; height: 40px; border: 0; background: none; font-size: 26px; line-height: 1; color: #8a94a6; cursor: pointer; padding: 0; } .star.on { color: var(--warn); }
 .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
 .btn { min-height: 46px; padding: 0 20px; border-radius: 6px; border: 1px solid transparent; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
-.btn.primary { background: var(--accent); color: #fff; min-height: 50px; font-size: 16px; padding: 0 28px; box-shadow: 0 1px 2px rgba(0,0,0,.15); } .btn.primary:disabled { background: #9aa6b8; color: #fff; opacity: 1; cursor: default; box-shadow: none; }
+.btn.primary { background: var(--accent); color: #fff; min-height: 50px; font-size: 16px; padding: 0 28px; box-shadow: 0 1px 2px rgba(0,0,0,.15); } .btn.primary:disabled { background: #5b6676; color: #fff; opacity: 1; cursor: default; box-shadow: none; }
 .sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--panel); border-top: 2px solid var(--accent); box-shadow: 0 -6px 18px rgba(0,0,0,.10); padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .sticky .in { max-width: 860px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
 .sticky .what { font-size: 14px; color: var(--muted); min-width: 0; line-height: 1.35; } .sticky .what b { color: var(--fg); } .sticky .what .bad { color: var(--bad); }
 .sticky .btn.primary { white-space: nowrap; flex: 0 0 auto; } @media (max-width: 480px) { .sticky .in { flex-direction: column; align-items: stretch; } .sticky .btn.primary { width: 100%; } }
-body.has-sticky main { padding-bottom: 120px; } body.has-sticky footer { padding-bottom: 110px; }
+body.has-sticky main { padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)); } body.has-sticky footer { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); }
 .btn.ghost { background: transparent; color: var(--accent); border-color: var(--accent); }
 .btn.dark { background: var(--fg); color: #fff; }
 .msg { border-radius: 6px; padding: 10px 12px; font-size: 14px; display: none; } .msg.err { display: block; background: var(--bad-soft); color: var(--bad); } .msg.ok { display: block; background: var(--ok-soft); color: var(--ok); }
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; } th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--panel-2); }
 .tbox { overflow: auto; border: 1px solid var(--line); border-radius: 6px; } .tbox td:first-child { white-space: nowrap; }
-@media (max-width: 640px) { .tbox table { width: max-content; min-width: 100%; max-width: 230vw; } }
+@media (max-width: 640px) { .tbox table { width: max-content; min-width: 100%; max-width: 230vw; } .tbox { box-shadow: inset -28px 0 18px -18px rgba(0, 0, 0, .18); } .tbox::after { content: '← 옆으로 밀어서 보기'; display: block; font-size: 12px; color: var(--muted); padding: 4px 8px; } }
 .tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; } .tag.wait { background: var(--warn-soft); color: var(--warn); } .tag.done { background: var(--ok-soft); color: var(--ok); }
 .empty { color: var(--muted); font-size: 14px; padding: 10px 0; }
-.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: #fff; padding: 12px 18px; border-radius: 8px; font-size: 14.5px; font-weight: 600; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); max-width: calc(100vw - 32px); z-index: 10; }
+.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: #fff; padding: 12px 18px; border-radius: 8px; font-size: 14.5px; font-weight: 600; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); max-width: calc(100vw - 32px); z-index: 60; } body.has-sticky .toast { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16px 32px; }
 .who { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } @media (max-width: 560px) { .who { grid-template-columns: 1fr; } }
 .drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 118px; border: 2px dashed var(--line-2); border-radius: 8px; padding: 18px; text-align: center; cursor: pointer; background: var(--panel-2); } .drop.over { border-color: var(--accent); background: var(--accent-soft); } .drop b { font-size: 15px; } .drop small { color: var(--muted); font-size: 12.5px; } .drop input { display: none; }
 .prev { margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: var(--panel); display: flex; flex-direction: column; gap: 10px; }
 .prev ul { margin: 0; padding-left: 18px; font-size: 13px; } .prev .err { color: var(--bad); } .prev .warn { color: var(--warn); } .prev h3 { margin: 0; font-size: 14px; }
-.stat { display: flex; gap: 6px 18px; flex-wrap: wrap; font-size: 13.5px; color: var(--muted); } .stat b { font-size: 20px; color: var(--fg); font-weight: 700; margin-right: 4px; }
+.stat { display: flex; gap: 6px 18px; flex-wrap: wrap; font-size: 13.5px; color: var(--muted); } .stat small, .tbox td small { font-size: 12px; } .stat b { font-size: 20px; color: var(--fg); font-weight: 700; margin-right: 4px; }
 .map td select { min-height: 36px; font-size: 14px; padding: 5px 8px; } .map td.h { font-weight: 600; } .map td.s { color: var(--muted); font-size: 12.5px; max-width: 18rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .two { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 6px 14px; font-size: 13px; } .cols b { display: block; font-size: 11.5px; color: var(--muted); font-weight: 600; }
@@ -90,7 +90,8 @@ main[data-mode="1"] [data-m]:not([data-m~="1"]), main[data-mode="2"] [data-m]:no
 .chg { font-size: 12px; font-weight: 500; margin-left: auto; color: var(--accent); text-decoration: none; } h2 .chg, h3 .chg { float: right; margin-top: 4px; } main:not([data-mode]) .chg { display: none; } .pick-c b { font-size: 14.5px; } .pick-c span { font-size: 12.5px; color: var(--muted); } .pick-c em { font-style: normal; font-size: 12.5px; color: var(--accent); font-weight: 600; margin-top: 2px; }
 .steps { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; margin: 0 0 10px; color: var(--muted); } .steps span { display: inline-flex; align-items: center; gap: 6px; } .steps i { font-style: normal; display: inline-flex; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--line-2); font-size: 11px; align-items: center; justify-content: center; color: var(--fg); background: #fff; }
 .tplrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--panel-2); } .tplrow small { display: block; color: var(--muted); font-size: 12.5px; }
-.btn.tpl { background: var(--fg); color: #fff; min-height: 44px; font-size: 15px; padding: 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,.12); } .btn.tpl:hover { background: #000; }
+.btn.tpl { background: #fff; color: var(--fg); border-color: var(--line-2); min-height: 42px; font-size: 14px; padding: 0 16px; white-space: nowrap; flex: none; } .btn.tpl:hover { border-color: var(--fg); }
+details.more { margin: -4px 0 12px; } details.more summary { cursor: pointer; color: var(--accent); font-size: 13px; font-weight: 600; list-style: none; } details.more summary::before { content: '▸ '; } details.more[open] summary::before { content: '▾ '; } details.more .hint { margin-top: 6px; }
 h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: center; gap: 8px; padding-top: 14px; border-top: 1px dashed var(--line-2); }
 .muted-s { font-size: 12.5px; color: var(--muted); }
 </style>
@@ -118,7 +119,8 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
 
   <section class="card" id="card-file" data-m="1 2">
     <h2 data-m="1"><span class="n">1</span>파일 업로드 <span class="tag">대리상 목록 · D2D 참석자 명단</span><a href="#top" class="chg" data-chg>방법 변경</a></h2>
-    <p class="hint" data-m="1">현재 사용 중인 대리상 현황 엑셀을 수정 없이 그대로 업로드하시면 됩니다. 열 제목이 양식과 달라도 자동으로 인식하며, 한 칸에 국가·담당자·이메일·연락처·주소·단가가 여러 개 기재된 경우에도 항목별로 분리하여 반영됩니다. 정식 양식(19개 항목)에 있는 항목이 파일에 없으면 제출 전에 표시되고, 제출 후 CRM에 '보완 필요'로 기록됩니다. 정식 양식으로 작성하는 경우 모든 칸을 채우며, 해당 사항이 없는 칸은 "없음", 협의 단계는 "협의중"으로 기재해 주십시오. <b>D2D 참석자 명단</b>(참석자명 · 국가 · 이메일 · 관심제품 · D2D 프로그램 · 행사일 · <b>모객 대리상</b> 7칸)도 같은 자리에 올리면 리드로 자동 반영됩니다 — 대리상이 모객한 행사는 모객 대리상 칸에 그 대리상 이름을 적어 주십시오.</p>
+    <p class="hint" data-m="1"><b>갖고 계신 대리상 현황 엑셀을 고치지 말고 그대로 올리세요.</b> 열 제목이 달라도 자동으로 읽습니다. <b>D2D 참석자 명단</b>(참석자명 · 국가 · 이메일 · 관심제품 · D2D 프로그램 · 행사일 · <b>모객 대리상</b>)도 같은 자리에 올리면 리드로 반영됩니다.</p>
+    <details class="more" data-m="1"><summary>자세한 규칙 보기</summary><p class="hint">한 칸에 국가·담당자·이메일·연락처·주소·단가가 여러 개 기재된 경우에도 항목별로 분리하여 반영됩니다. 정식 양식(19개 항목)에 있는 항목이 파일에 없으면 제출 전에 표시되고, 제출 후 CRM에 '보완 필요'로 기록됩니다. 정식 양식으로 작성하는 경우 모든 칸을 채우며, 해당 사항이 없는 칸은 "없음", 협의 단계는 "협의중"으로 기재해 주십시오. 대리상이 모객한 행사는 참석자 명단의 모객 대리상 칸에 그 대리상 이름을 적어 주십시오 — 그 대리상이 후속 담당이 됩니다.</p></details>
     <div class="steps" data-m="1"><span><i>1</i>파일 업로드</span><span><i>2</i>열 인식 결과 확인 (잘못 인식된 열은 드롭다운으로 변경)</span><span><i>3</i>제출 → CRM 자동 반영</span></div>
     <label class="drop" id="drop" data-m="1"><b>엑셀 파일을 끌어다 놓거나 클릭하여 선택</b><small>.xlsx · .xls · .csv — 여러 파일, 여러 시트 가능</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
     <div class="tplrow" data-m="1"><div><b>정식 양식</b><small>19개 항목 · 드롭다운 · 작성 예시 시트 포함. 양식에 작성 후 위에 업로드하십시오.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 내려받기 (.xlsx)</a></div>
@@ -134,7 +136,7 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
   <section class="card" id="card-form" data-m="3">
     <h2><span class="n">3</span>직접 입력 <span class="tag">업체 1곳</span><a href="#top" class="chg" data-chg>방법 변경</a></h2>
     <p class="hint">①·②로 제출하셨다면 이 항목은 작성하지 않으셔도 됩니다. <b>모든 항목이 필수</b>이며, 해당 사항이 없으면 "없음", 협의 단계는 "협의중"으로 기재해 주십시오. 동일 업체를 다시 제출하면 기존 정보가 갱신됩니다.</p>
-    <label class="f" style="margin-bottom:12px">자동 입력<small>메일 서명·명함 내용을 붙여넣으면 이메일·연락처·홈페이지·국가·업체명을 아래 항목에 채웁니다. 확인 후 제출하십시오.</small><textarea id="autofill" rows="2" placeholder="예) Mina Park, CEO, Atlas Medical Trading, Dubai UAE, mina@atlas-med.example, +971 50 000 0001"></textarea></label>
+    <label class="f" style="margin-bottom:12px">자동 입력<small>메일 서명·명함 내용을 붙여넣으면 이메일·연락처·홈페이지·국가·업체명을 아래 항목에 채웁니다. 확인 후 제출하십시오.</small><textarea id="autofill" rows="3" placeholder="예) Mina Park, CEO, Atlas Medical Trading, Dubai UAE, mina@atlas-med.example, +971 50 000 0001"></textarea></label>
     <form id="form" novalidate>
       <div class="grid">
         <label class="f">업체명 <span class="req">*</span><input id="f-name" maxlength="200" autocomplete="organization"></label>
@@ -715,7 +717,7 @@ const FREE = (() => {
     const nK = parsedFiles.reduce((s, f) => s + f.rows.filter((r) => (r.contracts || []).length).length, 0), nPr = parsedFiles.reduce((s, f) => s + f.rows.reduce((a, r) => a + (r.prices || []).filter((x) => x.price !== null).length, 0), 0);
     const mapTables = parsedFiles.flatMap((f) => f.sheets.map((sh) => `<div><h3>열 읽기 결과 — ${esc(f.name)}${f.sheets.length > 1 && sh.name !== f.name ? ' · ' + esc(sh.name) : ''}</h3><div class="tbox"><table class="map"><thead><tr><th>엑셀 열</th><th>이렇게 읽음</th><th>예시 값</th></tr></thead><tbody>${sh.headers.map((h, i) => { if (String(h ?? '').trim() === '' && !sh.samples.some((r) => String((r || [])[i] ?? '').trim())) return ''; const cur = Object.keys(sh.map).find((k) => sh.map[k] === i) || ''; return `<tr><td class="h">${esc(h)}</td><td><select data-file="${esc(f.name)}" data-sheet="${esc(sh.name)}" data-col="${i}"><option value="">사용 안 함</option>${Object.keys(LABEL).map((k) => `<option value="${k}"${k === cur ? ' selected' : ''}>${esc(LABEL[k])}</option>`).join('')}</select></td><td class="s">${esc(clip(sh.samples.map((r) => (r || [])[i]).find((v) => v !== undefined && String(v).trim() !== '')))}</td></tr>`; }).join('')}</tbody></table></div></div>`));
     const sample = parsedFiles.flatMap((f) => f.rows).slice(0, 6);
-    const rowTable = sample.length ? `<div><h3>읽은 내용 (처음 ${sample.length}건)</h3><div class="tbox"><table><thead><tr><th>업체명</th><th>국가</th><th>구분</th><th>담당자</th><th>품목</th><th>계약 만료</th></tr></thead><tbody>${sample.map((r) => { const cov = FREE.coverageOf(r); return `<tr><td><b>${esc(r.partner_name)}</b>${r.owner ? `<br><small>${esc(r.owner)}</small>` : ''}</td><td>${esc(cov[0] || '')}${cov.length > 1 ? ` <small>+${cov.length - 1}</small>` : ''}${r.coverage_note ? `<br><small class="warn">? ${esc(r.coverage_note)}</small>` : ''}</td><td>${esc(r.status || (noStatus ? '(선택값)' : ''))}${r.partner_type ? `<br><small>${esc(r.partner_type)}</small>` : ''}</td><td>${(r.contacts || []).length}명${(r.contacts || [])[0] ? `<br><small>${esc((r.contacts[0].name || '') + (r.contacts[0].email ? ' · ' + r.contacts[0].email : ''))}</small>` : ''}</td><td>${esc(r.our_products || r.products_other || '')}${(r.prices || []).filter((x) => x.price !== null).length ? `<br><small>단가 ${(r.prices || []).filter((x) => x.price !== null).length}건</small>` : ''}</td><td>${esc((r.contracts || [])[0] ? (r.contracts[0].end || '—') : '')}</td></tr>`; }).join('')}</tbody></table></div></div>` : '';
+    const rowTable = sample.length ? `<div><h3>읽은 내용 (처음 ${sample.length}건)</h3><div class="tbox"><table><thead><tr><th>업체명</th><th>국가</th><th>구분</th><th>담당자</th><th>품목</th><th>계약 만료</th></tr></thead><tbody>${sample.map((r) => { const cov = FREE.coverageOf(r); return `<tr><td><b>${esc(r.partner_name)}</b>${r.owner ? `<br><small>${esc(r.owner)}</small>` : ''}</td><td>${esc(cov[0] || '')}${cov.length > 1 ? ` <small>+${cov.length - 1}</small>` : ''}${r.coverage_note ? `<br><small class="warn">? ${esc(r.coverage_note)}</small>` : ''}</td><td>${esc(r.status || (noStatus ? '(선택값)' : ''))}${r.partner_type ? `<br><small>${esc(r.partner_type)}</small>` : ''}</td><td>${(r.contacts || []).length}명${(r.contacts || [])[0] ? `<br><small>${esc((r.contacts[0].name || '') + (r.contacts[0].email ? ' · ' + r.contacts[0].email : ''))}</small>` : ''}</td><td>${esc(String(r.our_products || r.products_other || '').split(';').filter(Boolean).join(', '))}${(r.prices || []).filter((x) => x.price !== null).length ? `<br><small>단가 ${(r.prices || []).filter((x) => x.price !== null).length}건</small>` : ''}</td><td style="white-space:nowrap">${esc((r.contracts || [])[0] ? (r.contracts[0].end || '—') : '')}</td></tr>`; }).join('')}</tbody></table></div></div>` : '';
     const attSample = parsedFiles.flatMap((f) => f.att || []).slice(0, 6);
     const attTable = attSample.length ? `<div><h3>D2D 참석자 (처음 ${attSample.length}행)</h3><div class="tbox"><table><thead><tr><th>참석자</th><th>국가</th><th>프로그램 · 행사</th><th>행사일</th><th>관심제품</th><th>모객 대리상</th></tr></thead><tbody>${attSample.map((r) => `<tr><td><b>${esc(r.person)}</b></td><td>${esc(r.country || '')}</td><td>${esc([r.program, r.event].filter(Boolean).join(' · '))}</td><td style="white-space:nowrap">${esc(r.date)}</td><td>${esc(r.product || '')}</td><td>${esc(r.source_partner || r.partner_id || '')}</td></tr>`).join('')}</tbody></table></div></div>` : '';
     const canSubmit = !errors.length && (n > 0 || nA > 0);
@@ -735,7 +737,7 @@ const FREE = (() => {
       overrides[fn] = overrides[fn] || {}; overrides[fn][sn] = {headerRow: sh.headerRow, map};
       reparse();
     }));
-    prevBox.querySelectorAll('[data-cancel]').forEach((c) => c.addEventListener('click', () => { parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); }));
+    prevBox.querySelectorAll('[data-cancel]').forEach((c) => c.addEventListener('click', () => { parsedFiles = []; rawFiles = []; overrides = {}; lastPasted = ''; pasteBox.value = ''; const fi = $('#file'); if (fi) fi.value = ''; renderPreview(); msgP('', ''); }));
     let sending = false;
     const bulk = async () => {
       if (sending) return; const b = $('#btn-bulk'), b2 = $('#btn-bulk-2'); const label = `제출 (${whatLabel()})`; const set = (dis, txt) => { for (const x of [b, b2]) if (x) { x.disabled = dis; x.textContent = txt; } stickyBtn.disabled = dis; if (txt !== label) stickyBtn.textContent = txt; };
@@ -764,7 +766,8 @@ const FREE = (() => {
   function parseTsv(text) { const rows = []; let row = [], cell = '', q = false; for (let i = 0; i < text.length; i++) { const ch = text[i]; if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; } else if (ch === '"' && cell === '') q = true; else if (ch === '\t') { row.push(cell); cell = ''; } else if (ch === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; } else if (ch !== '\r') cell += ch; } if (cell !== '' || row.length) { row.push(cell); rows.push(row); } return rows.filter((r) => r.some((c) => String(c).trim() !== '')); }
   window.__parseTsv = parseTsv;
   const pasteBox = $('#paste');
-  const handlePaste = () => { const t = pasteBox.value; if (!t.trim()) return; const aoa = parseTsv(t); if (!aoa.some((r) => r.length > 1)) { msgP('err', '탭으로 구분된 표가 아닙니다. 엑셀에서 머리글 행을 포함한 범위를 복사하여 붙여넣어 주십시오.'); return; } rawFiles = [{name: '붙여넣은 표', sheets: [{name: '범위', rows: aoa}], pasted: true}]; overrides = {}; reparse(); if (!parsedFiles[0] || !parsedFiles[0].rows.length) msgP('err', '업체명·국가 열을 찾지 못했습니다. 머리글 행(업체명·국가 …)부터 복사했는지 확인해 주세요.'); };
+  let lastPasted = '';
+  const handlePaste = () => { const t = pasteBox.value; if (!t.trim() || t === lastPasted) return; lastPasted = t; const aoa = parseTsv(t); if (!aoa.some((r) => r.length > 1)) { msgP('err', '탭으로 구분된 표가 아닙니다. 엑셀에서 머리글 행을 포함한 범위를 복사하여 붙여넣어 주십시오.'); return; } rawFiles = [{name: '붙여넣은 표', sheets: [{name: '범위', rows: aoa}], pasted: true}]; overrides = {}; reparse(); if (!parsedFiles[0] || !parsedFiles[0].rows.length) msgP('err', '업체명·국가 열을 찾지 못했습니다. 머리글 행(업체명·국가 …)부터 복사했는지 확인해 주세요.'); };
   pasteBox.addEventListener('paste', () => setTimeout(handlePaste, 0)); pasteBox.addEventListener('change', handlePaste);
   // free text (signature / business card / memo) → prefill the quick form
   $('#autofill').addEventListener('input', (e) => {
@@ -790,7 +793,15 @@ const FREE = (() => {
   drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); readFiles(e.dataTransfer.files); });
   // method picker: show only the chosen method (①②③); 「방법 변경」 brings the picker back. Nothing is hidden until a choice is made.
   const mainEl = document.querySelector('main');
-  const setMode = (m) => { if (m) mainEl.dataset.mode = m; else delete mainEl.dataset.mode; document.querySelectorAll('.pick-c').forEach((a) => { if (a.dataset.pick === m) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); if (window.__updateSticky) window.__updateSticky(); };
+  const setMode = (m) => {
+    const prev = mainEl.dataset.mode || '';
+    if (m && m !== prev) { // leaving a method: its pending data must not ride along under the new method's button
+      if (m === '3' && parsedFiles.length) { parsedFiles = []; rawFiles = []; overrides = {}; lastPasted = ''; pasteBox.value = ''; renderPreview(); msgP('', ''); }
+      if ((m === '1' || m === '2') && prev === '3' && formTouched()) { if (!confirm('③ 직접 입력에 적은 내용을 지우고 ' + (m === '1' ? '① 파일 업로드' : '② 붙여넣기') + '로 바꿀까요?')) return; resetForm(); }
+      if (m === '1' && prev === '2' && rawFiles.length && rawFiles.every((rf) => rf.pasted)) { parsedFiles = []; rawFiles = []; overrides = {}; lastPasted = ''; pasteBox.value = ''; renderPreview(); }
+      if (m === '2' && prev === '1' && rawFiles.length && !rawFiles.every((rf) => rf.pasted)) { parsedFiles = []; rawFiles = []; overrides = {}; renderPreview(); }
+    }
+    if (m) mainEl.dataset.mode = m; else delete mainEl.dataset.mode; document.querySelectorAll('.pick-c').forEach((a) => { if (a.dataset.pick === m) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); if (window.__updateSticky) window.__updateSticky(); };
   document.querySelectorAll('.pick-c').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); setMode(a.dataset.pick); const t = document.querySelector(a.getAttribute('href')); if (t) t.scrollIntoView({block: 'start', behavior: 'smooth'}); }));
   document.querySelectorAll('[data-chg]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); setMode(''); $('#top').scrollIntoView({block: 'start', behavior: 'smooth'}); }));
   window.__setMode = setMode;
@@ -803,12 +814,13 @@ const FREE = (() => {
   function updateSticky() {
     const n = parsedFiles.reduce((a, f) => a + f.rows.length, 0), nA = parsedFiles.reduce((a, f) => a + (f.att || []).length, 0), errs = parsedFiles.flatMap((f) => f.errors).length, partial = parsedFiles.some((f) => f.partial);
     const what = [n ? `대리상 ${n}건` : '', nA ? `D2D 참석자 ${nA}행` : ''].filter(Boolean).join(' · ');
-    if (parsedFiles.length) {
+    const mode = mainEl.dataset.mode || '';
+    if (parsedFiles.length && mode !== '3') {
       sticky.hidden = false; stickyBtn.dataset.mode = 'file';
       const srcLabel = rawFiles.length && rawFiles.every((rf) => rf.pasted) ? '붙여넣기' : '파일 업로드';
       stickyWhat.innerHTML = what ? `${srcLabel} → <b>${what}</b>${partial ? ' · 보완 필요 항목 있음' : ''}${errs ? ` · <span class="bad">오류 ${errs}건 — 수정 후 제출</span>` : ''}` : '읽을 수 있는 대리상·참석자 행이 없습니다 — 열 이름을 확인해 주십시오';
       stickyBtn.textContent = `제출 (${what || '대리상 0건'})`; stickyBtn.disabled = !(n || nA) || errs > 0;
-    } else if (formTouched()) {
+    } else if (formTouched() && mode !== '1' && mode !== '2') {
       sticky.hidden = false; stickyBtn.dataset.mode = 'form';
       stickyWhat.innerHTML = `직접 입력 → <b>${esc($('#f-name').value.trim() || '업체명 미입력')}</b>${countries.length ? ` · ${esc(countries[0])}${countries.length > 1 ? ' 외 ' + (countries.length - 1) : ''}` : ''}`;
       stickyBtn.textContent = '제출'; stickyBtn.disabled = busy;

@@ -7,7 +7,7 @@
 :root {
   --bg: #eceff3; --panel: #ffffff; --panel-2: #f3f5f8; --fg: #0f1419; --muted: #475061; --line: #d8dde5; --line-2: #b6bfcb;
   --accent: #1a56db; --accent-ink: #ffffff; --accent-soft: #e3ebfb;
-  --ok: #15803d; --ok-soft: #e1f3e8; --warn: #a15c07; --warn-soft: #fbefd8; --bad: #b42318; --bad-soft: #fbe4e1;
+  --ok: #0f6b32; --ok-soft: #dff2e6; --warn: #8f5206; --warn-soft: #fbefd8; --bad: #b42318; --bad-soft: #fbe4e1;
   --head: #141a23; --head-ink: #ffffff; --head-dim: #aab4c3;
   /* legacy names kept for older call sites — all resolve into the budget above */
   --navy: #171a1f; --navy-2: #2a3140; --navy-ink: #ffffff; --navy-dim: #9aa3b2;
@@ -35,7 +35,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 14px; line-height: 1.45;
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 14px; line-height: 1.45; word-break: keep-all; overflow-wrap: anywhere;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 56px; }
 h1, h2, h3, h4, p { margin: 0; }
 h1 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; text-wrap: balance; }
@@ -62,10 +62,11 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .tabs a:hover { color: var(--fg); }
 .tabs a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
 .tabs a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.tabs a .n { font-family: var(--num); font-size: 11.5px; font-weight: 700; opacity: .75; }
+.tabs a .n { font-family: var(--num); font-size: 12px; font-weight: 700; opacity: 1; }
 .tabs a.go { color: var(--accent); margin-left: auto; order: 9; } .tabs a.go[aria-current="page"] { border-bottom-color: var(--accent); }
-.stars { display: inline-flex; gap: 2px; } .stars .star { all: unset; cursor: pointer; font-size: 22px; line-height: 1; color: var(--line-2); } .stars .star.on { color: var(--warn); } .stars .star:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
+.stars { display: inline-flex; gap: 2px; } .stars .star { all: unset; cursor: pointer; font-size: 22px; line-height: 1; color: #8a94a6; } .stars .star.on { color: var(--warn); } .stars .star:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
 [hidden] { display: none !important; }
+.muted { color: var(--muted); } td small, .kv small { font-size: 11.5px; }
 .relay { border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; background: var(--panel-2); } .relay-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } .relay-link { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-family: var(--num); font-size: 12.5px; word-break: break-all; } .relay .note { margin: 0; }
 .banner { background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-left: 3px solid var(--warn); border-radius: var(--radius); padding: 8px 14px; font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
 .banner.bad { border-left-color: var(--bad); }
@@ -76,12 +77,12 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .panel-head .code { font-family: var(--num); font-size: 11px; font-weight: 700; letter-spacing: .12em; color: var(--accent); opacity: .85; }
 .panel .note { color: var(--muted); font-size: 12.5px; }
-.g2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 12px; }
+.g2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 12px; align-items: start; }
 .g2.wide { grid-template-columns: repeat(auto-fit, minmax(min(100%, 36rem), 1fr)); }
-.g3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 12px; } .detail .g3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); }
+.g3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 12px; align-items: start; } .detail .g3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); }
 .g2.side { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); } @media (max-width: 900px) { .g2.side { grid-template-columns: 1fr; } }
 /* KPI cards: label / number / context. No stripes; a flagged number is the only colored one. */
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: 10px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.6rem), 1fr)); gap: 10px; } .kpis.k2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 13px 15px 12px; min-width: 0; box-shadow: var(--shadow); }
 .kpi .l { font-size: 12px; font-weight: 700; color: var(--muted); }
 .kpi .v { font-family: var(--num); font-size: 34px; font-weight: 700; line-height: 1.05; margin-top: 6px; color: var(--fg); font-variant-numeric: tabular-nums; letter-spacing: -.015em; }
@@ -108,7 +109,7 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .acts { display: flex; flex-direction: column; }
 .act { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 4px; border-bottom: 1px solid var(--line); cursor: pointer; text-align: left; background: none; border-radius: 0; border-top: 0; border-left: 0; border-right: 0; width: 100%; font-weight: inherit; }
 .act:last-child { border-bottom: 0; } .act:hover { background: var(--panel-2); } .act > * { min-width: 0; }
-.act b { font-size: 13.5px; font-weight: 700; display: block; white-space: normal; overflow-wrap: anywhere; } .act small { color: var(--muted); font-size: 11.5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-top: 1px; white-space: normal; overflow: hidden; } /* two lines, then clipped */
+.act b { font-size: 13.5px; font-weight: 700; display: block; white-space: normal; overflow-wrap: anywhere; } .act small { color: var(--muted); font-size: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-top: 1px; white-space: normal; overflow: hidden; } /* two lines, then clipped */
 .act .n { font-family: var(--num); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 2.2rem; text-align: right; }
 .act .n.zero { color: var(--muted); font-weight: 600; }
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); vertical-align: 0; flex: none; }
@@ -116,16 +117,16 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .st { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-weight: 600; font-size: 12px; }
 /* highlights: label / value pairs */
 .hl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: 8px 16px; }
-.hl .k { color: var(--muted); font-size: 11.5px; font-weight: 700; display: block; } .hl .v { font-size: 14px; font-weight: 700; display: block; margin-top: 1px; } .hl small { color: var(--muted); font-size: 11.5px; display: block; }
+.hl .k { color: var(--muted); font-size: 12px; font-weight: 700; display: block; } .hl .v { font-size: 14px; font-weight: 700; display: block; margin-top: 1px; } .hl small { color: var(--muted); font-size: 11.5px; display: block; }
 /* tables */
-.tablebox { overflow: auto; border: 1px solid var(--line); border-radius: 6px; max-height: 32rem; }
+.tablebox { overflow: auto; border: 1px solid var(--line); border-radius: 6px; max-height: 32rem; } .tablebox.scrollable { box-shadow: inset -28px 0 18px -18px rgba(16, 24, 40, .18); } .scroll-hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
 table { border-collapse: collapse; width: 100%; font-size: 12.5px; font-variant-numeric: tabular-nums; }
-th { position: sticky; top: 0; z-index: 1; background: var(--panel-2); text-align: left; padding: 8px 9px; border-bottom: 2px solid var(--line-2); white-space: nowrap; font-weight: 700; font-size: 11.5px; color: var(--fg); letter-spacing: .02em; }
+th { position: sticky; top: 0; z-index: 1; background: var(--panel-2); text-align: left; padding: 8px 8px; border-bottom: 2px solid var(--line-2); white-space: nowrap; font-weight: 700; font-size: 12px; color: var(--fg); letter-spacing: .01em; }
 th button.sort { all: unset; cursor: pointer; }
 th[aria-sort="ascending"] button.sort::after { content: " ↑"; color: var(--accent); } th[aria-sort="descending"] button.sort::after { content: " ↓"; color: var(--accent); }
 td { padding: 7px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
 tr:last-child td { border-bottom: 0; }
-td.r, th.r { text-align: right; white-space: nowrap; } td.nw { white-space: nowrap; } td.b { font-weight: 600; white-space: nowrap; } td.ell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 12rem; } td.wrap { white-space: normal; overflow-wrap: anywhere; min-width: 6rem; } .chip.wrapchip { white-space: normal; line-height: 15px; padding: 2px 7px; }
+td.r, th.r { text-align: right; white-space: nowrap; } td.nw { white-space: nowrap; } td.b { font-weight: 600; white-space: nowrap; } td.ell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 12rem; } td.wr { white-space: normal; overflow-wrap: anywhere; min-width: 6rem; } .chip.wrapchip { white-space: normal; line-height: 15px; padding: 2px 7px; }
 @media (max-width: 1100px) { .sec2-hide { display: none; } } @media (max-width: 1400px) { .sec3-hide { display: none; } }
 td .actions, td button { white-space: nowrap; }
 details.fold summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--accent); list-style: none; } details.fold summary::before { content: '▸ '; } details.fold[open] summary::before { content: '▾ '; } details.fold > .code-list { margin-top: 10px; }
@@ -133,7 +134,7 @@ tbody tr.click { cursor: pointer; } tbody tr.click:hover td { background: var(--
 .num { font-family: var(--num); font-weight: 600; font-size: 13px; }
 .empty { color: var(--muted); font-size: 12.5px; padding: 18px; text-align: center; border: 1px dashed var(--line); border-radius: 6px; }
 /* chips: neutral by default; color only where it carries meaning */
-.chip { display: inline-flex; align-items: center; padding: 0 7px; border-radius: 4px; font-size: 11px; font-weight: 600; line-height: 19px; white-space: nowrap; background: var(--panel-2); color: var(--fg); border: 1px solid transparent; }
+.chip { display: inline-flex; align-items: center; padding: 0 7px; border-radius: 4px; font-size: 11.5px; font-weight: 600; line-height: 19px; white-space: nowrap; background: var(--panel-2); color: var(--fg); border: 1px solid transparent; }
 .chip.cur { background: var(--accent-soft); color: var(--accent); } .chip.cand { background: var(--panel-2); color: var(--fg); } .chip.early { background: var(--panel); color: var(--muted); border-color: var(--line); } .chip.end { background: var(--panel-2); color: var(--muted); text-decoration: line-through; }
 .chip.sel { background: var(--ok-soft); color: var(--ok); } .chip.rej { background: var(--bad-soft); color: var(--bad); } .chip.hold { background: var(--warn-soft); color: var(--warn); }
 .chip.st0, .chip.st1 { background: var(--panel); color: var(--muted); border-color: var(--line); } .chip.st2, .chip.st3 { background: var(--panel-2); color: var(--fg); } .chip.st4 { background: var(--warn-soft); color: var(--warn); } .chip.st5 { background: var(--ok-soft); color: var(--ok); }
@@ -152,19 +153,19 @@ select:focus-visible, input:focus-visible, textarea:focus-visible, button:focus-
 button { background: var(--panel); border: 1px solid var(--line-2); border-radius: 6px; padding: 7px 13px; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap; }
 button:hover { border-color: var(--muted); }
 button.primary { background: var(--fg); border-color: var(--fg); color: var(--panel); } button.accent { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-button.danger { color: var(--bad); } button.small { padding: 3px 9px; font-size: 11.5px; } button[disabled] { opacity: .5; cursor: not-allowed; }
+button.danger { color: var(--bad); } button.small { padding: 4px 10px; font-size: 12px; } button[disabled] { opacity: .5; cursor: not-allowed; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .confirm { display: inline-flex; gap: 6px; align-items: center; background: var(--bad-soft); padding: 4px 8px; border-radius: 6px; font-size: 12px; }
 .form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr)); gap: 10px 14px; }
 .form .field { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .rm-f { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); } .rm-f input { min-height: 30px; } .rm-mail { display: inline-flex; align-items: center; padding: 3px 9px; font-size: 11.5px; border: 1px solid var(--line-2); border-radius: 6px; text-decoration: none; color: var(--fg); background: var(--panel); } .form .field.wide { grid-column: 1 / -1; }
-.form .lbl { font-size: 11.5px; font-weight: 600; color: var(--muted); } .form .lbl .req { color: var(--bad); } .form .help { font-size: 11px; color: var(--muted); }
+.form .lbl { font-size: 12px; font-weight: 600; color: var(--muted); } .form .lbl .req { color: var(--bad); } .form .help { font-size: 11.5px; color: var(--muted); }
 .form .group { grid-column: 1 / -1; font-family: var(--num); font-size: 11px; font-weight: 600; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--line); padding-bottom: 3px; margin-top: 4px; }
 .checks { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 5px 0; align-items: center; } .checks .pline-h { flex-basis: 100%; font-family: var(--num); font-size: 11px; font-weight: 600; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; margin-top: 4px; } .checks label { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; }
 .errs { background: var(--bad-soft); color: var(--bad); border-radius: 6px; padding: 8px 12px; font-size: 12.5px; } .errs ul { margin: 0; padding-left: 18px; }
 .detail { border-color: var(--line-2); }
 .detail-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; } .detail-head h2 { font-size: 16px; } .detail-head .meta { color: var(--muted); font-size: 12.5px; }
-.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 6px 14px; font-size: 12.5px; } .kv div { min-width: 0; } .kv .k { color: var(--muted); font-size: 11px; display: block; font-weight: 600; }
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 6px 14px; font-size: 12.5px; } .kv div { min-width: 0; } .kv .k { color: var(--muted); font-size: 12px; display: block; font-weight: 600; }
 .sub-panel { background: var(--panel-2); border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .sub-panel .tablebox { background: var(--panel); }
 /* timeline */
@@ -175,7 +176,7 @@ button.danger { color: var(--bad); } button.small { padding: 3px 9px; font-size:
 /* charts */
 .chart { position: relative; min-height: 10rem; } .chart svg { display: block; width: 100%; height: auto; }
 .chart .tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 6px 18px rgba(0, 0, 0, .15); padding: 6px 9px; font-size: 12px; white-space: nowrap; z-index: 2; } .chart .tip .h { color: var(--muted); }
-.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 11.5px; color: var(--muted); } .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); } .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
 /* upload */
 .drop { border: 1px dashed var(--line-2); border-radius: var(--radius); padding: 22px 16px; text-align: center; background: var(--panel-2); cursor: pointer; }
 .drop.over { border-color: var(--accent); background: var(--accent-soft); }
@@ -195,7 +196,7 @@ button.danger { color: var(--bad); } button.small { padding: 3px 9px; font-size:
 .cc .p { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sec-hide { } @media (max-width: 760px) { .sec-hide { display: none; } th.sec-hide { display: none; } .bar .meta { align-items: flex-start; text-align: left; } .tabs a.go { margin-left: 0; order: 0; }
   /* phones: let wide tables keep readable columns and scroll sideways inside their box instead of squeezing every cell into a one-word column */
-  .tablebox table { width: max-content; min-width: 100%; max-width: 230vw; } .tablebox table.fit { width: 100%; max-width: 100%; } .act small { -webkit-line-clamp: 3; }
+  .tablebox table { width: max-content; min-width: 100%; max-width: 230vw; } .tablebox table.fit { width: 100%; max-width: 100%; } .tablebox table.fit td.wr { min-width: 4rem; } .act small { -webkit-line-clamp: 3; }
   .actions button, .toolbar button { white-space: normal; max-width: 100%; overflow-wrap: anywhere; } }
 @media (prefers-reduced-motion: no-preference) { .toast { animation: rise .2s ease-out; } @keyframes rise { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } } }
 </style>
@@ -1302,9 +1303,10 @@ function table(cols, list, opts) {
   for (const r of list) {
     const tr = el('tr', {class: (o.onRow ? 'click ' : '') + (o.selected && o.selected(r) ? 'sel' : '')});
     for (const c of cols) {
-      const td = el('td', {class: (c.r ? 'r ' : '') + (c.nw ? 'nw ' : '') + (c.b ? 'b ' : '') + (c.ell ? 'ell ' : '') + (c.wrap ? 'wrap ' : '') + (c.sec ? 'sec-hide ' : '') + (c.sec2 ? 'sec2-hide ' : '') + (c.sec3 ? 'sec3-hide' : '')});
+      const td = el('td', {class: (c.r ? 'r ' : '') + (c.nw ? 'nw ' : '') + (c.b ? 'b ' : '') + (c.ell ? 'ell ' : '') + (c.wrap ? 'wr ' : '') + (c.sec ? 'sec-hide ' : '') + (c.sec2 ? 'sec2-hide ' : '') + (c.sec3 ? 'sec3-hide' : '')});
       if (c.max) td.style.maxWidth = c.max;
-      const v = c.render ? c.render(r) : txt(r[c.k]);
+      let v = c.render ? c.render(r) : txt(r[c.k]);
+      if (c.dash && (v === '' || v === null || v === undefined)) v = el('span', {class: 'muted'}, '—');
       if (v && v.nodeType) td.append(v); else td.textContent = txt(v);
       if (c.ell && !(v && v.nodeType)) td.title = txt(v); // full text on hover when the cell is ellipsised
       tr.append(td);
@@ -1429,8 +1431,10 @@ function render() {
   if (ui.role === 'blocked') { renderBlocked(); return; }
   if (ui.role === 'contributor') { renderSales(); return; }
   ({overview: renderOverview, partners: renderPartners, leads: renderLeads, reco: renderReco, history: renderHistory, upload: renderUpload, submit: renderSubmit})[tab]();
-  a11yPass();
+  a11yPass(); markScrollables();
 }
+function markScrollables() { document.querySelectorAll('.tablebox').forEach((tb) => { const sc = tb.scrollWidth > tb.clientWidth + 1; tb.classList.toggle('scrollable', sc); if (sc && !tb.nextElementSibling?.classList?.contains('scroll-hint')) tb.insertAdjacentHTML('afterend', '<div class="scroll-hint">↔ 표가 화면보다 넓습니다 — 옆으로 스크롤하면 나머지 열이 보입니다</div>'); if (!sc && tb.nextElementSibling?.classList?.contains('scroll-hint')) tb.nextElementSibling.remove(); }); }
+window.addEventListener('resize', () => { clearTimeout(window.__msT); window.__msT = setTimeout(markScrollables, 150); });
 // keyboard access for click targets that are not buttons: every clickable row / signal card gets a tab stop and Enter/Space
 function a11yPass() { document.querySelectorAll('tbody tr.click:not([tabindex]), .sig.click:not([tabindex]), .cc:not([tabindex])').forEach((n) => { n.tabIndex = 0; }); }
 document.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.matches && e.target.matches('tr.click, .sig.click, .cc')) { e.preventDefault(); e.target.click(); } });
@@ -1530,7 +1534,7 @@ function renderOverview() {
     const prodRows = [...byProd.values()].sort((a, b) => b.licensed - a.licensed || b.max - a.max || b.n - a.n);
     sec.append(el('div', {class: 'g2 side'},
       panel('신제품 진출 현황', '01 / LAUNCH PIPELINE', `${lst.products}개 품목 · ${lst.markets}개 시장 행${lst.source ? ` (${lst.source} 기준)` : ''}. 04 신제품 추천 탭에서 제품별 시장·12단계 가이드를 봅니다.`,
-        el('div', {class: 'kpis'}, kpi('기획 · 파트너 발굴', fmtInt(lst.byPhase[1] || 0), 'STEP1–4'), kpi('계약 · 스펙 확정', fmtInt(lst.byPhase[2] || 0), 'STEP5–7'), kpi('인허가 · 런칭', fmtInt(lst.byPhase[3] || 0), `STEP8–12 · 허가·PO 이후 ${fmtInt(lst.licensed.length)}`), kpi('우선 과제', fmtInt(lst.priority.length), '전략툴 우선 표시')),
+        el('div', {class: 'kpis k2'}, kpi('기획 · 파트너 발굴', fmtInt(lst.byPhase[1] || 0), 'STEP1–4'), kpi('계약 · 스펙 확정', fmtInt(lst.byPhase[2] || 0), 'STEP5–7'), kpi('인허가 · 런칭', fmtInt(lst.byPhase[3] || 0), `STEP8–12 · 허가·PO 이후 ${fmtInt(lst.licensed.length)}`), kpi('우선 과제', fmtInt(lst.priority.length), '전략툴 우선 표시')),
         el('div', {class: 'acts'},
           actionRow('진출 정체 (30일 이상 갱신 없음)', lst.stale.length, lst.stale.slice(0, 3).map((l) => `${l.product}/${l.market}`).join(' · ') || '없음', 'warn', () => goto('reco')),
           actionRow('거래처 기재 없음 (STEP3–7)', lst.noPartner.length, lst.noPartner.slice(0, 3).map((l) => `${l.product}/${l.market}`).join(' · ') || '없음', 'bad', () => goto('reco')),
@@ -1605,7 +1609,7 @@ function renderOverview() {
   sec.append(el('div', {class: 'g2 wide'},
     panel('우선 관리 리드', '06 / HIGH VALUE', '예상매출이 큰 유효리드 상위 8명.',
       el('div', {class: 'tablebox'}, table([{k: 'person', l: '고객', b: 1}, {k: 'country', l: '국가', nw: 1}, {k: 'product', l: '관심제품', nw: 1}, {k: 'stage', l: '단계', render: (r) => stageChip(r.stage)}, {k: 'pipeline', l: 'Pipeline', r: 1, render: (r) => el('span', {class: 'num'}, won(r.pipeline))}, {k: 'partner_id', l: '담당 대리상', sec: 1, render: (r) => r.partner_id ? partnerName(r.partner_id) : unlinked()}], prio,
-        {onRow: (r) => { ui.cSel = r.customer_id; goto('leads'); }, emptyText: '유효리드가 없습니다'}))),
+        {onRow: (r) => { ui.cSel = r.customer_id; goto('leads'); }, emptyText: '아직 유효리드가 없습니다 — 06 탭(또는 영업 제출 페이지)에 D2D 참석자 파일을 올리면 채워집니다'}))),
     panel('D2D 퍼널 · 하이라이트', '07 / FUNNEL', '유효리드 = 니즈확인 이상(180일 내 활동).',
       el('div', {class: 'lines'}, funnel.map(([l, v]) => frow(l, v, cs.length))),
       el('div', {class: 'hl', style: 'margin-top: 6px'},
@@ -1656,10 +1660,10 @@ function renderPartnerList() {
   const leadsOf = (p) => cs.filter((c) => c.country === p.country && c.valid).length;
   const rec = recruitStats(cs);
   const cols = [
-    {k: 'partner_id', l: 'ID', sort: 1, nw: 1}, {k: 'partner_name', l: '회사명', sort: 1, b: 1, ell: 1, max: '13rem', render: (r) => el('span', {title: r.partner_name}, r.partner_name)}, {k: 'country', l: '국가', sort: 1, nw: 1, render: (r) => { const n = FREE.coverageOf(r).length; return n > 1 ? el('span', {title: FREE.coverageOf(r).join(', ')}, r.country, el('span', {style: 'color: var(--muted)'}, ` +${n - 1}`)) : r.country; }}, {k: 'team', l: '담당팀', sort: 1, nw: 1, sec: 1},
-    {k: 'status', l: '구분', sort: 1, render: (r) => statusChip(r.status)}, {k: 'partner_type', l: '유형', sec2: 1, nw: 1, ell: 1, max: '6rem', render: (r) => el('span', {title: r.partner_type || ''}, r.partner_type || '')}, {k: 'categories', l: '카테고리', sec: 1, ell: 1, max: '8rem', render: (r) => el('span', {title: split(r.categories).join(', ')}, split(r.categories).join(', '))}, {k: 'channels', l: '채널', sec: 1, ell: 1, max: '8rem', render: (r) => el('span', {title: split(r.channels).join(', ')}, split(r.channels).join(', '))},
-    {k: 'rating', l: '평가', sort: 1, r: 1, render: (r) => r.rating ? '★' + r.rating : ''}, {k: 'cap_regulatory', l: '인허가', r: 1, sec: 1, sec2: 1, render: (r) => (isRated(r) ? capOf(r, 'cap_regulatory') : el('span', {style: 'color: var(--muted)', title: '미평가 — 상세 수정에서 1~5점 입력'}, '—'))}, {k: 'cap_coverage', l: '커버리지', r: 1, sec: 1, sec2: 1, render: (r) => (isRated(r) ? capOf(r, 'cap_coverage') : el('span', {style: 'color: var(--muted)', title: '미평가 — 상세 수정에서 1~5점 입력'}, '—'))},
-    {k: 'leads', l: '유효리드', r: 1, render: (r) => el('span', {title: '관할 국가의 유효리드 수'}, fmtInt(leadsOf(r)))}, {k: 'recruited', l: 'D2D 모객', r: 1, sec2: 1, render: (r) => { const x = rec.get(r.partner_id); return x ? el('span', {title: `모객 ${x.invited}명 · 유효리드 ${x.valid} · 주문 ${x.won}`}, `${fmtInt(x.invited)} → ${fmtInt(x.valid)}`) : el('span', {class: 'muted'}, '—'); }}, {k: 'last_contact_date', l: '최근 접촉', sort: 1, nw: 1}, {k: 'contact_name', l: '담당자', sec: 1, nw: 1, ell: 1, max: '6.5rem'}, {k: 'updated_at', l: '업데이트', sort: 1, nw: 1, sec2: 1},
+    {k: 'partner_id', l: 'ID', sort: 1, nw: 1}, {k: 'partner_name', l: '회사명', sort: 1, b: 1, ell: 1, max: '12rem', render: (r) => el('span', {title: r.partner_name}, r.partner_name)}, {k: 'country', l: '국가', sort: 1, nw: 1, render: (r) => { const n = FREE.coverageOf(r).length; return n > 1 ? el('span', {title: FREE.coverageOf(r).join(', ')}, r.country, el('span', {style: 'color: var(--muted)'}, ` +${n - 1}`)) : r.country; }}, {k: 'team', l: '담당팀', sort: 1, nw: 1, sec: 1},
+    {k: 'status', l: '구분', sort: 1, render: (r) => statusChip(r.status)}, {k: 'partner_type', l: '유형', sec2: 1, sec3: 1, nw: 1, ell: 1, max: '6rem', dash: 1, render: (r) => el('span', {title: r.partner_type || ''}, r.partner_type || '')}, {k: 'categories', l: '카테고리', sec: 1, ell: 1, max: '8rem', dash: 1, render: (r) => el('span', {title: split(r.categories).join(', ')}, split(r.categories).join(', '))}, {k: 'channels', l: '채널', sec: 1, ell: 1, max: '8rem', dash: 1, render: (r) => el('span', {title: split(r.channels).join(', ')}, split(r.channels).join(', '))},
+    {k: 'rating', l: '평가', sort: 1, r: 1, dash: 1, render: (r) => r.rating ? '★' + r.rating : ''}, {k: 'cap_regulatory', l: '인허가', r: 1, sec: 1, sec2: 1, render: (r) => (isRated(r) ? capOf(r, 'cap_regulatory') : el('span', {style: 'color: var(--muted)', title: '미평가 — 상세 수정에서 1~5점 입력'}, '—'))}, {k: 'cap_coverage', l: '커버리지', r: 1, sec: 1, sec2: 1, render: (r) => (isRated(r) ? capOf(r, 'cap_coverage') : el('span', {style: 'color: var(--muted)', title: '미평가 — 상세 수정에서 1~5점 입력'}, '—'))},
+    {k: 'leads', l: '유효리드', r: 1, render: (r) => el('span', {title: '관할 국가의 유효리드 수'}, fmtInt(leadsOf(r)))}, {k: 'recruited', l: 'D2D 모객', r: 1, sec2: 1, render: (r) => { const x = rec.get(r.partner_id); return x ? el('span', {title: `모객 ${x.invited}명 · 유효리드 ${x.valid} · 주문 ${x.won}`}, `${fmtInt(x.invited)} → ${fmtInt(x.valid)}`) : el('span', {class: 'muted'}, '—'); }}, {k: 'last_contact_date', l: '최근 접촉', sort: 1, nw: 1, dash: 1}, {k: 'contact_name', l: '담당자', sec: 1, sec3: 1, nw: 1, ell: 1, max: '6.5rem', dash: 1}, {k: 'updated_at', l: '업데이트', sort: 1, nw: 1, sec2: 1},
   ];
   box.append(table(cols, list, {sortKey: ui.pSort[0], sortDir: ui.pSort[1], onSort: (k) => { ui.pSort = [k, ui.pSort[0] === k ? -ui.pSort[1] : 1]; renderPartnerList(); },
     onRow: (r) => { ui.pSel = r.partner_id; ui.pMode = null; renderPartnerList(); renderPartnerDetail(); $('#p-detail').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }, selected: (r) => r.partner_id === ui.pSel, emptyText: state.loaded ? '조건에 맞는 대리상이 없습니다' : '불러오는 중…'}));
@@ -1812,7 +1816,7 @@ function renderPartnerInsights() {
     kpi('정보 보완 필요', fmtInt(low.length), '완성도 60% 미만', low.length ? 'red' : '')));
   box.append(el('div', {class: 'g2 wide'},
     panel('계약 만료 일정', '02 / CONTRACTS', '본사 기재 계약 기준. 90일 내 빨강, 180일 내 주황. 행을 누르면 그 대리상 상세로 이동합니다.',
-      el('div', {class: 'tablebox'}, table([{k: 'partner', l: '대리상', b: 1, nw: 1, render: (r) => r.partner.partner_name}, {k: 'country', l: '국가', nw: 1, render: (r) => r.partner.country}, {k: 'team', l: '담당팀', nw: 1, sec: 1, render: (r) => r.partner.team}, {k: 'products', l: '계약 제품', render: (r) => split(r.c.products).join(', ') || '—'}, {k: 'end', l: '만료일', nw: 1, render: (r) => r.c.end}, {k: 'days', l: '잔여', nw: 1, render: (r) => el('span', {class: 'chip ' + (r.days < 0 ? 'end' : r.days <= 90 ? 'bad' : r.days <= 180 ? 'warn' : 'ok')}, r.days < 0 ? `${-r.days}일 경과` : `D-${r.days}`)}, {k: 'renewal', l: '갱신', nw: 1, render: (r) => r.c.renewal || '—'}, {k: 'type', l: '형태', nw: 1, render: (r) => r.c.type || '—'}], cRows.slice(0, 30),
+      el('div', {class: 'tablebox'}, table([{k: 'partner', l: '대리상', b: 1, ell: 1, max: '10rem', render: (r) => el('span', {title: r.partner.partner_name}, r.partner.partner_name)}, {k: 'country', l: '국가', nw: 1, render: (r) => r.partner.country}, {k: 'team', l: '담당팀', nw: 1, sec: 1, sec2: 1, render: (r) => r.partner.team}, {k: 'products', l: '계약 제품', wrap: 1, render: (r) => split(r.c.products).join(', ') || '—'}, {k: 'end', l: '만료일', nw: 1, render: (r) => r.c.end}, {k: 'days', l: '잔여', nw: 1, render: (r) => el('span', {class: 'chip ' + (r.days < 0 ? 'end' : r.days <= 90 ? 'bad' : r.days <= 180 ? 'warn' : 'ok')}, r.days < 0 ? `${-r.days}일 경과` : `D-${r.days}`)}, {k: 'renewal', l: '갱신', nw: 1, sec2: 1, render: (r) => r.c.renewal || '—'}, {k: 'type', l: '형태', nw: 1, sec2: 1, render: (r) => r.c.type || '—'}], cRows.slice(0, 30),
         {onRow: (r) => { ui.pSel = r.partner.partner_id; ui.pMode = null; renderPartnerList(); renderPartnerDetail(); $('#p-detail').scrollIntoView({behavior: 'smooth', block: 'start'}); }, emptyText: '등록된 계약 없음 — 대리상 상세의 "+ 계약 추가" 또는 계약 열이 있는 파일 업로드'}))),
     panel('공급 단가 비교', '03 / PRICE BENCHMARK', '같은 제품·규격의 대리상별 단가. 편차가 크면 조건 정비 대상입니다.',
       el('div', {class: 'tablebox'}, table([{k: 'key', l: '제품 · 규격', b: 1, nw: 1}, {k: 'n', l: '대리상', r: 1}, {k: 'min', l: '최저', r: 1, render: (r) => el('span', {class: 'num'}, `${r.cur === 'USD' ? '$' : r.cur + ' '}${r.min}`)}, {k: 'med', l: '중앙', r: 1, render: (r) => `${r.cur === 'USD' ? '$' : r.cur + ' '}${r.med}`}, {k: 'max', l: '최고', r: 1, render: (r) => el('span', {class: 'num'}, `${r.cur === 'USD' ? '$' : r.cur + ' '}${r.max}`)}, {k: 'spread', l: '편차', r: 1, render: (r) => el('span', {class: 'chip ' + (r.spread >= 15 ? 'warn' : '')}, r.spread + '%')}, {k: '_lo', l: '최저 대리상', nw: 1, render: (r) => `${r.lo.p.partner_name} (${r.lo.p.country})`}, {k: '_hi', l: '최고 대리상', sec: 1, render: (r) => `${r.hi.p.partner_name} (${r.hi.p.country})`}], pRows, {emptyText: '단가 정보 없음 — 단가 열이 있는 파일을 올리면 자동 집계'})))));
@@ -1910,7 +1914,7 @@ function renderLeadList() {
   const stateChip = (s) => el('span', {class: 'chip ' + ({ACTIVE: '', WON: 'sel', DORMANT: 'warn', ARCHIVED: 'end'}[s] || ''), title: s}, STATE_KO[s] || s);
   box.append(table([{k: 'score', l: '점수', sort: 1, r: 1, render: (r) => el('span', {class: 'num', title: r.why.join(' · ')}, String(r.score))}, {k: 'person', l: '이름', sort: 1, b: 1}, {k: 'country', l: '국가', sort: 1, nw: 1}, {k: 'team', l: '담당팀', sort: 1, nw: 1, sec: 1}, {k: 'product', l: '관심제품', sort: 1, nw: 1}, {k: 'programs', l: 'D2D 접점', render: (r) => el('span', {class: 'ev', style: 'max-width: 16rem'}, split(r.programs).map((p) => el('span', {style: 'white-space: nowrap'}, progDot(p), p)))},
     {k: 'stage', l: '단계', sort: 1, render: (r) => stageChip(r.stage)}, {k: 'owner', l: '담당', sort: 1, nw: 1, sec: 1}, {k: 'pipeline', l: 'Pipeline', sort: 1, r: 1, render: (r) => el('span', {class: 'num'}, won(r.pipeline))},
-    {k: 'state', l: '상태', sort: 1, render: (r) => stateChip(r.state)}, {k: 'partner_id', l: '담당 대리상', sec: 1, render: (r) => r.partner_id ? partnerName(r.partner_id) : unlinked()}, {k: 'source_partner_id', l: '모객 대리상', sec2: 1, ell: 1, render: (r) => r.source_partner_id ? partnerName(r.source_partner_id) : r.source_partner_name ? el('span', {class: 'muted', title: '02 탭에 등록되지 않은 이름'}, `${r.source_partner_name} (미등록)`) : '—'}, {k: 'last_date', l: '최근 활동', sort: 1, nw: 1}, {k: 'visits', l: '참석', r: 1, sec: 1}], list,
+    {k: 'state', l: '상태', sort: 1, render: (r) => stateChip(r.state)}, {k: 'partner_id', l: '담당 대리상', sec: 1, ell: 1, max: '8rem', render: (r) => r.partner_id ? el('span', {title: partnerName(r.partner_id)}, partnerName(r.partner_id)) : unlinked()}, {k: 'source_partner_id', l: '모객 대리상', sec2: 1, ell: 1, max: '7rem', render: (r) => r.source_partner_id ? partnerName(r.source_partner_id) : r.source_partner_name ? el('span', {class: 'muted', title: '02 탭에 등록되지 않은 이름'}, `${r.source_partner_name} (미등록)`) : '—'}, {k: 'last_date', l: '최근 활동', sort: 1, nw: 1}, {k: 'visits', l: '참석', r: 1, sec: 1}], list,
     {sortKey: ui.cSort[0], sortDir: ui.cSort[1], onSort: (k) => { ui.cSort = [k, ui.cSort[0] === k ? -ui.cSort[1] : 1]; renderLeadList(); }, onRow: (r) => { ui.cSel = r.customer_id; ui.cEdit = false; renderLeadList(); renderLeadDetail(); $('#l-detail').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }, selected: (r) => r.customer_id === ui.cSel, emptyText: state.loaded ? '조건에 맞는 고객이 없습니다' : '불러오는 중…'}));
 }
 function renderLeadDetail() {
@@ -1993,15 +1997,17 @@ function renderLeadQueue(box, cs) {
     el('span', {}, el('b', {}, el('a', {href: '#', onclick: (ev) => { ev.preventDefault(); ui.cSel = a.c.customer_id; ui.cEdit = false; renderLeadList(); renderLeadDetail(); $('#l-detail').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }}, a.c.person), ` · ${a.c.country} · ${a.c.product || ''} `, stageChip(a.c.stage)),
       el('small', {}, `${a.action} · 최근 ${a.c.last_date || '—'} (${a.age}일)${a.late ? ` · 지연 ${a.late}일` : ''} · ${a.c.team || '팀 미정'} · 담당 ${a.c.owner || '미지정'}${a.partner ? ' · 대리상 ' + a.partner : a.suggest ? ' · 추천 대리상 ' + a.suggest.partner.partner_name : ' · 대리상 없음'}`)),
     el('span', {class: 'nw'}, a.suggest && !ui.readOnly ? el('button', {type: 'button', class: 'small', onclick: () => assignLeadPartner(a.c, a.suggest.partner.partner_id)}, '배정') : '', ' ', el('span', {class: 'num', title: '리드 점수'}, String(a.score)))));
-  const bulk = unassigned.length && !ui.readOnly ? el('button', {type: 'button', class: 'small', onclick: async () => { let n = 0; for (const c of unassigned) { const s = suggestPartnersForLead(c)[0]; if (!s) continue; const doc = {...c, history: (c.history || []).map((h) => ({...h})), partner_id: s.partner.partner_id, updated_at: todayISO()}; if (await tryWrite(() => store.put('customers', doc.customer_id, doc))) n += 1; } toast(`${n}건 배정했습니다`); render(); }}, `미배정 전체 자동 배정 (${unassigned.length}건)`) : '';
+  const bulk = unassigned.length && !ui.readOnly ? el('button', {type: 'button', class: 'primary small', onclick: async () => { let n = 0; for (const c of unassigned) { const s = suggestPartnersForLead(c)[0]; if (!s) continue; const doc = {...c, history: (c.history || []).map((h) => ({...h})), partner_id: s.partner.partner_id, updated_at: todayISO()}; if (await tryWrite(() => store.put('customers', doc.customer_id, doc))) n += 1; } toast(`${n}건 배정했습니다`); render(); }}, `미배정 전체 자동 배정 (${unassigned.length}건)`) : '';
   // hand-off text per partner
   const withPartner = [...new Set(cs.filter((c) => c.partner_id && c.state !== 'ARCHIVED' && c.stage !== '주문완료').map((c) => c.partner_id))].map((id) => state.partners[id]).filter(Boolean);
   const sel = el('select', {id: 'lq-partner', 'aria-label': '대리상'}, new Option('대리상 선택', ''), ...withPartner.map((p) => new Option(`${p.partner_name} (${cs.filter((c) => c.partner_id === p.partner_id && c.state !== 'ARCHIVED' && c.stage !== '주문완료').length}건)`, p.partner_id)));
-  const ta = el('textarea', {rows: 5, style: 'width:100%;margin-top:6px', readonly: true, placeholder: '대리상을 고르면 전달 문안이 만들어집니다'});
-  sel.addEventListener('change', () => { const p = state.partners[sel.value]; const leads = cs.filter((c) => c.partner_id === sel.value && c.state !== 'ARCHIVED' && c.stage !== '주문완료').sort((a, b) => leadScore(b).score - leadScore(a).score); ta.value = p ? handoffText(p, leads) : ''; });
+  const ta = el('textarea', {rows: 12, style: 'width:100%;margin-top:6px', readonly: true, placeholder: '대리상을 고르면 전달 문안이 만들어집니다'});
+  const fill = () => { const p = state.partners[sel.value]; const leads = cs.filter((c) => c.partner_id === sel.value && c.state !== 'ARCHIVED' && c.stage !== '주문완료').sort((a, b) => leadScore(b).score - leadScore(a).score); ta.value = p ? handoffText(p, leads) : ''; ui.lqPartner = sel.value; };
+  sel.addEventListener('change', fill);
+  if (ui.lqPartner && withPartner.some((p) => p.partner_id === ui.lqPartner)) { sel.value = ui.lqPartner; fill(); }
   box.append(el('div', {class: 'g2'},
     panel(`이번 주 할 일 — ${acts.length}건`, '01 / WEEKLY QUEUE', '행사 후 14일 내 첫 연락 → 니즈확인 → 견적(30일) → Follow-up(21일) → 협상(30일). 지연이 긴 순서입니다.',
-      el('div', {class: 'acts'}, rowsEl.length ? rowsEl : el('p', {class: 'note'}, '처리할 항목이 없습니다.')), el('div', {class: 'actions'}, acts.length > 12 ? el('button', {type: 'button', class: 'small', onclick: () => { ui.leadQueueAll = !ui.leadQueueAll; renderLeadQueue(box, cs); }}, ui.leadQueueAll ? '12건만 보기' : `전체 ${acts.length}건 보기`) : '', bulk)),
+      bulk ? el('div', {class: 'actions'}, bulk, el('span', {class: 'note'}, `미배정 ${unassigned.length}건 — 모객 대리상 > 관할·취급 대리상 순으로 한 번에 배정`)) : '', el('div', {class: 'acts'}, rowsEl.length ? rowsEl : el('p', {class: 'note'}, '처리할 항목이 없습니다.')), el('div', {class: 'actions'}, acts.length > 12 ? el('button', {type: 'button', class: 'small', onclick: () => { ui.leadQueueAll = !ui.leadQueueAll; renderLeadQueue(box, cs); }}, ui.leadQueueAll ? '12건만 보기' : `전체 ${acts.length}건 보기`) : '')),
     panel('대리상 전달 문안', '02 / HAND-OFF', '배정된 리드를 대리상(또는 담당 영업)에게 웍스로 보낼 문안. 점수 높은 순.', sel, ta, el('div', {class: 'actions'}, el('button', {type: 'button', class: 'small', onclick: (ev) => { if (ta.value) copyText(ev.currentTarget, ta.value, '복사됨'); }}, '문안 복사')))));
 }
 
@@ -2286,7 +2292,10 @@ async function loadSample(which) {
   setBusy((isDemo ? '데모' : '전략툴 스냅샷') + ' 데이터를 저장하는 중…');
   const ok = await tryWrite(async () => {
     for (const coll of ['products', 'partners', 'partner_products', 'selection_history', 'launches']) if (sample[coll] && sample[coll].length) await store.putMany(coll, sample[coll], COLLS[coll].id, (n, t) => setBusy(`저장 중 ${COLLS[coll].sheet} ${n}/${t}`));
-    if (sample.attendance && sample.attendance.length) { const {docs} = mergeAttendance({}, sample.attendance); await store.putMany('customers', [...docs.values()], (d) => d.customer_id, (n, t) => setBusy(`저장 중 D2D 고객 ${n}/${t}`)); }
+    if (sample.attendance && sample.attendance.length) {
+      let att = sample.attendance;
+      if (isDemo) { const dates = att.map((r) => String(r.date || '')).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort(); const last = dates[dates.length - 1]; if (last) { const delta = daysBetween(todayISO(), last) - 7; if (delta > 0) { const shift = (d) => (/^\d{4}-\d{2}-\d{2}$/.test(String(d || '')) ? new Date(new Date(d + 'T00:00:00Z').getTime() + delta * 864e5).toISOString().slice(0, 10) : d); att = att.map((r) => ({...r, date: shift(r.date)})); } } }
+      const {docs} = mergeAttendance({}, att); await store.putMany('customers', [...docs.values()], (d) => d.customer_id, (n, t) => setBusy(`저장 중 D2D 고객 ${n}/${t}`)); }
     await store.setMeta({...(state.meta || {}), sample: isDemo, source: isDemo ? '데모 데이터' : (sample.source || '전략툴 스냅샷'), loaded_at: todayISO()});
   }, isDemo ? '데모 데이터를 불러왔습니다' : '전략툴 스냅샷을 불러왔습니다');
   setBusy(''); if (ok) render();
