@@ -1767,7 +1767,18 @@ function renderOverview() {
   sec.append(panel('국가 커버리지', '05 / COVERAGE', '공백 = 기존 대리상 없음(유효리드가 있으면 빨간 점), 후보만 = 후보 대리상만 있음, 커버 = 기존 대리상 있음. 잠재 대리상만 있는 나라는 「잠재:」로 표시. 열 제목으로 정렬, 행을 누르면 그 나라의 대리상 목록으로 이동합니다.',
     el('div', {class: 'toolbar'}, teamSel, stSel, q, count), covBox));
   // 4) priority leads + funnel/highlights
-  const prio = cs.filter((c) => c.valid).sort((a, b) => b.pipeline - a.pipeline || (SCORE[b.stage] || 0) - (SCORE[a.stage] || 0)).slice(0, 8);
+  // B2B: valid leads rolled up to the institution (clinic / hospital / company); a lead without an institution stands on its own
+  const accM = new Map();
+  for (const c of cs.filter((x) => x.valid)) {
+    const k = `${norm(c.org || c.person)}|${c.country}`;
+    const a = accM.get(k) || {key: k, org: c.org || '', person: c.person, country: c.country, n: 0, visits: 0, pipeline: 0, maxStage: '', maxScore: 0, products: new Map(), partners: new Map(), customer_id: c.customer_id};
+    a.n += 1; a.visits += (c.history || []).length || 1; a.pipeline += Number(c.pipeline) || 0;
+    if ((SCORE[c.stage] || 0) > a.maxScore) { a.maxScore = SCORE[c.stage] || 0; a.maxStage = c.stage; a.customer_id = c.customer_id; }
+    if (c.product) a.products.set(c.product, (a.products.get(c.product) || 0) + 1);
+    if (c.partner_id) a.partners.set(c.partner_id, (a.partners.get(c.partner_id) || 0) + 1);
+    accM.set(k, a);
+  }
+  const prio = [...accM.values()].map((a) => ({...a, product: [...a.products.entries()].sort((x, y) => y[1] - x[1]).slice(0, 2).map((x) => x[0]).join(', '), partner_id: ([...a.partners.entries()].sort((x, y) => y[1] - x[1])[0] || [''])[0]})).sort((a, b) => b.pipeline - a.pipeline || b.maxScore - a.maxScore || b.n - a.n).slice(0, 8);
   const funnel = [['참석자 (고유)', cs.length], ...funnelStats(cs).slice(1).map((f) => [f.stage === '니즈확인' ? '니즈확인 = 유효리드' : f.stage, f.n])];
   const topCountry = board.slice().sort((a, b) => b.valid - a.valid || b.pipeline - a.pipeline)[0], topProg = [...prog].sort((a, b) => b.rate - a.rate || b.pipeline - a.pipeline)[0];
   const prodCount = new Map(); ls.valid.forEach((c) => prodCount.set(c.product, (prodCount.get(c.product) || 0) + 1));
@@ -1775,9 +1786,9 @@ function renderOverview() {
   const bestPartner = cur.map((p) => ({p, s: rows('partner_products').filter((x) => x.partner_id === p.partner_id).reduce((s, x) => s + Number(x.sales_2025_krw || 0), 0)})).sort((a, b) => b.s - a.s)[0];
   const hlItem = (k, v, s) => el('div', {}, el('span', {class: 'k'}, k), el('span', {class: 'v'}, v || '—'), s ? el('small', {}, s) : '');
   sec.append(el('div', {class: 'g2 wide'},
-    panel('우선 관리 리드', '06 / HIGH VALUE', '예상매출이 큰 유효리드 상위 8명.',
-      el('div', {class: 'tablebox'}, table([{k: 'person', l: '고객', b: 1}, {k: 'country', l: '국가', nw: 1}, {k: 'product', l: '관심제품', nw: 1}, {k: 'stage', l: '단계', render: (r) => stageChip(r.stage)}, {k: 'pipeline', l: 'Pipeline', r: 1, render: (r) => el('span', {class: 'num'}, won(r.pipeline))}, {k: 'partner_id', l: '담당 대리상', sec: 1, render: (r) => r.partner_id ? partnerName(r.partner_id) : unlinked()}], prio,
-        {onRow: (r) => { ui.cSel = r.customer_id; goto('leads'); }, emptyText: '아직 유효리드가 없습니다 — 06 탭(또는 영업 제출 페이지)에 D2D 참석자 파일을 올리면 채워집니다'}))),
+    panel('우선 관리 기관 · 거래처', '06 / KEY ACCOUNTS', 'B2B 기준: 유효리드를 소속 기관(병원·클리닉·회사)으로 묶어 예상매출이 큰 순. 기관 정보가 없는 리드는 이름으로 표시됩니다. 행을 누르면 03 탭에서 그 기관의 담당자들이 보입니다.',
+      el('div', {class: 'tablebox'}, table([{k: 'org', l: '기관 · 거래처', b: 1, wrap: 1, render: (r) => r.org ? el('span', {}, r.org, el('small', {class: 'muted'}, ` · 담당자 ${r.n}명`)) : el('span', {}, r.person, el('small', {class: 'muted', title: '참석자 파일에 소속 기관이 없음'}, ' · 기관 미기재'))}, {k: 'country', l: '국가', nw: 1}, {k: 'product', l: '관심제품', nw: 1}, {k: 'maxStage', l: '최고 단계', render: (r) => stageChip(r.maxStage)}, {k: 'pipeline', l: 'Pipeline', r: 1, render: (r) => el('span', {class: 'num'}, won(r.pipeline))}, {k: 'partner_id', l: '담당 대리상', sec: 1, render: (r) => r.partner_id ? partnerName(r.partner_id) : unlinked()}], prio,
+        {onRow: (r) => { ui.filters.q = r.org || r.person; ui.cSel = r.customer_id; goto('leads'); }, emptyText: '아직 유효리드가 없습니다 — 06 탭(또는 영업 제출 페이지)에 D2D 참석자 파일을 올리면 채워집니다'}))),
     panel('D2D 퍼널 · 하이라이트', '07 / FUNNEL', '각 단계에 도달한 참석자 수(누적 · 03 탭 「여정 퍼널」과 같은 기준). 유효리드 = 니즈확인 이상(180일 내 활동).',
       el('div', {class: 'lines'}, funnel.map(([l, v]) => frow(l, v, cs.length))),
       el('div', {class: 'hl', style: 'margin-top: 6px'},
@@ -2033,7 +2044,7 @@ function renderLeads() {
           el('select', {id: 'lf-country', 'aria-label': '국가'}), el('select', {id: 'lf-product', 'aria-label': '제품'}), el('select', {id: 'lf-owner', 'aria-label': '담당자'}),
           el('select', {id: 'lf-stage', 'aria-label': '단계'}, new Option('전체 단계', ''), ...STAGES.map((s) => new Option(s, s))),
           el('select', {id: 'lf-state', 'aria-label': '상태'}, new Option('진행 중 + 주문완료', ''), new Option('진행 중 (ACTIVE)', 'ACTIVE'), new Option('주문완료 (WON)', 'WON'), new Option('휴면 90일+ (DORMANT)', 'DORMANT'), new Option('보관 180일+ (ARCHIVED)', 'ARCHIVED'), new Option('전체', 'ALL')),
-          el('input', {id: 'lf-q', class: 'grow', type: 'search', placeholder: '이름·행사·국가·제품 검색', 'aria-label': '검색'}),
+          el('input', {id: 'lf-q', class: 'grow', type: 'search', placeholder: '기관·이름·행사·국가·제품 검색', 'aria-label': '검색'}),
           el('span', {class: 'count', id: 'lf-count'}), el('button', {type: 'button', class: 'primary', id: 'btn-new-lead'}, '+ 리드 빠른 입력')),
         el('div', {id: 'l-form'}), el('div', {class: 'tablebox', id: 'l-table'})),
       el('div', {class: 'panel detail', id: 'l-detail', hidden: true}),
@@ -2053,6 +2064,7 @@ function renderLeads() {
   fillSelect($('#lf-owner'), [...new Set(cs.map((c) => c.owner))].sort(), '전체 담당자');
   if (ui.filters.stage) { $('#lf-stage').value = ui.filters.stage; ui.filters.stage = null; }
   if (ui.filters.country) { $('#lf-country').value = ui.filters.country; ui.filters.country = null; }
+  if (ui.filters.q) { $('#lf-q').value = ui.filters.q; ui.filters.q = null; }
   renderLeadList();
   if (!ui.cEdit) renderLeadDetail();
   const bottom = $('#l-bottom'); clear(bottom);
@@ -2074,7 +2086,7 @@ function renderLeads() {
 function leadsFiltered() {
   const f = {scope: ($('#lf-scope') || {}).value || '', program: $('#lf-program').value, country: $('#lf-country').value, product: $('#lf-product').value, owner: $('#lf-owner').value, stage: $('#lf-stage').value, state: $('#lf-state').value, q: $('#lf-q').value.trim().toLowerCase()};
   return customersView().filter((c) => (f.scope === 'all' || f.stage || f.q || (SCORE[c.stage] || 0) >= 2) && (!f.program || split(c.programs).includes(f.program)) && (!f.country || c.country === f.country) && (!f.product || c.product === f.product) && (!f.owner || c.owner === f.owner) && (!f.stage || c.stage === f.stage)
-    && (f.state === 'ALL' ? true : f.state ? c.state === f.state : (c.state === 'ACTIVE' || c.state === 'WON')) && (!f.q || [c.person, c.country, c.product, c.owner, c.key, c.source_partner_name || '', c.history.map((h) => h.event).join(' ')].join(' ').toLowerCase().includes(f.q)));
+    && (f.state === 'ALL' ? true : f.state ? c.state === f.state : (c.state === 'ACTIVE' || c.state === 'WON')) && (!f.q || [c.person, c.org || '', c.country, c.product, c.owner, c.key, c.source_partner_name || '', c.history.map((h) => h.event).join(' ')].join(' ').toLowerCase().includes(f.q)));
 }
 function renderLeadList() {
   const today = todayISO();
@@ -2083,7 +2095,7 @@ function renderLeadList() {
   const box = $('#l-table'); clear(box);
   const PAGE = 60, page = ui.cPage || 0, shown = list.slice(0, (page + 1) * PAGE);
   const stateChip = (s) => el('span', {class: 'chip ' + ({ACTIVE: '', WON: 'sel', DORMANT: 'warn', ARCHIVED: 'end'}[s] || ''), title: s}, STATE_KO[s] || s);
-  box.append(table([{k: 'score', l: '점수 /100', sort: 1, r: 1, render: (r) => el('span', {class: 'num', title: r.why.join(' · ')}, String(r.score))}, {k: 'person', l: '이름', sort: 1, b: 1}, {k: 'country', l: '국가', sort: 1, nw: 1}, {k: 'team', l: '담당팀', sort: 1, nw: 1, sec: 1}, {k: 'product', l: '관심제품', sort: 1, nw: 1}, {k: 'programs', l: 'D2D 접점', render: (r) => el('span', {class: 'ev', style: 'max-width: 16rem'}, split(r.programs).map((p) => el('span', {style: 'white-space: nowrap'}, progDot(p), p)))},
+  box.append(table([{k: 'score', l: '점수 /100', sort: 1, r: 1, render: (r) => el('span', {class: 'num', title: r.why.join(' · ')}, String(r.score))}, {k: 'person', l: '이름', sort: 1, b: 1}, {k: 'org', l: '소속 기관', sort: 1, ell: 1, max: '11rem', dash: 1, hideEmpty: 1}, {k: 'country', l: '국가', sort: 1, nw: 1}, {k: 'team', l: '담당팀', sort: 1, nw: 1, sec: 1}, {k: 'product', l: '관심제품', sort: 1, nw: 1}, {k: 'programs', l: 'D2D 접점', render: (r) => el('span', {class: 'ev', style: 'max-width: 16rem'}, split(r.programs).map((p) => el('span', {style: 'white-space: nowrap'}, progDot(p), p)))},
     {k: 'stage', l: '단계', sort: 1, render: (r) => stageChip(r.stage)}, {k: 'owner', l: '담당', sort: 1, nw: 1, sec: 1}, {k: 'pipeline', l: 'Pipeline', sort: 1, r: 1, render: (r) => el('span', {class: 'num'}, won(r.pipeline))},
     {k: 'state', l: '상태', sort: 1, render: (r) => stateChip(r.state)}, {k: 'partner_id', l: '담당 대리상', sec: 1, ell: 1, max: '8rem', render: (r) => r.partner_id ? el('span', {title: partnerName(r.partner_id)}, partnerName(r.partner_id)) : unlinked()}, {k: 'source_partner_id', l: '모객 대리상', sec2: 1, ell: 1, max: '7rem', render: (r) => r.source_partner_id ? partnerName(r.source_partner_id) : r.source_partner_name ? el('span', {class: 'muted', title: '02 탭에 등록되지 않은 이름'}, `${r.source_partner_name} (미등록)`) : '—'}, {k: 'last_date', l: '최근 활동', sort: 1, nw: 1}, {k: 'visits', l: '참석', r: 1, sec: 1}], shown,
     {sortKey: ui.cSort[0], sortDir: ui.cSort[1], onSort: (k) => { ui.cSort = [k, ui.cSort[0] === k ? -ui.cSort[1] : 1]; renderLeadList(); }, onRow: (r) => { ui.cSel = r.customer_id; ui.cEdit = false; renderLeadList(); renderLeadDetail(); $('#l-detail').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }, selected: (r) => r.customer_id === ui.cSel, emptyText: state.loaded ? (($('#lf-scope') || {}).value === 'all' ? '조건에 맞는 참석자가 없습니다' : '접촉이 보고된 리드가 아직 없습니다 — 「전체 참석자」로 바꾸면 명단을 볼 수 있습니다') : '불러오는 중…'}));
@@ -2097,7 +2109,7 @@ function renderLeadDetail() {
   box.hidden = false;
   const [act, actSub] = nextAction(cv);
   const sc = leadScore(cv), sug = suggestPartnersForLead(cv);
-  box.append(el('div', {class: 'detail-head'}, el('h2', {}, cv.person), stageChip(cv.stage), el('span', {class: 'chip ' + ({ACTIVE: 'ok', WON: 'sel', DORMANT: 'warn', ARCHIVED: 'end'}[cv.state] || ''), title: cv.state}, STATE_KO[cv.state] || cv.state), el('span', {class: 'meta'}, `${cv.country} · ${cv.product} · Pipeline ${won(cv.pipeline)} · 담당 ${cv.owner}${cv.key ? ' · ' + cv.key : ''}`)));
+  box.append(el('div', {class: 'detail-head'}, el('h2', {}, cv.org ? cv.org : cv.person), cv.org ? el('span', {class: 'meta'}, `담당자 ${cv.person}`) : el('span', {class: 'meta muted', title: '참석자 파일에 소속 기관이 없음'}, '기관 미기재'), stageChip(cv.stage), el('span', {class: 'chip ' + ({ACTIVE: 'ok', WON: 'sel', DORMANT: 'warn', ARCHIVED: 'end'}[cv.state] || ''), title: cv.state}, STATE_KO[cv.state] || cv.state), el('span', {class: 'meta'}, `${cv.country} · ${cv.product} · Pipeline ${won(cv.pipeline)} · 담당 ${cv.owner}${cv.key ? ' · ' + cv.key : ''}`)));
   const tl = el('div', {class: 'tl'});
   for (const h of cv.history.slice().reverse()) tl.append(el('div', {class: 'item'}, el('div', {class: 'dot', style: 'background:' + (PROG_COLOR[h.program] || 'var(--muted)')}), el('div', {}, el('b', {}, `${h.date} · ${h.program} · ${h.event}`), el('small', {}, `${h.product} · ${h.stage}${h.pipeline ? ' · ' + won(h.pipeline) : ''} · 담당 ${h.owner}${h.source ? ' · 모객 ' + ((resolvePartnerRef(h.source, cv.country) || {}).partner_name || h.source) : ''}`))));
   const partnersHere = rows('partners').filter((p) => p.country === cv.country && p.status !== '거래종료');
@@ -2166,7 +2178,7 @@ function renderLeadQueue(box, cs) {
   const unassigned = cs.filter((c) => !c.partner_id && c.state !== 'ARCHIVED' && suggestPartnersForLead(c).length);
   const show = ui.leadQueueAll ? acts : acts.slice(0, 12);
   const rowsEl = show.map((a) => el('div', {class: 'act', style: 'cursor:default'}, el('i', {class: 'dot ' + (a.late > 14 ? 'bad' : a.late > 0 ? 'warn' : 'ok')}),
-    el('span', {}, el('b', {}, el('a', {href: '#', onclick: (ev) => { ev.preventDefault(); ui.cSel = a.c.customer_id; ui.cEdit = false; renderLeadList(); renderLeadDetail(); $('#l-detail').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }}, a.c.person), ` · ${a.c.country} · ${a.c.product || ''} `, stageChip(a.c.stage)),
+    el('span', {}, el('b', {}, el('a', {href: '#', onclick: (ev) => { ev.preventDefault(); ui.cSel = a.c.customer_id; ui.cEdit = false; renderLeadList(); renderLeadDetail(); $('#l-detail').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }}, a.c.person), a.c.org ? el('span', {class: 'muted'}, ` · ${a.c.org}`) : '', ` · ${a.c.country} · ${a.c.product || ''} `, stageChip(a.c.stage)),
       el('small', {}, `${a.action} · 최근 ${a.c.last_date || '—'} (${a.age}일)${a.late ? ` · 지연 ${a.late}일` : ''} · ${a.c.team || '팀 미정'} · 담당 ${a.c.owner || '미지정'}${a.partner ? ' · 대리상 ' + a.partner : a.suggest ? ' · 추천 대리상 ' + a.suggest.partner.partner_name : ' · 대리상 없음'}`)),
     el('span', {class: 'nw'}, a.suggest && !ui.readOnly ? el('button', {type: 'button', class: 'small', onclick: () => assignLeadPartner(a.c, a.suggest.partner.partner_id)}, '배정') : '', ' ', el('span', {class: 'num', title: '리드 점수'}, String(a.score)))));
   const bulk = unassigned.length && !ui.readOnly ? el('button', {type: 'button', class: 'primary small', onclick: async () => { let n = 0; for (const c of unassigned) { const s = suggestPartnersForLead(c)[0]; if (!s) continue; const doc = {...c, history: (c.history || []).map((h) => ({...h})), partner_id: s.partner.partner_id, updated_at: todayISO()}; if (await tryWrite(() => store.put('customers', doc.customer_id, doc))) n += 1; } toast(`${n}건 배정했습니다`); render(); }}, `미배정 전체 자동 배정 (${unassigned.length}건)`) : '';
