@@ -1,18 +1,26 @@
 // Real-browser check of the hosted CRM page (GitHub-hosted Chromium): the page loads, the gate renders, a wrong code
 // makes the browser do the CORS preflight + POST to the shared store and get the server's "bad_code" answer back.
 // No team code is used or stored here. Writes verify/result.json.
-const {chromium} = require('playwright'); const fs = require('fs');
+const {chromium} = require('playwright'); const fs = require('fs'); const crypto = require('crypto');
 const URL = 'https://amy0559.github.io/GLOBAL-CGBIO/crm.html';
-const out = {url: URL, at: new Date().toISOString(), steps: []};
+const sha = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
+const wanted = fs.existsSync('crm.html') ? sha(fs.readFileSync('crm.html')) : null; // the version this commit carries
+const out = {url: URL, at: new Date().toISOString(), commit_sha256: wanted, steps: []};
 const step = (name, ok, detail) => { out.steps.push({name, ok, detail}); console.log(ok ? 'OK ' : 'FAIL', name, detail || ''); };
 (async () => {
   const browser = await chromium.launch(); const page = await browser.newPage({viewport: {width: 1366, height: 900}});
   const errors = []; page.on('pageerror', (e) => errors.push(e.message));
-  let gate = false;
-  for (let i = 0; i < 20 && !gate; i++) { // GitHub Pages may still be deploying the commit that carries this check
-    try { await page.goto(URL + '?v=' + Date.now(), {waitUntil: 'load', timeout: 60000}); await page.waitForSelector('#cloud-code', {timeout: 15000}); gate = true; }
-    catch (e) { await page.waitForTimeout(15000); }
+  let gate = false, live = null;
+  for (let i = 0; i < 24 && !gate; i++) { // GitHub Pages may still be deploying the commit that carries this check: wait until the live bytes ARE this commit's crm.html
+    try {
+      const resp = await page.goto(URL + '?v=' + Date.now(), {waitUntil: 'load', timeout: 60000});
+      const body = await resp.body(); live = {page_bytes: body.length, page_sha256: sha(body)};
+      if (wanted && live.page_sha256 !== wanted) { await page.waitForTimeout(15000); continue; }
+      await page.waitForSelector('#cloud-code', {timeout: 15000}); gate = true;
+    } catch (e) { await page.waitForTimeout(15000); }
   }
+  Object.assign(out, live || {});
+  step('live page is this commit\'s crm.html (sha256 match)', !!live && (!wanted || live.page_sha256 === wanted), live ? `${live.page_bytes} bytes · ${live.page_sha256.slice(0, 16)}…` : 'no response');
   step('page served and team-code gate rendered', gate);
   if (gate) {
     const ua = await page.evaluate(() => navigator.userAgent); out.userAgent = ua;
