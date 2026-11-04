@@ -9,21 +9,21 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root { --bg: #f4f5f7; --panel: #ffffff; --panel-2: #f6f7f9; --fg: #171a1f; --muted: #5f6673; --line: #e3e6ea; --line-2: #c8ced6; --accent: #1f5fbf; --accent-soft: #e9f0fb; --ok: #1d7a4a; --ok-soft: #e6f4ec; --warn: #9a5b08; --warn-soft: #fbf0dc; --bad: #c0392b; --bad-soft: #fbe6e4; --radius: 8px; }
+:root { --bg: #eceff3; --panel: #ffffff; --panel-2: #f3f5f8; --fg: #0f1419; --muted: #475061; --line: #d8dde5; --line-2: #b6bfcb; --accent: #1a56db; --accent-soft: #e3ebfb; --ok: #15803d; --ok-soft: #e1f3e8; --warn: #a15c07; --warn-soft: #fbefd8; --bad: #b42318; --bad-soft: #fbe4e1; --radius: 8px; --head: #141a23; --head-ink: #ffffff; --head-dim: #aab4c3; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif; -webkit-text-size-adjust: 100%; }
-header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 18px max(16px, env(safe-area-inset-left, 0px)) 16px max(16px, env(safe-area-inset-right, 0px)); }
+header { background: var(--head); color: var(--head-ink); border-bottom: 1px solid var(--head); padding: 20px max(16px, env(safe-area-inset-left, 0px)) 18px max(16px, env(safe-area-inset-right, 0px)); }
 .wrap { max-width: 860px; margin: 0 auto; }
-.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
-h1 { margin: 4px 0 2px; font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
-header p { margin: 0; color: var(--muted); font-size: 13.5px; }
+.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--head-dim); font-weight: 700; }
+h1 { margin: 4px 0 3px; font-size: 23px; font-weight: 700; letter-spacing: -.01em; color: var(--head-ink); }
+header p { margin: 0; color: var(--head-dim); font-size: 14px; } header p b { color: var(--head-ink); } header .n { background: var(--head-ink) !important; color: var(--head) !important; }
 main { padding: 14px max(16px, env(safe-area-inset-left, 0px)) 48px max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 12px; }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 16px 18px; }
-.card h2 { margin: 0 0 2px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 18px 20px; box-shadow: 0 1px 2px rgba(16, 24, 40, .06); }
+.card h2 { margin: 0 0 4px; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .card h2 .n, h3.or .n { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--fg); color: #fff; font-size: 12px; align-items: center; justify-content: center; flex: none; }
 .card h2 .tag { font-size: 11.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 1px 7px; }
-.hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.hint { margin: 0 0 12px; color: var(--muted); font-size: 13.5px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
 .grid .wide { grid-column: 1 / -1; }
 @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
@@ -118,7 +118,7 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
 
   <section class="card" id="card-file" data-m="1 2">
     <h2 data-m="1"><span class="n">1</span>파일 업로드 <span class="tag">대리상 목록 · D2D 참석자 명단</span><a href="#top" class="chg" data-chg>방법 변경</a></h2>
-    <p class="hint" data-m="1">현재 사용 중인 대리상 현황 엑셀을 수정 없이 그대로 업로드하시면 됩니다. 열 제목이 양식과 달라도 자동으로 인식하며, 한 칸에 국가·담당자·이메일·연락처·주소·단가가 여러 개 기재된 경우에도 항목별로 분리하여 반영됩니다. 정식 양식(19개 항목)에 있는 항목이 파일에 없으면 제출 전에 표시되고, 제출 후 CRM에 '보완 필요'로 기록됩니다. 정식 양식으로 작성하는 경우 모든 칸을 채우며, 해당 사항이 없는 칸은 "없음", 협의 단계는 "협의중"으로 기재해 주십시오. <b>D2D 참석자 명단</b>(행사일 · 프로그램 · 행사명 · 참석자명 · 국가 · 관심제품 · <b>모객 대리상</b>)도 같은 자리에 올리면 리드로 자동 반영됩니다 — 대리상이 모객한 행사는 모객 대리상 칸에 그 대리상 이름을 적어 주십시오.</p>
+    <p class="hint" data-m="1">현재 사용 중인 대리상 현황 엑셀을 수정 없이 그대로 업로드하시면 됩니다. 열 제목이 양식과 달라도 자동으로 인식하며, 한 칸에 국가·담당자·이메일·연락처·주소·단가가 여러 개 기재된 경우에도 항목별로 분리하여 반영됩니다. 정식 양식(19개 항목)에 있는 항목이 파일에 없으면 제출 전에 표시되고, 제출 후 CRM에 '보완 필요'로 기록됩니다. 정식 양식으로 작성하는 경우 모든 칸을 채우며, 해당 사항이 없는 칸은 "없음", 협의 단계는 "협의중"으로 기재해 주십시오. <b>D2D 참석자 명단</b>(참석자명 · 국가 · 이메일 · 관심제품 · D2D 프로그램 · 행사일 · <b>모객 대리상</b> 7칸)도 같은 자리에 올리면 리드로 자동 반영됩니다 — 대리상이 모객한 행사는 모객 대리상 칸에 그 대리상 이름을 적어 주십시오.</p>
     <div class="steps" data-m="1"><span><i>1</i>파일 업로드</span><span><i>2</i>열 인식 결과 확인 (잘못 인식된 열은 드롭다운으로 변경)</span><span><i>3</i>제출 → CRM 자동 반영</span></div>
     <label class="drop" id="drop" data-m="1"><b>엑셀 파일을 끌어다 놓거나 클릭하여 선택</b><small>.xlsx · .xls · .csv — 여러 파일, 여러 시트 가능</small><input id="file" type="file" accept=".xlsx,.xls,.csv" multiple></label>
     <div class="tplrow" data-m="1"><div><b>정식 양식</b><small>19개 항목 · 드롭다운 · 작성 예시 시트 포함. 양식에 작성 후 위에 업로드하십시오.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 내려받기 (.xlsx)</a></div>
