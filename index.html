@@ -35,7 +35,10 @@ label.f small, .g small { display: block; color: var(--muted); font-weight: 400;
 .req { color: var(--bad); }
 input, select, textarea { width: 100%; min-height: 44px; border: 1px solid var(--line-2); border-radius: 6px; padding: 9px 11px; font: inherit; font-size: 16px; background: #fff; color: var(--fg); }
 textarea { min-height: 72px; resize: vertical; line-height: 1.45; }
-input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible, .pick-c:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::placeholder { color: #8a94a6; font-style: italic; opacity: 1; }
+@media (max-width: 480px) { .sticky .btn.primary:disabled::after { content: none; } }
+.tokens:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); } .tokens input:focus { outline: none; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .plines { display: grid; gap: 6px; } .pline { display: grid; grid-template-columns: 78px 1fr; gap: 6px 8px; align-items: start; } .pline > b { font-size: 12.5px; color: var(--muted); font-weight: 600; padding-top: 10px; } @media (max-width: 480px) { .pline { grid-template-columns: 1fr; } .pline > b { padding-top: 4px; } }
 .chip { min-height: 38px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--line-2); background: #fff; color: var(--fg); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
@@ -88,9 +91,10 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16
 .pick-g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } @media (max-width: 640px) { .pick-g { grid-template-columns: 1fr; } }
 .pick-c { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: var(--fg); border: 1px solid var(--line-2); border-radius: 6px; padding: 10px 12px; background: var(--panel-2); }
 .pick-c:hover, .pick-c[aria-current="true"] { border-color: var(--accent); background: var(--accent-soft); } .pick-c[aria-current="true"] b::after { content: " ✓"; color: var(--accent); }
+main:not([data-mode]) [data-m] { display: none; } main:not([data-mode]) .card#card-file, main:not([data-mode]) .card#card-form { display: none; }
 main[data-mode="1"] [data-m]:not([data-m~="1"]), main[data-mode="2"] [data-m]:not([data-m~="2"]), main[data-mode="3"] [data-m]:not([data-m~="3"]) { display: none; } main[data-mode="2"] .or { border-top: 0; margin-top: 0; padding-top: 0; }
 .chg { font-size: 12px; font-weight: 500; margin-left: auto; color: var(--accent); text-decoration: none; } h2 .chg, h3 .chg { float: right; margin-top: 4px; } main:not([data-mode]) .chg { display: none; } .pick-c b { font-size: 14.5px; } .pick-c span { font-size: 12.5px; color: var(--muted); } .pick-c em { font-style: normal; font-size: 12.5px; color: var(--accent); font-weight: 600; margin-top: 2px; }
-.steps { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; margin: 0 0 10px; color: var(--muted); } .steps span { display: inline-flex; align-items: center; gap: 6px; } .steps i { font-style: normal; display: inline-flex; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 5px; border: 1px solid var(--line-2); font-size: 11px; font-weight: 700; align-items: center; justify-content: center; color: var(--fg); background: #fff; }
+.steps { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; margin: 0 0 10px; color: var(--muted); } .steps span { display: inline-flex; align-items: center; gap: 6px; } .steps i { white-space: nowrap; font-style: normal; display: inline-flex; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 5px; border: 1px solid var(--line-2); font-size: 11px; font-weight: 700; align-items: center; justify-content: center; color: var(--fg); background: #fff; }
 .tplrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--panel-2); } .tplrow small { display: block; color: var(--muted); font-size: 12.5px; }
 .btn.tpl { background: #fff; color: var(--fg); border-color: var(--line-2); min-height: 42px; font-size: 14px; padding: 0 16px; white-space: nowrap; flex: none; } .btn.tpl:hover { border-color: var(--fg); }
 details.more { margin: -4px 0 12px; } details.more summary { cursor: pointer; color: var(--accent); font-size: 13px; font-weight: 600; list-style: none; } details.more summary::before { content: '▸ '; } details.more[open] summary::before { content: '▾ '; } details.more .hint { margin-top: 6px; }
@@ -104,7 +108,7 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
   <section class="card">
     <h2>제출자</h2>
     <div class="who">
-      <label class="f">이름 <span class="req">*</span><input id="who-name" maxlength="50" autocomplete="off" list="who-list" placeholder="홍길동"><datalist id="who-list"></datalist></label>
+      <label class="f">이름 <span class="req">*</span><input id="who-name" maxlength="50" autocomplete="off" list="who-list" placeholder="예: 홍길동"><datalist id="who-list"></datalist></label>
       <label class="f">팀 <span class="req">*</span><select id="who-team"><option value="">선택</option><option value="글로벌영업1팀">글로벌영업1팀</option><option value="글로벌영업2팀">글로벌영업2팀</option><option value="글로벌영업3팀">글로벌영업3팀</option><option value="미용성형TF">미용성형TF</option><option value="인니TF">인니TF</option><option value="글로벌전략TF">글로벌전략TF</option><option value="글로벌사업부">글로벌사업부</option><option value="기타">기타</option></select></label>
     </div>
     <div class="msg" id="who-msg" role="alert"></div>
@@ -128,7 +132,7 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
     <div class="tplrow" data-m="1"><div><b>정식 양식</b><small>19개 항목 · 드롭다운 · 작성 예시 시트 포함. 양식에 작성 후 위에 업로드하십시오.</small></div><a class="btn tpl" id="btn-template" href="https://amy0559.github.io/GLOBAL-CGBIO/partner_form.xlsx" download>정식 양식 내려받기 (.xlsx)</a></div>
     <div class="tplrow" data-m="1"><div><b>D2D 참석자 명단 양식</b><small>7칸 — 참석자명 · 국가 · 이메일 · 관심제품 · D2D 프로그램 · 행사일 · 모객 대리상 (영문 머리글도 인식, 그 외 칸은 선택)</small></div><a class="btn tpl" id="btn-template-d2d" href="https://amy0559.github.io/GLOBAL-CGBIO/d2d_attendees.xlsx" download>참석자 양식 내려받기 (.xlsx)</a></div>
     <h3 class="or" id="card-paste" data-m="2"><span class="n">2</span>복사·붙여넣기 <span class="muted-s">— 파일 대신 엑셀 범위를 붙여넣는 경우</span><a href="#top" class="chg" data-chg>방법 변경</a></h3>
-    <label class="f" data-m="2">엑셀에서 <b>머리글 행을 포함하여</b> 범위를 선택해 복사(Ctrl+C)한 뒤 아래 칸에 붙여넣기(Ctrl+V)<small>파일 업로드와 동일하게 처리됩니다. ①을 진행하셨다면 생략하십시오.</small><textarea id="paste" rows="3" placeholder="국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
+    <label class="f" data-m="2">엑셀에서 <b>머리글 행을 포함하여</b> 범위를 선택해 복사(Ctrl+C)한 뒤 아래 칸에 붙여넣기(Ctrl+V)<small>파일 업로드와 동일하게 처리됩니다. ①을 진행하셨다면 생략하십시오.</small><textarea id="paste" rows="3" placeholder="예: 국가&#9;대리점명&#9;영업담당자&#9;담당자명&#9;이메일 …"></textarea></label>
     <div class="msg" id="prev-msg" role="alert" style="margin-top:10px"></div>
     <div id="prev"></div>
     <div class="two" style="margin-top:12px"><button class="btn ghost" id="btn-cols" type="button">인식 가능한 열 이름 보기</button><span class="muted-s">국가·담당자·이메일·연락처·주소·품목·단가·계약·MOQ 등 한글·영문 열 이름</span></div>
@@ -148,15 +152,15 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
       </div>
       <details class="fold" id="fold-contacts" open><summary>업체 대표 · 실무담당자 <span class="req">*</span><small>실무담당자는 복수 입력 가능. 없는 경우 이름 칸에 "없음"</small></summary>
         <div class="grid">
-          <label class="f">업체대표명 <span class="req">*</span><input id="f-ceo-name" maxlength="100" placeholder="Mina Park (CEO)"></label>
-          <label class="f">업체대표 이메일 <span class="req">*</span><input id="f-ceo-email" type="email" inputmode="email" maxlength="255" placeholder="없는 경우 없음"></label>
-          <label class="f">업체대표 연락처 <span class="req">*</span><input id="f-ceo-phone" type="tel" inputmode="tel" maxlength="50" placeholder="+971 50 000 0001"></label>
+          <label class="f">업체대표명 <span class="req">*</span><input id="f-ceo-name" maxlength="100" placeholder="예: Mina Park (CEO)"></label>
+          <label class="f">업체대표 이메일 <span class="req">*</span><input id="f-ceo-email" type="email" inputmode="email" maxlength="255" placeholder="없으면 「없음」"></label>
+          <label class="f">업체대표 연락처 <span class="req">*</span><input id="f-ceo-phone" type="tel" inputmode="tel" maxlength="50" placeholder="예: +971 50 000 0001"></label>
           <div class="wide"><span class="lbl-s">실무담당자 (이름 · 업무 · 이메일 · 연락처) <span class="req">*</span></span><div class="rows" id="contacts"></div><button class="add" type="button" id="add-contact">+ 담당자 추가</button></div>
         </div>
       </details>
       <details class="fold" open><summary>회사 정보 <span class="req">*</span><small>홈페이지·SNS·주소. 없는 경우 "없음"</small></summary>
         <div class="grid">
-          <label class="f wide">홈페이지 / SNS <span class="req">*</span><small>복수인 경우 줄바꿈. 인스타그램·페이스북 등은 SNS로 자동 구분됩니다.</small><textarea id="f-web" rows="2" placeholder="www.example.com&#10;instagram.com/example"></textarea></label>
+          <label class="f wide">홈페이지 / SNS <span class="req">*</span><small>복수인 경우 줄바꿈. 인스타그램·페이스북 등은 SNS로 자동 구분됩니다.</small><textarea id="f-web" rows="2" placeholder="예: www.example.com&#10;instagram.com/example"></textarea></label>
           <label class="f wide">주소 <span class="req">*</span><small>본사·지사가 여러 곳이면 줄바꿈으로 구분 (예: 본사: … / 지사: …)</small><textarea id="f-address" rows="2"></textarea></label>
         </div>
       </details>
@@ -165,10 +169,10 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
           <div class="g wide">카테고리 <span class="req">*</span><small>제품을 선택하면 해당 카테고리가 자동 선택됩니다.</small><div class="chips" id="f-cats"><button type="button" class="chip" aria-pressed="false" data-v="에스테틱">에스테틱</button><button type="button" class="chip" aria-pressed="false" data-v="HA">HA</button><button type="button" class="chip" aria-pressed="false" data-v="본·척추">본·척추</button><button type="button" class="chip" aria-pressed="false" data-v="운드">운드</button><button type="button" class="chip" aria-pressed="false" data-v="인체조직">인체조직</button><button type="button" class="chip" aria-pressed="false" data-v="써지컬">써지컬</button><button type="button" class="chip" aria-pressed="false" data-v="스텐트">스텐트</button><button type="button" class="chip" aria-pressed="false" data-v="덴탈">덴탈</button><button type="button" class="chip" aria-pressed="false" data-v="OBL">OBL</button><button type="button" class="chip" aria-pressed="false" data-v="기타">기타</button></div></div>
           <div class="g wide">취급/계약 제품명 (당사 제품) <span class="req">*</span><small>해당 제품을 모두 선택. 목록에 없는 제품은 아래 칸에 기재</small><div class="chips plines" id="f-products"><div class="pline"><b>Aesthetic</b><div class="chips"><button type="button" class="chip" aria-pressed="false" data-v="AiLEENE">AiLEENE</button><button type="button" class="chip" aria-pressed="false" data-v="Facetem">Facetem</button><button type="button" class="chip" aria-pressed="false" data-v="Easyef MD spray (에스테틱 애프터케어)">Easyef MD spray (에스테틱 애프터케어)</button><button type="button" class="chip" aria-pressed="false" data-v="Dooth">Dooth</button><button type="button" class="chip" aria-pressed="false" data-v="LUXX">LUXX</button><button type="button" class="chip" aria-pressed="false" data-v="Reallo Inject Fine">Reallo Inject Fine</button></div></div><div class="pline"><b>Surgical</b><div class="chips"><button type="button" class="chip" aria-pressed="false" data-v="CGDerm">CGDerm</button><button type="button" class="chip" aria-pressed="false" data-v="CuraSYS">CuraSYS</button><button type="button" class="chip" aria-pressed="false" data-v="CG Gel">CG Gel</button><button type="button" class="chip" aria-pressed="false" data-v="HEMOCLORE">HEMOCLORE</button><button type="button" class="chip" aria-pressed="false" data-v="CG Synovia">CG Synovia</button><button type="button" class="chip" aria-pressed="false" data-v="NOTIE">NOTIE</button><button type="button" class="chip" aria-pressed="false" data-v="EASYMADE NS">EASYMADE NS</button><button type="button" class="chip" aria-pressed="false" data-v="NovoGrid">NovoGrid</button></div></div><div class="pline"><b>Spine</b><div class="chips"><button type="button" class="chip" aria-pressed="false" data-v="EXCENDER">EXCENDER</button><button type="button" class="chip" aria-pressed="false" data-v="NOVOMAX">NOVOMAX</button><button type="button" class="chip" aria-pressed="false" data-v="COLONNADE">COLONNADE</button><button type="button" class="chip" aria-pressed="false" data-v="LumFix">LumFix</button></div></div><div class="pline"><b>Biologic</b><div class="chips"><button type="button" class="chip" aria-pressed="false" data-v="ALLOMIX">ALLOMIX</button><button type="button" class="chip" aria-pressed="false" data-v="Bonfuse">Bonfuse</button><button type="button" class="chip" aria-pressed="false" data-v="BONGENER">BONGENER</button><button type="button" class="chip" aria-pressed="false" data-v="Bongros">Bongros</button><button type="button" class="chip" aria-pressed="false" data-v="NOVOSIS">NOVOSIS</button><button type="button" class="chip" aria-pressed="false" data-v="EXCELOS">EXCELOS</button></div></div><div class="pline"><b>Wound</b><div class="chips"><button type="button" class="chip" aria-pressed="false" data-v="Easyef MD spray (창상 보호)">Easyef MD spray (창상 보호)</button><button type="button" class="chip" aria-pressed="false" data-v="CuraSYS (창상 보호)">CuraSYS (창상 보호)</button><button type="button" class="chip" aria-pressed="false" data-v="CGPASTE">CGPASTE</button></div></div></div></div>
           <label class="f wide">기타 취급 제품명 <small>목록에 없는 당사 제품·타사 브랜드. 당사 제품을 취급하지 않는 경우 "없음"</small><input id="f-products-other" maxlength="300" placeholder="예: 타사 필러 / 없음"></label>
-          <label class="f wide">계약 <span class="req">*</span><small>체결일 ~ 만료일, 갱신(자동/수동), 형태(독점/비독점), 규모, 기간을 한 칸에 기재. 만료일만 확인된 경우 "만료 2026-01-31", 협의 단계는 "협의중"</small><input id="f-contract" maxlength="300" placeholder="2024-12-17 ~ 2027-12-17, 자동, 독점, USD 300K, 3년"></label>
-          <label class="f wide">MOQ (연차별) <span class="req">*</span><small>예) 1년차 15,000 / 2년차 18,000 / 3년차 21,000 BOX. 국가별로 다른 경우 괄호로 표기: 1년차 20,000 (T) 10,000 (I)</small><input id="f-moq" maxlength="300" placeholder="1년차 15,000 / 2년차 18,000 / 3년차 21,000 BOX"></label>
-          <label class="f wide">공급 단가 <span class="req">*</span><small>규격과 금액을 함께, 1행 1건 (예: 0.8cc $55 / 1Box $20 / $30 + FOC 조건)</small><textarea id="f-prices" rows="3" placeholder="0.8cc $55&#10;1.5cc $53"></textarea></label>
-          <label class="f wide">계약 조건·메모 <span class="req">*</span><small>FOC 조건, 특약, 기타 참고사항. 없는 경우 "없음"</small><textarea id="f-terms" rows="2" placeholder="5,000박스 이상 주문 시 60% FOC"></textarea></label>
+          <label class="f wide">계약 <span class="req">*</span><small>체결일 ~ 만료일, 갱신(자동/수동), 형태(독점/비독점), 규모, 기간을 한 칸에 기재. 만료일만 확인된 경우 "만료 2026-01-31", 협의 단계는 "협의중"</small><input id="f-contract" maxlength="300" placeholder="예: 2024-12-17 ~ 2027-12-17, 자동, 독점, USD 300K, 3년"></label>
+          <label class="f wide">MOQ (연차별) <span class="req">*</span><small>예) 1년차 15,000 / 2년차 18,000 / 3년차 21,000 BOX. 국가별로 다른 경우 괄호로 표기: 1년차 20,000 (T) 10,000 (I)</small><input id="f-moq" maxlength="300" placeholder="예: 1년차 15,000 / 2년차 18,000 / 3년차 21,000 BOX"></label>
+          <label class="f wide">공급 단가 <span class="req">*</span><small>규격과 금액을 함께, 1행 1건 (예: 0.8cc $55 / 1Box $20 / $30 + FOC 조건)</small><textarea id="f-prices" rows="3" placeholder="예: 0.8cc $55&#10;1.5cc $53"></textarea></label>
+          <label class="f wide">계약 조건·메모 <span class="req">*</span><small>FOC 조건, 특약, 기타 참고사항. 없는 경우 "없음"</small><textarea id="f-terms" rows="2" placeholder="예: 5,000박스 이상 주문 시 60% FOC"></textarea></label>
         </div>
       </details>
       <details class="fold"><summary>평가 · 채널 · 메모 <small>선택 사항</small></summary>
@@ -193,7 +197,7 @@ h3.or { margin: 16px 0 8px; font-size: 14.5px; display: flex; align-items: cente
   </section>
 </main>
 <div class="sticky" id="sticky" hidden><div class="in"><div class="what" id="sticky-what"></div><button class="btn primary" id="sticky-btn" type="button">제출</button></div></div>
-<footer>Internal use · 글로벌사업부 · 대리상 정보와 D2D 참석자 명단 모두 이 페이지로 제출합니다</footer>
+<footer>사내용 · 글로벌사업부 · 대리상 정보와 D2D 참석자 명단 모두 이 페이지로 제출합니다</footer>
 <script>
 (() => {
   'use strict';
@@ -793,7 +797,7 @@ const FREE = (() => {
   $('#file').addEventListener('change', (e) => { readFiles(e.target.files); e.target.value = ''; });
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); }); drop.addEventListener('dragleave', () => drop.classList.remove('over'));
   drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); readFiles(e.dataTransfer.files); });
-  // method picker: show only the chosen method (①②③); 「방법 변경」 brings the picker back. Nothing is hidden until a choice is made.
+  // method picker: show only the chosen method (①②③); 「방법 변경」 brings the picker back. Before a choice only the three choices are on the page.
   const mainEl = document.querySelector('main');
   const setMode = (m) => {
     const prev = mainEl.dataset.mode || '';
@@ -822,7 +826,7 @@ const FREE = (() => {
       const srcLabel = rawFiles.length && rawFiles.every((rf) => rf.pasted) ? '붙여넣기' : '파일 업로드';
       stickyWhat.innerHTML = what ? `${srcLabel} → <b>${what}</b>${partial ? ' · 보완 필요 항목 있음' : ''}${errs ? ` · <span class="bad">오류 ${errs}건 — 수정 후 제출</span>` : ''}` : '읽을 수 있는 대리상·참석자 행이 없습니다 — 열 이름을 확인해 주십시오';
       stickyBtn.textContent = `제출 (${what || '대리상 0건'})`; stickyBtn.disabled = !(n || nA) || errs > 0;
-    } else if (formTouched() && mode !== '1' && mode !== '2') {
+    } else if ((formTouched() && mode !== '1' && mode !== '2') || mode === '3') {
       sticky.hidden = false; stickyBtn.dataset.mode = 'form';
       stickyWhat.innerHTML = `직접 입력 → <b>${esc($('#f-name').value.trim() || '업체명 미입력')}</b>${countries.length ? ` · ${esc(countries[0])}${countries.length > 1 ? ' 외 ' + (countries.length - 1) : ''}` : ''}`;
       stickyBtn.textContent = '제출'; stickyBtn.disabled = busy;
