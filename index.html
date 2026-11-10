@@ -680,6 +680,22 @@ justify-content: center !important;
 text-align: center !important;
 }
 </style>
+
+<style id="mobileResponsiveFixStyle">
+@media (max-width: 767px) {
+  #viewSales .md\:grid-cols-2,
+  #viewSales .md\:grid-cols-3,
+  #viewSales .lg\:grid-cols-3,
+  #viewSales .step3-action-grid {
+    grid-template-columns: 1fr !important;
+  }
+  #viewSales {
+    overflow-x: hidden !important;
+  }
+}
+#modeBtnGuide { display: none !important; }
+</style>
+
 </head>
 <body class="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
 <!-- ULTRA-CLEAN STICKY ENTERPRISE HEADER & NAVIGATION SHELL -->
@@ -722,29 +738,27 @@ CG
 <!-- ========================================================================= -->
 <main id="viewAdmin" class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-4 space-y-4">
 <!-- UNIFIED 1-BAR NAVIGATION & QUICK ACTION BAR -->
-<div class="bg-white rounded-xl p-3 border border-slate-200 shadow-sm space-y-2.5 no-print">
+<div class="bg-white rounded p-3 border border-slate-300 shadow-sm space-y-2.5 no-print">
   <div class="flex flex-wrap items-center justify-between gap-2">
     <!-- Left: 6 Clean Navigation Tabs -->
     <div id="adminMainTabsGrid" class="flex flex-wrap items-center gap-1.5">
-      <button type="button" data-admintab="overview" class="admin-tab-btn py-2 px-3.5 rounded-lg text-xs font-extrabold transition-all bg-slate-900 text-white">1. 종합 현황</button>
-      <button type="button" data-admintab="masterdb" class="admin-tab-btn py-2 px-3.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">2. 대리상 DB</button>
-      <button type="button" data-admintab="aimatcher" class="admin-tab-btn py-2 px-3.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">3. AI 파트너 추천</button>
-      <button type="button" data-admintab="d2dfunnel" class="admin-tab-btn py-2 px-3.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">4. 학회 리드(D2D)</button>
-      <button type="button" data-admintab="newsletterhub" class="admin-tab-btn py-2 px-3.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">5. 국가별 인허가</button>
-      <button type="button" data-admintab="tracker" class="admin-tab-btn py-2 px-3.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:bg-slate-100">6. 제출 관리 (<span id="headerDdayBadge">D-7</span>)</button>
+      <button type="button" data-admintab="overview" class="admin-tab-btn py-2 px-3 rounded text-xs font-extrabold transition-all bg-slate-900 text-white border border-slate-900">1. 종합 현황</button>
+      <button type="button" data-admintab="masterdb" class="admin-tab-btn py-2 px-3 rounded text-xs font-extrabold transition-all text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200">2. 대리상 DB</button>
+      <button type="button" data-admintab="aimatcher" class="admin-tab-btn py-2 px-3 rounded text-xs font-extrabold transition-all text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200">3. AI 파트너 추천</button>
+      <button type="button" data-admintab="d2dfunnel" class="admin-tab-btn py-2 px-3 rounded text-xs font-extrabold transition-all text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200">4. 학회 유효리드(D2D)</button>
+      <button type="button" data-admintab="newsletterhub" class="admin-tab-btn py-2 px-3 rounded text-xs font-extrabold transition-all text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200">5. 뉴스레터/인허가</button>
+      <button type="button" data-admintab="tracker" class="admin-tab-btn py-2 px-3 rounded text-xs font-extrabold transition-all text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200">6. 제출 관리 (<span id="headerDdayBadge">D-7</span>)</button>
     </div>
 
-    <!-- Right: Only 3 Essential Actions (Zero Visual Noise) -->
+    <!-- Right: Clean Primary Action Group (Auto-Analysis Upload + Link Copy + Template + Tools) -->
     <div class="flex flex-wrap items-center gap-1.5">
-      <label for="globalTopFileUpload" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition inline-flex items-center gap-1">
-        <span>+ 파일 업로드</span>
+      <label for="globalTopFileUpload" class="cursor-pointer bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-xs px-3.5 py-2 rounded transition inline-flex items-center gap-1 shadow-sm">
+        <span>+ 파일 자동분석 업로드</span>
         <input id="globalTopFileUpload" type="file" accept=".xlsx,.xls,.csv,.tsv,.json,.txt,.html,.htm,.pdf,.doc,.docx" multiple class="hidden" style="display:none;" />
       </label>
-      <button id="btnCopySalesLinkMain" type="button" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-3 py-2 rounded-lg">영업팀 링크 복사</button>
-      <button id="btnOpenGithubOverwriteModal" type="button" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3 py-2 rounded-lg">GitHub 덮어쓰기</button>
-      <button id="btnDownloadStdExcelTop" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3 py-2 rounded-lg border border-slate-200">표준양식(.xlsx)</button>
-      <button id="btnDownloadQuickGuideJpgTop" type="button" onclick="window.downloadSalesQuickGuideCardJpg()" class="bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold text-xs px-3 py-2 rounded-lg border border-blue-200">가이드 이미지(.jpg)</button>
-      <button id="btnToggleMoreToolsDrawer" type="button" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 font-bold text-xs px-3 py-2 rounded-lg">도구 더보기 ▾</button>
+      <button id="btnCopySalesLinkMain" type="button" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3 py-2 rounded">영업팀 링크 복사</button>
+      <button id="btnDownloadStdExcelTop" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-3 py-2 rounded border border-slate-300">표준양식(.xlsx)</button>
+      <button id="btnToggleMoreToolsDrawer" type="button" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs px-3 py-2 rounded">도구 더보기 ▾</button>
     </div>
   </div>
 
@@ -755,7 +769,9 @@ CG
   <!-- Collapsible Secondary Tools Drawer (Hidden by default so main screen is 100% clean) -->
   <div id="moreToolsDrawer" class="hidden pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
     <div id="liveUploadSyncBanner" class="flex flex-wrap items-center gap-1.5">
-      <span class="text-slate-500 font-bold mr-1">데이터 관리:</span>
+      <span class="text-slate-600 font-extrabold mr-1">관리 및 배포 도구:</span>
+      <button id="btnDownloadQuickGuideJpgTop" type="button" onclick="window.downloadSalesQuickGuideCardJpg()" class="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 font-bold px-2.5 py-1.5 rounded">가이드 이미지(.jpg)</button>
+      <button id="btnOpenGithubOverwriteModal" type="button" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-2.5 py-1.5 rounded">GitHub 덮어쓰기</button>
       <button type="button" id="btnVerifyPortalSyncModal" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-md">연동코드 붙여넣기</button>
       <button type="button" id="btnKeepOnly2Examples" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-md">예시 2건 보기</button>
       <button type="button" id="btnLoadDemo154Pool" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-md">시연샘플 채우기</button>
@@ -942,20 +958,21 @@ CG
 <section id="adminTabAimatcher" class="hidden space-y-4">
 <div class="bg-white rounded-lg p-6 border border-slate-300 shadow-sm space-y-5">
 <!-- Clean Executive Title & Export Bar -->
+<!-- Clean Executive Title & Auto-Analysis Upload / Export Bar -->
 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 border-b border-slate-200">
 <div>
-<div class="flex items-center gap-2">
-<span class="badge-rect bg-slate-900 text-white">AI PARTNER MATCHING ENGINE</span>
-<h3 class="text-lg font-extrabold text-slate-900">신제품 AI 파트너 매칭</h3>
-</div>
-<p class="text-xs text-slate-500 mt-1">
-당사 25개 주력 제품의 포트폴리오 연결성, 과거 대리상 선정 이력(단가 및 MOQ, 독점 조건), 49개국 인허가(RA) 리드타임, D2D 학회 실수요를 교차 분석하여 최적 파트너를 추천합니다.
+<h3 class="text-lg font-extrabold text-slate-900">신제품 국가별 AI 최적 파트너 추천 및 출시 가속화 가이드</h3>
+<p class="text-xs text-slate-600 mt-1">
+현재 및 후보 대리상 DB, 과거 대리상 선정 기준(단가, MOQ, 유통망), 학회(D2D) 참석자 및 뉴스레터 유효리드를 자동 분석하여 국가별 최적 파트너(기존 대리상 확장 및 신규 후보사)를 근거와 함께 추천합니다.
 </p>
 </div>
 <div class="flex flex-wrap items-center gap-2 shrink-0">
-<button type="button" id="btnToggleAiCustomConfig" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs px-3.5 py-2 rounded">상세 조건 / 키워드 직접 설정 ▾</button>
-<button type="button" id="btnToggleAiRoadmapDrawer" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs px-3.5 py-2 rounded">출시 로드맵 / 선정기준 학습현황 ▾</button>
-<button id="btnExportAiRecExcel" type="button" class="bg-blue-700 hover:bg-blue-600 text-white font-extrabold text-xs px-4 py-2 rounded shadow-sm">추천 결과 엑셀(.xlsx) 다운로드</button>
+<label for="globalTopFileUpload" class="cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-300 font-extrabold text-xs px-3.5 py-2 rounded">
++ 파일 업로드 자동분석
+</label>
+<button type="button" id="btnToggleAiCustomConfig" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs px-3 py-2 rounded">상세 조건 설정 ▾</button>
+<button type="button" id="btnToggleAiRoadmapDrawer" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs px-3 py-2 rounded">선정기준 학습 / 출시로드맵 ▾</button>
+<button id="btnExportAiRecExcel" type="button" class="bg-slate-900 hover:bg-blue-700 text-white font-extrabold text-xs px-3.5 py-2 rounded shadow-sm">추천 결과 엑셀(.xlsx)</button>
 </div>
 </div>
 <!-- Effortless 1-Bar AX Copilot Selector (Product Line Presets + Country + Priority) -->
@@ -1091,10 +1108,10 @@ CG
 </div>
 </div>
 </div>
-<!-- Clean White 4-Metric Executive Verdict Strip -->
-<div id="aiLaunchSummaryBanner" class="bg-slate-900 text-white p-4 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-center"></div>
-<!-- Global Strategy TF & Global BD White-Space & GTM Acceleration Matrix -->
-<div id="bdWhitespaceMatrixBanner" class="bg-slate-50 border border-slate-300 rounded-lg p-3.5 text-xs"></div>
+<!-- Clean White 4-Card Executive Verdict Strip (Uniform Rectangular Enterprise Style) -->
+<div id="aiLaunchSummaryBanner" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs"></div>
+<!-- Global Strategy & White-Space Acceleration Matrix -->
+<div id="bdWhitespaceMatrixBanner" class="bg-white border border-slate-300 rounded p-4 text-xs"></div>
 <!-- Collapsible GTM Timeline & Historical Learning Drawer -->
 <div id="aiRoadmapDrawer" class="hidden space-y-2.5">
 <div id="aiHistoricalLearningBanner" class="bg-slate-50 border border-slate-300 p-3.5 rounded text-xs"></div>
@@ -1102,13 +1119,17 @@ CG
 </div>
 <!-- Symmetrical Dual-Track Headers + Partner Cards -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-<div class="bg-slate-900 text-white px-4 py-2.5 rounded flex items-center justify-between border-l-4 border-l-blue-500">
-<h4 class="text-xs sm:text-sm font-extrabold">Track 1 / 기존 대리상 확장</h4>
-<span class="badge-rect bg-blue-600 text-white">선정이력 / 거래조건 검증</span>
+<div class="bg-slate-50 text-slate-900 px-4 py-3 rounded border border-slate-300 border-l-4 border-l-blue-700 flex items-center justify-between">
+<div>
+  <h4 class="text-xs sm:text-sm font-extrabold text-slate-900">Track 1. 기존 검증 대리상 추천 (교차판매 및 즉시 출시)</h4>
+  <p class="text-[11px] text-slate-500 mt-0.5">과거 선정 이력, MOQ 이행력 및 현지 유통망이 검증된 기존 대리상 및 해외법인</p>
 </div>
-<div class="bg-slate-900 text-white px-4 py-2.5 rounded flex items-center justify-between border-l-4 border-l-emerald-500">
-<h4 class="text-xs sm:text-sm font-extrabold">Track 2 / 신규 후보사 발굴</h4>
-<span class="badge-rect bg-emerald-600 text-white">포트폴리오 / D2D 수요 검증</span>
+</div>
+<div class="bg-slate-50 text-slate-900 px-4 py-3 rounded border border-slate-300 border-l-4 border-l-emerald-700 flex items-center justify-between">
+<div>
+  <h4 class="text-xs sm:text-sm font-extrabold text-slate-900">Track 2. 신규 후보 대리상 추천 (신규 발굴 및 유효리드 전환)</h4>
+  <p class="text-[11px] text-slate-500 mt-0.5">제품 연결성, 학회(D2D) 참석자 및 뉴스레터 유효리드 시너지가 높은 신규 후보사</p>
+</div>
 </div>
 </div>
 <div id="aiRecommendationResults" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -1261,10 +1282,9 @@ CG
 <!-- NEW V42: INTERACTIVE D2D -> B2B SALES OPPORTUNITY FEASIBILITY & MOQ SIMULATOR -->
 <div id="d2dFeasibilitySimulatorCard" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-5">
 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-<div class="text-center">
-<span class="badge-rect bg-blue-50 text-blue-700 border border-blue-200">B2B OPPORTUNITY FEASIBILITY ENGINE</span>
-<h3 class="text-base sm:text-lg font-extrabold text-slate-900 mt-1">D2D 학회 수요 기반 B2B 영업기회 타당성 검토 / 적정 MOQ 시뮬레이터</h3>
-<p class="text-xs text-slate-500 mt-0.5">학회, 세미나 병원 도입문의 건수와 국가, 제품을 선택하면 시장성, 49개국 인허가(RA), 적정 1~3년차 MOQ, 예상 매출 및 Go/No-Go 판정을 즉시 산출합니다.</p>
+<div>
+<h3 class="text-base sm:text-lg font-extrabold text-slate-900">학회(D2D) 참석자 및 병원 실수요 기반 영업 유효리드 타당성 / 적정 MOQ 시뮬레이터</h3>
+<p class="text-xs text-slate-500 mt-0.5">학회, 세미나, 뉴스레터 유입 건수와 타깃 국가, 제품을 선택하면 49개국 인허가(RA), 적정 1~3년차 MOQ, 예상 매출 및 담당팀 연결 경로를 산출합니다.</p>
 </div>
 <div class="flex items-center gap-2">
 <button type="button" id="btnCopyFeasibilityReport" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-extrabold text-xs px-3.5 py-2 rounded-lg">📋 타당성 검토서 복사</button>
@@ -1317,64 +1337,51 @@ CG
 <div id="feasibilityResultPanel" class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs"></div>
 </div>
 <div class="bg-white rounded-lg p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
-<!-- B2B Macro-Aggregation Header & Bulk Upload Controls -->
-<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-200">
-<div>
-<div class="flex items-center gap-2 flex-wrap">
-<span class="bg-slate-900 text-amber-300 text-xs font-extrabold px-2.5 py-0.5 rounded-lg">글로벌 학회 / 세미나 / VCP 권역별 수요 집계 및 B2B 유통법인 추출</span>
-<h3 class="text-base font-extrabold text-slate-900">학회 발굴 법인 / 수요 이관</h3>
+<!-- B2B Macro-Aggregation Header & Bulk Upload Controls (Zero Horizontal Overflow) -->
+<div class="space-y-3 pb-3 border-b border-slate-200">
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <h3 class="text-base font-extrabold text-slate-900">학회 참석자 및 뉴스레터 영업 유효리드 관리 (후보대리상 자동 전환)</h3>
+      <p class="text-xs text-slate-600 mt-1">
+        참석자 및 뉴스레터 명단 파일을 업로드하면 <strong>국가별 병원 실수요 통계</strong>를 자동 집계하고, 명단 내 <strong>수입 및 유통법인(영업 유효리드)만 자동 추출해 후보대리상 DB와 신제품 AI 추천 엔진에 연동</strong>합니다.
+      </p>
+    </div>
+    <div class="bg-slate-100 p-0.5 rounded border border-slate-300 flex items-center text-xs shrink-0">
+      <button type="button" id="btnD2DViewTable" class="px-3 py-1.5 rounded font-extrabold bg-slate-900 text-white">국가/캠페인별 유효리드 집계표</button>
+      <button type="button" id="btnD2DViewKanban" class="px-3 py-1.5 rounded font-bold text-slate-700 hover:bg-white">후보대리상 전환 파이프라인</button>
+    </div>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <label for="d2dFileUploadInput" class="cursor-pointer bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-xs px-3.5 py-2 rounded shadow-sm">
+      + 참석자/뉴스레터 파일 업로드 자동분석
+      <input id="d2dFileUploadInput" type="file" accept=".xlsx,.xls,.csv,.tsv,.json,.txt,.html,.htm" multiple class="hidden" style="display:none;" />
+    </label>
+    <button id="btnPromoteAllD2DToMaster" type="button" class="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-3.5 py-2 rounded shadow-sm">추출된 유효리드 전체 후보대리상 DB 편입</button>
+    <button type="button" id="btnDownloadAdminD2DExcel" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs px-3 py-2 rounded">D2D 표준양식(.xlsx)</button>
+    <button type="button" id="btnToggleD2DAddDrawer" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs px-3 py-2 rounded">수동 등록 ▾</button>
+  </div>
 </div>
-<p class="text-xs text-slate-600 mt-1">
-학회, 세미나, 뉴스레터 참석자 명단 파일을 업로드하면 <strong>① 국가별, 제품군별 병원 실수요 통계(기존 대리상 MOQ 압박용)</strong>로 자동 합산하고, 명단 속 <strong>② B2B 수입, 유통법인(딜러)만 자동 필터링해 후보대리상 DB로 일괄 편입</strong>합니다.
-</p>
+<!-- 4 Macro B2B KPI & Filter Cards (Uniform Rectangular White Enterprise Style) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+<div data-d2dstagefilter="ALL" class="d2d-stage-card cursor-pointer bg-white hover:border-slate-500 border border-slate-300 border-l-4 border-l-slate-900 p-3.5 rounded shadow-sm flex flex-col justify-between">
+  <div class="flex items-center justify-between gap-2"><span class="text-[11px] font-extrabold text-slate-600">1. 학회 및 캠페인 클러스터</span><span id="d2dCountTotal" class="text-xs font-extrabold text-slate-900 whitespace-nowrap shrink-0">0개 법인</span></div>
+  <div id="d2dCard1Summary" class="font-extrabold text-slate-900 text-sm mt-1">총 0개 권역 / 0개 유통법인</div>
+  <div class="text-[11px] text-slate-500 mt-1">학회 참석자 및 병원 도입문의 통합 집계</div>
 </div>
-<div class="flex flex-wrap items-center gap-1.5 shrink-0">
-<div class="bg-slate-100 p-0.5 rounded-lg border border-slate-300 flex items-center text-xs">
-<button type="button" id="btnD2DViewTable" class="px-2.5 py-1 rounded-lg font-extrabold bg-slate-900 text-white">📊 국가, 캠페인별 B2B 군집 집계표</button>
-<button type="button" id="btnD2DViewKanban" class="px-2.5 py-1 rounded-lg font-bold text-slate-700 hover:bg-white">🏢 추출된 B2B 대리상 파이프라인</button>
+<div data-d2dstagefilter="SQL" class="d2d-stage-card cursor-pointer bg-white hover:border-emerald-600 border border-slate-300 border-l-4 border-l-emerald-700 p-3.5 rounded shadow-sm flex flex-col justify-between">
+  <div class="flex items-center justify-between"><span class="text-[11px] font-extrabold text-emerald-800">2. 자동 추출 영업 유효리드(SQL)</span><span id="d2dCountSql" class="text-xs font-extrabold text-emerald-800">0개 법인</span></div>
+  <div id="d2dCard2Summary" class="font-extrabold text-slate-900 text-sm mt-1">유통 및 딜러 법인 0개사</div>
+  <div class="text-[11px] text-slate-500 mt-1">참석자 중 수입사, 유통사, 구매팀 자동 선별</div>
 </div>
-<button type="button" id="btnDownloadAdminD2DExcel" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs px-3 py-1.5 rounded-lg shadow-sm">D2D 권역집계 엑셀양식(.xlsx)</button>
-<label for="d2dFileUploadInput" class="cursor-pointer bg-blue-700 hover:bg-blue-600 text-white font-extrabold text-xs px-3 py-1.5 rounded-lg shadow-sm">
-D2D 데이터 파일 업로드
-<input id="d2dFileUploadInput" type="file" accept=".xlsx,.xls,.csv,.tsv,.json,.txt,.html,.htm" multiple class="hidden" style="display:none;" />
-</label>
-<button id="btnPromoteAllD2DToMaster" type="button" class="bg-indigo-700 hover:bg-indigo-600 text-white font-extrabold text-xs px-3 py-1.5 rounded-lg shadow-sm">⚡ 추출된 B2B 유통법인 전체 마스터DB 일괄 편입</button>
-<button type="button" id="btnToggleD2DAddDrawer" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-bold text-xs px-2.5 py-1.5 rounded-lg">➕ 수동 클러스터 추가 ▾</button>
+<div data-d2dstagefilter="UNSYNCED" class="d2d-stage-card cursor-pointer bg-white hover:border-amber-500 border border-slate-300 border-l-4 border-l-amber-600 p-3.5 rounded shadow-sm flex flex-col justify-between">
+  <div class="flex items-center justify-between"><span class="text-[11px] font-extrabold text-amber-800">3. 후보대리상 전환 대기</span><span class="text-xs font-extrabold text-amber-800">미연동 보기</span></div>
+  <div class="font-extrabold text-slate-900 text-sm mt-1">미연동 국가 유효리드 군집</div>
+  <div class="text-[11px] text-slate-500 mt-1">클릭하여 확인 후 후보대리상 DB 일괄 편입</div>
 </div>
-</div>
-<!-- 4 Macro B2B KPI & Filter Cards -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
-<div data-d2dstagefilter="ALL" class="d2d-stage-card cursor-pointer bg-slate-900 text-white border-2 border-slate-900 p-3 rounded-lg flex items-center justify-between">
-<div>
-<div class="text-[10px] font-extrabold text-amber-300">D2D, 학회 발굴 B2B 권역 클러스터</div>
-<div id="d2dCard1Summary" class="font-extrabold text-white text-sm mt-0.5">총 0개 권역 / 0개 유통법인</div>
-<div class="text-[10px] text-slate-300 mt-0.5">수입사, 딜러 법인 추출 및 병원 수요패키지</div>
-</div>
-<span id="d2dCountTotal" class="badge-rect bg-amber-400 text-slate-950">0개 법인</span>
-</div>
-<div data-d2dstagefilter="SQL" class="d2d-stage-card cursor-pointer bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-300 p-3 rounded-lg flex items-center justify-between">
-<div>
-<div class="text-[10px] font-extrabold text-emerald-900">1만명 중 AI가 자동 추출한 B2B 법인</div>
-<div id="d2dCard2Summary" class="font-extrabold text-slate-900 text-sm mt-0.5">🏢 B2B 유통, 딜러 법인 0개사</div>
-<div class="text-[10px] text-slate-600 mt-0.5">수입사, 유통사, 대형병원 구매팀만 추출</div>
-</div>
-<span id="d2dCountSql" class="badge-rect bg-emerald-700 text-white">0개 법인</span>
-</div>
-<div data-d2dstagefilter="UNSYNCED" class="d2d-stage-card cursor-pointer bg-amber-50/80 hover:bg-amber-100/80 border border-amber-300 p-3 rounded-lg flex items-center justify-between">
-<div>
-<div class="text-[10px] font-extrabold text-amber-900">대리상 이관, 승격 대기 클러스터</div>
-<div class="font-extrabold text-slate-900 text-sm mt-0.5">⚡ 미연동 국가 수요군집 보기</div>
-<div class="text-[10px] text-slate-600 mt-0.5">원클릭으로 대리상 DB에 일괄 반영</div>
-</div>
-<span class="badge-rect bg-amber-200 text-amber-950">일괄편입 대상</span>
-</div>
-<div data-d2dstagefilter="SYNCED" class="d2d-stage-card cursor-pointer bg-blue-50/80 hover:bg-blue-100/80 border border-blue-300 p-3 rounded-lg flex items-center justify-between">
-<div>
-<div class="text-[10px] font-extrabold text-blue-900">B2B 대리상 DB & 신제품 AI 반영 완료</div>
-<div class="font-extrabold text-slate-900 text-sm mt-0.5">✅ 마스터DB 연동 완료 군집</div>
-<div class="text-[10px] text-slate-600 mt-0.5">SECTION 02 국가별 AI 추천점수 가산됨</div>
-</div>
-<span id="d2dCountSynced" class="badge-rect bg-blue-700 text-white">연동완료</span>
+<div data-d2dstagefilter="SYNCED" class="d2d-stage-card cursor-pointer bg-white hover:border-blue-600 border border-slate-300 border-l-4 border-l-blue-700 p-3.5 rounded shadow-sm flex flex-col justify-between">
+  <div class="flex items-center justify-between"><span class="text-[11px] font-extrabold text-blue-800">4. 신제품 AI 추천 연동 완료</span><span id="d2dCountSynced" class="text-xs font-extrabold text-blue-800">연동완료</span></div>
+  <div class="font-extrabold text-slate-900 text-sm mt-1">대리상 DB 및 AI 매칭 반영됨</div>
+  <div class="text-[11px] text-slate-500 mt-1">국가별 신제품 파트너 추천 시 가산점 반영</div>
 </div>
 </div>
 <!-- Collapsible Cluster Add Drawer (Hidden by default) -->
@@ -1459,26 +1466,23 @@ D2D 데이터 파일 업로드
 <!-- ADMIN TAB 5 (SECTION 05): CGBIO STUDIO V36 NEWSLETTER & EASYEF 154/49 HUB -->
 <!-- =================================================================== -->
 <section id="adminTabNewsletterhub" class="hidden space-y-5">
-<!-- Top Guide Banner for Section 05 -->
-<div class="bg-slate-900 text-white rounded-lg p-5 border-l-4 border-l-rose-500 shadow-sm space-y-3">
+<!-- Clean Enterprise Header for Section 05 (Newsletter Campaigns + 49-Country RA Guide) -->
+<div class="bg-white rounded p-5 border border-slate-300 border-l-4 border-l-slate-900 shadow-sm space-y-3">
 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
 <div>
-<div class="flex items-center gap-2 flex-wrap">
-<span class="bg-rose-600 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-lg">SECTION 05 / 글로벌 에듀케이션 캠페인 & 49개국 인허가(RA) 센터</span>
-<h3 class="text-base sm:text-lg font-extrabold text-white">
-글로벌 캠페인 / 인허가 허브
+<h3 class="text-base sm:text-lg font-extrabold text-slate-900">
+글로벌 뉴스레터 캠페인 및 49개국 인허가(RA) 통합 허브
 </h3>
-</div>
-<p class="text-xs text-slate-300 mt-1">
-글로벌 학술 캠페인(VCP, KIMES, Meet the Masters 등 13종)과 49개국 식약처 인허가 리드타임 및 154개 글로벌 타깃 데이터를 대리상 마스터 DB와 실시간 연동합니다.
+<p class="text-xs text-slate-600 mt-1">
+글로벌 학술 뉴스레터 캠페인(VCP, KIMES, Meet the Masters 등 13종) 반응 리드와 49개국 식약처 인허가 리드타임을 대리상 DB 및 신제품 AI 추천 엔진과 실시간 연동합니다.
 </p>
 </div>
 <div class="flex flex-wrap gap-2 shrink-0">
-<label for="studioHtmlDirectUpload" class="cursor-pointer bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-lg shadow-sm">
-📂 CGBIO 뉴스레터 / Easyef HTML 파일 재업로드, 실시간 갱신
+<label for="studioHtmlDirectUpload" class="cursor-pointer bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-xs px-3.5 py-2 rounded shadow-sm">
++ 뉴스레터 / 타깃 리스트 파일 업로드 자동분석
 <input id="studioHtmlDirectUpload" type="file" accept=".html,.htm,.json,.xlsx,.csv" multiple class="hidden" style="display:none;" />
 </label>
-<button id="btnMergeAll154Easyef" type="button" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs px-3.5 py-2.5 rounded-lg shadow-sm">⚡ Easyef 154개 글로벌 타깃 전체 마스터DB 원클릭 병합</button>
+<button id="btnMergeAll154Easyef" type="button" class="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-3.5 py-2 rounded shadow-sm">글로벌 타깃 후보풀(154개사) 마스터DB 병합</button>
 </div>
 </div>
 </div>
@@ -1487,7 +1491,7 @@ D2D 데이터 파일 업로드
 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200 pb-3">
 <div>
 <div class="flex items-center gap-2">
-<span class="badge-rect bg-rose-50 text-rose-800 border border-rose-200">CGBIO Global Medical Education & Newsletter Campaigns</span>
+
 <h4 class="text-base font-extrabold text-slate-900">글로벌 학술 캠페인</h4>
 </div>
 <p class="text-xs text-slate-500 mt-0.5">
@@ -1639,17 +1643,24 @@ D2D 데이터 파일 업로드
 <!-- ========================================================================= -->
 <main id="viewSales" class="hidden flex-1 max-w-[960px] w-full mx-auto px-4 sm:px-6 py-6 space-y-4">
 
-<!-- Compact 1-Line Header Strip -->
-<div class="bg-white rounded-xl px-5 py-3.5 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-  <div>
-    <h2 class="text-base sm:text-lg font-extrabold text-slate-900">해외 대리상 정보 제출</h2>
-    <p id="salesBannerNotice" class="text-xs text-slate-500 mt-0.5">STEP 1에서 소속과 성명을 입력한 뒤, STEP 2에서 편한 방식으로 제출해 주세요.</p>
+<!-- Compact Header Strip + Strategic Purpose Explanation (2-3 Concise Lines) -->
+<div class="bg-white rounded px-5 py-4 border border-slate-300 shadow-sm space-y-3">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-base sm:text-lg font-extrabold text-slate-900">해외 대리상 및 후보 파트너 정보 제출</h2>
+      <p id="salesBannerNotice" class="text-xs text-slate-500 mt-0.5">STEP 1에서 소속과 성명을 입력한 뒤, STEP 2에서 기존 보유 파일을 그대로 올려주세요.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span id="salesBannerDeadline" class="text-xs font-bold text-slate-800 bg-slate-100 border border-slate-300 px-3 py-1.5 rounded whitespace-nowrap shrink-0">⏰ 마감: 2026-11-16 (월) 18:00 (D-7)</span>
+      <button id="btnSalesDownloadTemplate" type="button" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3.5 py-2 rounded transition">
+        <span>표준 엑셀 양식(.xlsx) 다운로드</span>
+      </button>
+    </div>
   </div>
-  <div class="flex items-center gap-2">
-    <span id="salesBannerDeadline" class="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded whitespace-nowrap shrink-0">⏰ 마감: 2026-11-16 (월) 18:00 (D-7)</span>
-    <button id="btnSalesDownloadTemplate" type="button" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition">
-      <span>표준 엑셀 양식(.xlsx) 다운로드</span>
-    </button>
+  <div id="salesStrategicPurposeBox" class="bg-slate-50 border border-slate-200 border-l-4 border-l-blue-700 px-4 py-3 rounded text-xs text-slate-700 leading-relaxed space-y-1">
+    <div id="salesPurposeTitle" class="font-extrabold text-slate-900">통합 CRM 구축 및 데이터 활용 안내 (단순 현황 취합이 아닙니다)</div>
+    <p id="salesPurposeLine1">현재/후보 대리상 정보와 과거 선정 이력, 해외 학회(D2D) 참석자 및 뉴스레터 영업 유효리드를 하나로 연결해, <strong>향후 신제품 출시 시 국가별 최적 파트너(기존 대리상 및 신규 후보사)를 제품 적합성과 선정 근거와 함께 AI가 추천</strong>하여 파트너 발굴 및 검토 기간을 줄이고 해외 출시를 앞당기기 위함입니다.</p>
+    <p id="salesPurposeLine2" class="text-blue-800 font-bold">새로 문서를 가공하실 필요 없이, 각 팀에서 보유 중인 파일(엑셀, 워드, PDF)만 그대로 업로드하시면 항목과 선정 기준이 자동 분석되어 반영됩니다.</p>
   </div>
 </div>
 
@@ -2666,7 +2677,11 @@ const rawDiffDays = Math.round((targetMid - refMid) / (1000 * 60 * 60 * 24));
 const ddayText = rawDiffDays === 0 ? 'D-Day' : (rawDiffDays > 0 ? `D-${rawDiffDays}` : `D+${Math.abs(rawDiffDays)}`);
 if (document.getElementById('headerDeadlineText')) document.getElementById('headerDeadlineText').textContent = `${deadlineConfig.dateStr} 18:00`;
 if (document.getElementById('headerDdayBadge')) document.getElementById('headerDdayBadge').textContent = ddayText;
-if (document.getElementById('salesBannerDeadline')) document.getElementById('salesBannerDeadline').textContent = `⏰ 마감: ${deadlineConfig.dateStr}${deadlineConfig.dateStr === "2026-11-16" ? " (월)" : ""} 18:00 (${ddayText})`;
+if (document.getElementById('salesBannerDeadline')) {
+  const sbEl = document.getElementById('salesBannerDeadline');
+  sbEl.textContent = `⏰ 마감: ${deadlineConfig.dateStr}${deadlineConfig.dateStr === "2026-11-16" ? " (월)" : ""} 18:00 (${ddayText})`;
+  sbEl.dataset.origKr = sbEl.textContent;
+}
 if (document.getElementById('salesBannerNotice')) document.getElementById('salesBannerNotice').innerHTML = `📢 <strong>공지:</strong> ${deadlineConfig.notice}`;
 const total = partnersDB.length;
 const cntExisting = partnersDB.filter(p => p.type === '기존대리상').length;
@@ -3114,25 +3129,25 @@ const newCandidatePool = scoredList.filter(p => p.type === '후보대리상' || 
 const topExisting = existingPool[0] ? `${existingPool[0].company.split('(')[0]} (${existingPool[0].calcScore}점)` : '권역 거점 법인/기존 파트너';
 const topNew = newCandidatePool[0] ? `${newCandidatePool[0].company.split('(')[0]} (${newCandidatePool[0].calcScore}점)` : '신규 발굴 1순위 후보사';
 bannerEl.innerHTML = `
-<div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-<div class="text-[10px] font-bold text-slate-400">분석 대상 신제품 / 타깃 국가</div>
-<div class="text-xs font-extrabold text-amber-300 mt-0.5 truncate" title="${customProdName}">${customProdName}</div>
-<div class="text-[11px] text-slate-300 mt-0.5">국가: <strong>${country === 'ALL' ? '전체 등록 국가' : country}</strong> (후보군 <strong>${scoredList.length}개사</strong>)</div>
+<div class="bg-white p-3.5 rounded border border-slate-300 border-l-4 border-l-slate-900 shadow-sm">
+<div class="text-[11px] font-extrabold text-slate-500">1. 검토 신제품 및 타깃 국가</div>
+<div class="text-sm font-extrabold text-slate-900 mt-1 truncate" title="${customProdName}">${customProdName}</div>
+<div class="text-[11px] text-slate-600 mt-1 pt-1.5 border-t border-slate-100">타깃 국가: <strong>${country === 'ALL' ? '전체 등록 국가' : country}</strong> (분석 대상 <strong>${scoredList.length}개사</strong>)</div>
 </div>
-<div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-<div class="text-[10px] font-bold text-blue-300">기존 대리상 1순위 추천 (Track 1 / Cross-sell)</div>
-<div class="text-sm font-extrabold text-white mt-0.5 truncate">${topExisting}</div>
-<div class="text-[11px] text-emerald-300 mt-0.5">과거 선정이력 검증 파트너 ${existingPool.length}개사 즉시 투입</div>
+<div class="bg-white p-3.5 rounded border border-slate-300 border-l-4 border-l-blue-700 shadow-sm">
+<div class="text-[11px] font-extrabold text-blue-800">2. 기존 대리상 최적 추천 (즉시 확장)</div>
+<div class="text-sm font-extrabold text-slate-900 mt-1 truncate">${existingPool[0] ? `${existingPool[0].company.split('(')[0]} (${existingPool[0].calcScore}점)` : '해당 조건 기존 대리상 없음'}</div>
+<div class="text-[11px] text-slate-600 mt-1 pt-1.5 border-t border-slate-100">과거 선정이력 검증 파트너 <strong>${existingPool.length}개사</strong> 교차판매 가능</div>
 </div>
-<div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-<div class="text-[10px] font-bold text-emerald-300">신규 후보사 1순위 추천 (Track 2 / New Partner)</div>
-<div class="text-sm font-extrabold text-white mt-0.5 truncate">${topNew}</div>
-<div class="text-[11px] text-amber-300 mt-0.5">신규 후보, D2D 승격 파트너 ${newCandidatePool.length}개사 발굴 완료</div>
+<div class="bg-white p-3.5 rounded border border-slate-300 border-l-4 border-l-emerald-700 shadow-sm">
+<div class="text-[11px] font-extrabold text-emerald-800">3. 신규 후보사 최적 추천 (신규 발굴)</div>
+<div class="text-sm font-extrabold text-slate-900 mt-1 truncate">${newCandidatePool[0] ? `${newCandidatePool[0].company.split('(')[0]} (${newCandidatePool[0].calcScore}점)` : '해당 조건 신규 후보사 없음'}</div>
+<div class="text-[11px] text-slate-600 mt-1 pt-1.5 border-t border-slate-100">후보 및 D2D 유효리드 발굴 법인 <strong>${newCandidatePool.length}개사</strong> 대기</div>
 </div>
-<div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-<div class="text-[10px] font-bold text-rose-300">해외 출시 프로세스 가속화 효과</div>
-<div class="text-sm font-extrabold text-emerald-400 mt-0.5">파트너 검토, 출시 기간 60% 단축</div>
-<div class="text-[11px] text-slate-300 mt-0.5">과거 선정이력 + 49개국 RA + D2D 유효리드 직결</div>
+<div class="bg-white p-3.5 rounded border border-slate-300 border-l-4 border-l-indigo-700 shadow-sm">
+<div class="text-[11px] font-extrabold text-indigo-800">4. 파트너 검토 단축 및 출시 가속화</div>
+<div class="text-sm font-extrabold text-slate-900 mt-1">출시 리드타임 평균 14개월 &rarr; 5.5개월</div>
+<div class="text-[11px] text-slate-600 mt-1 pt-1.5 border-t border-slate-100">선정이력 + 49개국 RA + D2D 유효리드(${d2dSqlLeadsAll.length}건) 자동 결합</div>
 </div>
 `;
 }
@@ -3238,8 +3253,7 @@ const whitespaceCountries = ['독일', '프랑스', '스페인', '이탈리아',
 bdWsEl.innerHTML = `
 <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-slate-200">
 <div class="flex items-center gap-2">
-<span class="badge-rect bg-blue-700 text-white">글로벌전략TF / 글로벌BD GTM 가속화 진단</span>
-<strong class="text-slate-900">[${customProdName}] 국가별 기존 대리상 즉시 런칭(Cross-sell) vs 미개척 공백국(White-Space) 신규 발굴 가이드</strong>
+<strong class="text-slate-900 text-sm">[${customProdName}] 국가별 기존 대리상 즉시 런칭(Cross-sell) 및 미진출 공백국(White-Space) 신규 발굴 가이드</strong>
 </div>
 <span class="font-extrabold text-emerald-800">예상 해외출시 리드타임: 평균 14개월 &rarr; 5.5개월 (8.5개월 단축)</span>
 </div>
@@ -3271,18 +3285,22 @@ bdWsEl.innerHTML = `
 }
 const container = document.getElementById('aiRecommendationResults');
 if (pairedList.length === 0) {
-  container.innerHTML = `<div class="col-span-2 bg-white rounded-2xl p-8 border border-slate-300 text-center space-y-3">
-    <div class="text-lg font-extrabold text-slate-900">📂 현재 분석할 대리상 데이터가 없습니다 (등록 0건)</div>
-    <p class="text-sm text-slate-600">상단 <strong>STEP 1의 [📂 내 파일 업로드 (자동분석)]</strong> 버튼으로 보유하신 대리상 엑셀/CSV 파일을 올리시거나, <strong>STEP 3의 [📌 공식예시 2건] / [🧪 시연샘플 채우기]</strong> 버튼을 누르시면 업로드된 실제 대리상 데이터를 바탕으로 신제품 최적 파트너(Track 1 & Track 2)를 즉시 추천합니다.</p>
+  container.innerHTML = `<div class="col-span-2 bg-white rounded p-8 border border-slate-300 text-center space-y-4">
+    <div class="text-base font-extrabold text-slate-900">현재 등록된 대리상 또는 후보사 데이터가 없습니다 (0건)</div>
+    <p class="text-xs text-slate-600 max-w-2xl mx-auto leading-relaxed">보유 중인 대리상 현황 파일(엑셀, 워드, PDF)이나 학회(D2D) 참석자 파일을 업로드하시면 제품 적합성, 과거 선정 이력, 유효리드를 자동 분석해 국가별 최적 기존 대리상과 신규 후보사를 근거와 함께 추천합니다.</p>
+    <div class="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+      <label for="globalTopFileUpload" class="cursor-pointer bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-xs px-4 py-2.5 rounded shadow-sm">+ 대리상/참석자 파일 업로드 자동분석</label>
+      <button type="button" onclick="document.getElementById('btnLoadDemo154Pool').click(); renderAiRecommendations();" class="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-4 py-2.5 rounded shadow-sm">시연샘플 데이터(154개사)로 AI 추천 확인하기</button>
+    </div>
   </div>`;
   return;
 }
 container.innerHTML = pairedList.slice(0, 8).map((p) => {
 const isExistingTrack = p.trackGroup === 'EXISTING';
-const topBorderColor = isExistingTrack ? 'border-t-4 border-t-slate-900' : 'border-t-4 border-t-emerald-700';
+const topBorderColor = isExistingTrack ? 'border-l-4 border-l-blue-700' : 'border-l-4 border-l-emerald-700';
 const trackTag = isExistingTrack
-? `<span class="badge-rect bg-blue-900 text-white">기존 검증 파트너 추천 #${p.rankInGroup}</span>`
-: `<span class="badge-rect bg-emerald-800 text-white">신규 발굴 후보사 추천 #${p.rankInGroup}</span>`;
+? `<span class="text-xs font-extrabold text-blue-800">기존 검증 대리상 추천 #${p.rankInGroup}</span>`
+: `<span class="text-xs font-extrabold text-emerald-800">신규 후보 대리상 추천 #${p.rankInGroup}</span>`;
 const typeBadge = p.type === '기존대리상'
 ? 'bg-blue-100 text-blue-900 border border-blue-300'
 : p.type === '해외법인'
@@ -6169,7 +6187,8 @@ sel.innerHTML = optsHtml;
 const globalTopFileInput = document.getElementById('globalTopFileUpload');
 if (globalTopFileInput) {
 globalTopFileInput.addEventListener('change', e => {
-handleSpreadsheetUpload(e.target.files, '상단 파일 업로드', { stageBeforeSubmit: true });
+const isSalesModeNow = !document.getElementById('viewSales').classList.contains('hidden');
+handleSpreadsheetUpload(e.target.files, '통합 CRM 파일 자동분석 업로드', { stageBeforeSubmit: isSalesModeNow, inputEl: e.target });
 });
 }
 const btnResetData = document.getElementById('btnResetDefaultData');
@@ -7451,6 +7470,46 @@ function renderAutoRevenueAnalyticsDashboard() {
       </div>
     </div>
 
+    <!-- ROW 1.5: STRATEGIC GLOBAL LAUNCH ACCELERATION AX PIPELINE (Partner DB + D2D/Newsletter Valid Leads -> AI Partner Recommendation) -->
+    <div class="bg-white p-4 border border-slate-300 shadow-sm space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
+        <div>
+          <h3 class="font-extrabold text-slate-900 text-sm">글로벌 신제품 출시 가속화 통합 파이프라인 (파일 업로드 자동분석 연동)</h3>
+          <p class="text-xs text-slate-500 mt-0.5">현재 및 후보 대리상 선정이력과 학회(D2D), 뉴스레터 영업 유효리드를 결합해 신제품 출시 시 국가별 최적 파트너(기존 대리상 및 신규 후보사)를 근거와 함께 추천합니다.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <label for="globalTopFileUpload" class="cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-300 font-extrabold text-xs px-3 py-1.5 rounded">
+            + 대리상/참석자 파일 자동분석 업로드
+          </label>
+          <button type="button" onclick="switchAdminSubTab('aimatcher')" class="bg-slate-900 hover:bg-blue-700 text-white font-extrabold text-xs px-3 py-1.5 rounded transition">
+            신제품 AI 파트너 추천 바로가기 &rarr;
+          </button>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <div onclick="selectMasterDbTeamFolder('ALL', true)" class="cursor-pointer bg-slate-50 hover:bg-blue-50/60 p-3 border border-slate-200 border-l-4 border-l-slate-800 rounded transition">
+          <div class="font-extrabold text-slate-500 text-[11px]">STEP 1. 대리상 및 선정이력 통합</div>
+          <div class="font-extrabold text-slate-900 text-sm mt-0.5">기존/법인 ${cntEx + cntCo}개사, 후보/잠재 ${cntCa + cntPo}개사</div>
+          <div class="text-[11px] text-slate-600 mt-1">팀 공통양식, 거래조건(단가/MOQ) 및 과거 선정기준 축적</div>
+        </div>
+        <div onclick="switchAdminSubTab('d2dfunnel')" class="cursor-pointer bg-slate-50 hover:bg-blue-50/60 p-3 border border-slate-200 border-l-4 border-l-emerald-700 rounded transition">
+          <div class="font-extrabold text-slate-500 text-[11px]">STEP 2. 참석자(D2D) 및 뉴스레터 유효리드</div>
+          <div class="font-extrabold text-slate-900 text-sm mt-0.5">유효리드 클러스터 ${(typeof d2dAttendeeTriageList !== 'undefined' ? d2dAttendeeTriageList.length : 0)}건 / 캠페인 13종</div>
+          <div class="text-[11px] text-slate-600 mt-1">학회 참석 의사, 바이어 실수요 추출 및 후보대리상 전환</div>
+        </div>
+        <div onclick="switchAdminSubTab('aimatcher')" class="cursor-pointer bg-slate-50 hover:bg-blue-50/60 p-3 border border-slate-200 border-l-4 border-l-indigo-700 rounded transition">
+          <div class="font-extrabold text-slate-500 text-[11px]">STEP 3. 제품 적합성 x 과거 선정방식 분석</div>
+          <div class="font-extrabold text-slate-900 text-sm mt-0.5">25개 주력/신제품 x 49개국 인허가(RA)</div>
+          <div class="text-[11px] text-slate-600 mt-1">당사 제품 포트폴리오 연결성 및 과거 선정 의사결정 학습</div>
+        </div>
+        <div onclick="switchAdminSubTab('aimatcher')" class="cursor-pointer bg-slate-50 hover:bg-blue-50/60 p-3 border border-slate-200 border-l-4 border-l-blue-700 rounded transition">
+          <div class="font-extrabold text-slate-500 text-[11px]">STEP 4. 국가별 최적 파트너 근거 가이드</div>
+          <div class="font-extrabold text-blue-800 text-sm mt-0.5">기존 대리상 확장 + 신규 후보사 추천</div>
+          <div class="text-[11px] text-slate-600 mt-1">국가별 파트너 발굴, 검토 기간 단축 및 해외 출시 가속화</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ROW 2: UNIFIED 5-TEAM EXECUTIVE OVERVIEW TABLE -->
     <div class="bg-white p-5 border border-slate-300 shadow-sm space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200">
@@ -7965,7 +8024,7 @@ window.addEventListener("dragover", e => { e.preventDefault(); });
 window.addEventListener("drop", e => {
 e.preventDefault();
 if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-handleSpreadsheetUpload(e.dataTransfer.files, "드래그 앤 드롭 파일 자동분석", { stageBeforeSubmit: true });
+handleSpreadsheetUpload(e.dataTransfer.files, "드래그 앤 드롭 파일 자동분석", { stageBeforeSubmit: !document.getElementById("viewSales").classList.contains("hidden") });
 }
 });
 function downloadStandaloneSalesPortalHtml() {
@@ -8015,10 +8074,8 @@ grid.innerHTML = items.map(c => `
 <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/60 hover:bg-white transition-all flex flex-col justify-between space-y-3 shadow-sm">
 <div class="space-y-1.5">
 <div class="flex items-center justify-between gap-1 flex-wrap">
-<span class="badge-rect bg-rose-100 text-rose-900 border border-rose-300">${c.category} / ${c.date}</span>
-<span class="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
-발굴 B2B법인 ${c.d2dLeads}개사 &rarr; 후보대리상(SQL) ${c.sqlConverted}개사
-</span>
+<span class="text-xs font-extrabold text-slate-800 bg-slate-100 border border-slate-300 px-2 py-0.5 rounded">${c.category} | ${c.date}</span>
+<span class="text-xs font-bold text-blue-800">발굴 법인 ${c.d2dLeads}개사 / 유효리드 ${c.sqlConverted}건</span>
 </div>
 <h5 class="font-extrabold text-slate-900 text-sm leading-snug">${c.title}</h5>
 <div class="text-[11px] font-bold text-indigo-700">${c.headline}</div>
@@ -8029,7 +8086,7 @@ grid.innerHTML = items.map(c => `
 <div class="text-[10px] text-slate-400 truncate">${c.hashtags}</div>
 <div class="grid grid-cols-2 gap-1.5">
 <button type="button" data-nlpreview="${c.id}" class="btn-nl-preview bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-[11px] py-1.5 px-2 rounded-lg">📰 뉴스레터 원고 상세</button>
-<button type="button" data-nlconvert="${c.id}" class="btn-nl-convert bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-[11px] py-1.5 px-2 rounded-lg">후보대리상(SQL) 전환</button>
+<button type="button" data-nlconvert="${c.id}" class="btn-nl-convert bg-slate-900 hover:bg-blue-700 text-white font-extrabold text-xs py-1.5 px-2 rounded">유효리드 및 후보사 전환</button>
 </div>
 </div>
 </div>
@@ -11724,14 +11781,14 @@ showToast('시연용 샘플 데이터(154개사) 로드 완료', '보고 및 기
         btnHeaderLangEN: ['🌐 영문본 변환(EN)', '🌐 English (EN)'],
         btnOpenOverseasEnKitModal: ['🌍 해외 닥터 및 대리상 영문키트', '🌍 Overseas EN Kit'],
         btnOpenMultiExportHubModal: ['📥 항목별 PPTX, DOCX, JPG 다운로드', '📥 Export PPTX, DOCX, JPG'],
-        btnCopySalesLinkMain: ['🔗 영업팀 제출링크 복사', '🔗 Copy Submission Link'],
-        btnDownloadStdExcelTop: ['📥 표준 엑셀양식(.xlsx)', '📥 Excel Template (.xlsx)'],
-        btnDownloadQuickGuideJpgTop: ['🖼️ 가이드 이미지(.jpg)', '🖼️ Guide Image (.jpg)'],
+        btnCopySalesLinkMain: ['영업팀 링크 복사', 'Copy Submission Link'],
+        btnDownloadStdExcelTop: ['표준양식(.xlsx)', 'Excel Template (.xlsx)'],
+        btnDownloadQuickGuideJpgTop: ['가이드 이미지(.jpg)', 'Guide Image (.jpg)'],
         btnKeepOnly2Examples: ['📌 공식예시 2건', '📌 2 Official Examples'],
         btnLoadDemo154Pool: ['🧪 시연샘플', '🧪 Demo Sample'],
         btnWipeAllDbToZero: ['🗑️ DB 비우기', '🗑️ Clear DB (0)'],
         btnVerifyPortalSyncModal: ['🔄 연동점검', '🔄 Sync Check'],
-        btnToggleMoreToolsDrawer: ['⚙️ 도구', '⚙️ Tools'],
+        btnToggleMoreToolsDrawer: ['도구 더보기 ▾', 'More Tools ▾'],
         btnDbModeSummary: ['핵심 요약표 (8열)', 'Summary View (8 Cols)'],
         btnDbModeFull19: ['엑셀 19개 전체항목 (A~S열)', 'Full 19-Column View (A~S)'],
         btnOpenAddPartnerModal: ['+ 대리상 직접 등록', '+ Add Partner'],
@@ -13960,6 +14017,83 @@ textarea,
     };
     img.src = 'data:image/jpeg;base64,' + GUIDE_BASE_B64;
   };
+})();
+</script>
+
+
+<script id="strategicAxEnhancementScript">
+(function() {
+  window.refreshAiCountrySelectorOptions = function() {
+    const sel = document.getElementById('aiSelectCountry');
+    if (!sel) return;
+    const prevVal = sel.value || 'ALL';
+    const countryCounts = {};
+    if (typeof partnersDB !== 'undefined' && Array.isArray(partnersDB)) {
+      partnersDB.forEach(p => {
+        (p.countries || []).forEach(c => {
+          const clean = (typeof normalizeCountryName === 'function') ? normalizeCountryName(c) : String(c || '').trim();
+          if (clean && clean !== '미지정' && clean !== '미입력') {
+            countryCounts[clean] = (countryCounts[clean] || 0) + 1;
+          }
+        });
+      });
+    }
+    const baseMarkets = ['UAE', '태국', '베트남', '인도네시아', '일본', '브라질', '멕시코', '독일', '이탈리아', '프랑스', '스페인', '폴란드', '튀르키예', '사우디아라비아', '미국', '러시아', '중국', '호주'];
+    const allCountries = Array.from(new Set([...Object.keys(countryCounts), ...baseMarkets]));
+    allCountries.sort((a, b) => (countryCounts[b] || 0) - (countryCounts[a] || 0));
+
+    let opts = '<option value="ALL">글로벌 전체 국가 (통합 추천)</option>';
+    allCountries.forEach(c => {
+      const cnt = countryCounts[c] || 0;
+      const label = cnt > 0 ? `${c} (등록 파트너 ${cnt}개사)` : `${c} (신규 발굴 대상)`;
+      opts += `<option value="${c}">${label}</option>`;
+    });
+    sel.innerHTML = opts;
+    if (Array.from(sel.options).some(o => o.value === prevVal)) {
+      sel.value = prevVal;
+    }
+  };
+
+  // Hook into renderAllAdminViews so country options refresh automatically whenever files are uploaded or DB changes
+  const origRenderAll = window.renderAllAdminViews;
+  if (typeof origRenderAll === 'function') {
+    window.renderAllAdminViews = function() {
+      window.refreshAiCountrySelectorOptions();
+      return origRenderAll.apply(this, arguments);
+    };
+  }
+
+  // Hook into setLanguageMode so the new Sales Portal 2-3 line purpose box translates cleanly in EN mode
+  const origSetLang = window.setLanguageMode;
+  if (typeof origSetLang === 'function') {
+    window.setLanguageMode = function(lang) {
+      const res = origSetLang.apply(this, arguments);
+      const isEN = (lang === 'EN');
+      const pTitle = document.getElementById('salesPurposeTitle');
+      const pL1 = document.getElementById('salesPurposeLine1');
+      const pL2 = document.getElementById('salesPurposeLine2');
+      if (pTitle) {
+        pTitle.textContent = isEN
+          ? 'Why We Unify Partner & Lead Data (AI Launch Acceleration CRM)'
+          : '통합 CRM 구축 및 데이터 활용 안내 (단순 현황 취합이 아닙니다)';
+      }
+      if (pL1) {
+        pL1.innerHTML = isEN
+          ? 'By connecting current/candidate distributors, past selection history, and D2D conference/newsletter valid leads, <strong>our AI recommends optimal country-specific partners (existing & new candidates) with clear evidence for upcoming product launches</strong> to shorten partner vetting and accelerate global launches.'
+          : '현재/후보 대리상 정보와 과거 선정 이력, 해외 학회(D2D) 참석자 및 뉴스레터 영업 유효리드를 하나로 연결해, <strong>향후 신제품 출시 시 국가별 최적 파트너(기존 대리상 및 신규 후보사)를 제품 적합성과 선정 근거와 함께 AI가 추천</strong>하여 파트너 발굴 및 검토 기간을 줄이고 해외 출시를 앞당기기 위함입니다.';
+      }
+      if (pL2) {
+        pL2.textContent = isEN
+          ? 'No manual reformatting needed: simply upload your existing files (Excel, Word, PDF) and the system will automatically analyze and organize all records.'
+          : '새로 문서를 가공하실 필요 없이, 각 팀에서 보유 중인 파일(엑셀, 워드, PDF)만 그대로 업로드하시면 항목과 선정 기준이 자동 분석되어 반영됩니다.';
+      }
+      return res;
+    };
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(window.refreshAiCountrySelectorOptions, 150);
+  });
 })();
 </script>
 
