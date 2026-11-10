@@ -2716,7 +2716,17 @@ if (document.getElementById('salesBannerDeadline')) {
   sbEl.textContent = `⏰ 마감: ${deadlineConfig.dateStr}${deadlineConfig.dateStr === "2026-11-16" ? " (월)" : ""} 18:00 (${ddayText})`;
   sbEl.dataset.origKr = sbEl.textContent;
 }
-if (document.getElementById('salesBannerNotice')) document.getElementById('salesBannerNotice').innerHTML = `📢 <strong>공지:</strong> ${deadlineConfig.notice}`;
+if (document.getElementById('salesBannerNotice')) {
+  const snEl = document.getElementById('salesBannerNotice');
+  snEl.innerHTML = `📢 <strong>공지:</strong> ${deadlineConfig.notice}`;
+  snEl.dataset.origHtml = snEl.innerHTML;
+}
+if (document.getElementById('adminDeadlineDateInput') && document.activeElement !== document.getElementById('adminDeadlineDateInput')) {
+  document.getElementById('adminDeadlineDateInput').value = deadlineConfig.dateStr || '2026-11-16';
+}
+if (document.getElementById('adminDeadlineNoticeInput') && document.activeElement !== document.getElementById('adminDeadlineNoticeInput')) {
+  document.getElementById('adminDeadlineNoticeInput').value = deadlineConfig.notice || '';
+}
 const total = partnersDB.length;
 const cntExisting = partnersDB.filter(p => p.type === '기존대리상').length;
 const cntCandidate = partnersDB.filter(p => p.type === '후보대리상').length;
@@ -4334,12 +4344,25 @@ function renderRepStatusTable() {
   });
 }
 
-document.getElementById('btnSaveDeadlineConfig').addEventListener('click', () => {
+document.getElementById('btnSaveDeadlineConfig').addEventListener('click', async () => {
   deadlineConfig.dateStr = document.getElementById('adminDeadlineDateInput').value || '2026-11-16';
   deadlineConfig.notice = document.getElementById('adminDeadlineNoticeInput').value || '';
+  deadlineConfig.updatedAt = Date.now();
   saveStateToStorage();
   updateKPIsAndHeaderDeadline();
-  showToast('제출 마감기한 변경 완료', `영업팀 포털 상단의 마감기한이 [${deadlineConfig.dateStr}]로 즉시 업데이트되었습니다.`);
+  if (typeof liveBroadcastChannel !== 'undefined' && liveBroadcastChannel) {
+    try { liveBroadcastChannel.postMessage({ type: 'CGBIO_LIVE_DEADLINE', deadlineConfig }); } catch (e) {}
+  }
+  try {
+    await fetch(`https://ntfy.sh/${encodeURIComponent(cloudSyncChannelId)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ type: 'CGBIO_LIVE_DEADLINE', deadlineConfig })
+    });
+    showToast('마감기한 및 공지 문구 실시간 원격 반영 완료', `GitHub 영업팀 제출 링크(amy0559.github.io) 상단에도 변경하신 공지 문구와 마감기한(${deadlineConfig.dateStr})이 즉시 송출되었습니다.`);
+  } catch (e) {
+    showToast('마감기한 및 공지 문구 저장 완료', `마감기한(${deadlineConfig.dateStr}) 및 공지 문구가 저장되었습니다.`);
+  }
 });
 
 document.getElementById('btnRemindAllPending').addEventListener('click', () => {
@@ -13935,6 +13958,94 @@ textarea,
   });
 })();
 </script>
+
+
+
+<script id="remoteDeadlineNoticeLiveSyncScript">
+(function() {
+  window.applyIncomingRemoteDeadline = function(remoteDl) {
+    if (!remoteDl || typeof remoteDl !== 'object') return;
+    const curTs = Number((window.deadlineConfig && window.deadlineConfig.updatedAt) || 0);
+    const incTs = Number(remoteDl.updatedAt || 0);
+    if (incTs && curTs && incTs < curTs) return;
+    if (typeof deadlineConfig !== 'undefined') {
+      if (remoteDl.dateStr) deadlineConfig.dateStr = remoteDl.dateStr;
+      if (typeof remoteDl.notice === 'string') deadlineConfig.notice = remoteDl.notice;
+      deadlineConfig.updatedAt = incTs || Date.now();
+      if (typeof saveStateToStorage === 'function') saveStateToStorage();
+      if (typeof updateKPIsAndHeaderDeadline === 'function') updateKPIsAndHeaderDeadline();
+    }
+  };
+
+  async function pollAndListenRemoteDeadlineForPortal() {
+    const params = new URLSearchParams(window.location.search || '');
+    const chan = params.get('channel') || (typeof cloudSyncChannelId !== 'undefined' ? cloudSyncChannelId : 'cgbio_global_crm_prod_v100_clean');
+    // 1. Catch-up poll (last 168h = 7 days) so any previously saved notice/deadline from Master Tool applies immediately on open!
+    try {
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      if (ctrl) setTimeout(() => ctrl.abort(), 3000);
+      const res = await fetch(`https://ntfy.sh/${encodeURIComponent(chan)}/json?poll=1&since=168h`, ctrl ? { signal: ctrl.signal } : {});
+      if (res.ok) {
+        const txt = await res.text();
+        let latestDl = null;
+        txt.split('\n').filter(Boolean).forEach(line => {
+          try {
+            const outer = JSON.parse(line);
+            if (outer && outer.message) {
+              const inner = JSON.parse(outer.message);
+              if (inner && inner.type === 'CGBIO_LIVE_DEADLINE' && inner.deadlineConfig) {
+                if (!latestDl || Number(inner.deadlineConfig.updatedAt || 0) >= Number(latestDl.updatedAt || 0)) {
+                  latestDl = inner.deadlineConfig;
+                }
+              }
+            }
+          } catch (e) {}
+        });
+        if (latestDl) window.applyIncomingRemoteDeadline(latestDl);
+      }
+    } catch (e) {}
+
+    // 2. Live SSE listener so even an already-open Sales Portal tab updates its notice banner in < 1 second!
+    try {
+      if (typeof EventSource !== 'undefined') {
+        const es = new EventSource(`https://ntfy.sh/${encodeURIComponent(chan)}/sse`);
+        es.onmessage = function(ev) {
+          try {
+            const outer = JSON.parse(ev.data);
+            if (outer && outer.message) {
+              const inner = JSON.parse(outer.message);
+              if (inner && inner.type === 'CGBIO_LIVE_DEADLINE' && inner.deadlineConfig) {
+                window.applyIncomingRemoteDeadline(inner.deadlineConfig);
+              }
+            }
+          } catch (e) {}
+        };
+      }
+    } catch (e) {}
+  }
+
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      const bcDl = new BroadcastChannel('CGBIO_CRM_LIVE_SYNC_V12');
+      bcDl.onmessage = function(ev) {
+        if (ev.data && ev.data.type === 'CGBIO_LIVE_DEADLINE' && ev.data.deadlineConfig) {
+          window.applyIncomingRemoteDeadline(ev.data.deadlineConfig);
+        }
+      };
+    }
+  } catch (e) {}
+
+  window.addEventListener('DOMContentLoaded', function() {
+    pollAndListenRemoteRemoteDeadlineSafe();
+  });
+
+  function pollAndListenRemoteRemoteDeadlineSafe() {
+    pollAndListenRemoteDeadlineForPortal();
+  }
+})();
+</script>
+
+
 
 
 
