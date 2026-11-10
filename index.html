@@ -1618,7 +1618,7 @@ CG
 </div>
 <div>
 <label class="block text-xs font-bold text-slate-700 mb-1">공지 문구 (영업팀 화면 상단 노출)</label>
-<input id="adminDeadlineNoticeInput" type="text" value="마감 기한 내 해외 대리상 정보 제출 바랍니다." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs" />
+<input id="adminDeadlineNoticeInput" type="text" value="해외 제품출시 가속화와 매출상승을 목표로 한 ★글로벌사업부 통합 CRM 관리★를 위하여 꼭 제출 부탁드립니다." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs" />
 </div>
 <button id="btnSaveDeadlineConfig" type="button" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 px-4 rounded-lg transition">✅ 마감기한 즉시 반영하기</button>
 </div>
@@ -1675,7 +1675,7 @@ CG
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <h2 class="text-base sm:text-lg font-extrabold text-slate-900">해외 대리상 및 후보 파트너 정보 제출</h2>
-      <p id="salesBannerNotice" class="text-xs text-slate-500 mt-0.5">STEP 1에서 소속과 성명을 입력한 뒤, STEP 2에서 기존 보유 파일을 그대로 올려주세요.</p>
+      <p id="salesBannerNotice" class="text-xs text-slate-700 font-semibold mt-0.5">📢 <strong>공지:</strong> 해외 제품출시 가속화와 매출상승을 목표로 한 ★글로벌사업부 통합 CRM 관리★를 위하여 꼭 제출 부탁드립니다.</p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
       <span id="salesBannerDeadline" class="text-xs font-bold text-slate-800 bg-slate-100 border border-slate-300 px-3 py-1.5 rounded whitespace-nowrap shrink-0">⏰ 마감: 2026-11-16 (월) 18:00 (D-7)</span>
@@ -2077,7 +2077,7 @@ const OFFICIAL_TEAMS_META = {
 };
 let deadlineConfig = {
 dateStr: '2026-11-16',
-notice: '차주 월요일(11월 16일) 18:00까지 제출 꼭 부탁드립니다.'
+notice: '해외 제품출시 가속화와 매출상승을 목표로 한 ★글로벌사업부 통합 CRM 관리★를 위하여 꼭 제출 부탁드립니다.'
 };
 function buildCleanInitialRepsStatus() {
   return [
@@ -2264,8 +2264,20 @@ function loadStateFromStorage() {
     }
     if (d) {
       deadlineConfig = JSON.parse(d);
+      let dlChanged = false;
       if (deadlineConfig && deadlineConfig.dateStr === '2026-11-13') {
         deadlineConfig.dateStr = '2026-11-16';
+        dlChanged = true;
+      }
+      if (deadlineConfig && !deadlineConfig.updatedAt && (
+        !deadlineConfig.notice ||
+        deadlineConfig.notice === '마감 기한 내 해외 대리상 정보 제출 바랍니다.' ||
+        deadlineConfig.notice === '차주 월요일(11월 16일) 18:00까지 제출 꼭 부탁드립니다.'
+      )) {
+        deadlineConfig.notice = '해외 제품출시 가속화와 매출상승을 목표로 한 ★글로벌사업부 통합 CRM 관리★를 위하여 꼭 제출 부탁드립니다.';
+        dlChanged = true;
+      }
+      if (dlChanged) {
         safeSetStorageItem('CGBIO_PERMANENT_VAULT_DEADLINE', JSON.stringify(deadlineConfig));
       }
     }
@@ -4107,15 +4119,19 @@ showToast('D2D 추출 B2B 유통법인 등록 완료', '글로벌영업2팀 관�
 // 10. SUBMISSION DEADLINE & AUTO EMAIL REMINDER SYSTEM
 // =========================================================================
 function openEditableReminderEmailModal(targetTeamsList) {
-  const teams = Array.isArray(targetTeamsList) && targetTeamsList.length > 0 ? targetTeamsList : salesRepsStatus;
-  const isSingle = teams.length === 1;
-  const firstRep = teams[0];
+  const teams = Array.isArray(targetTeamsList) && targetTeamsList.length > 0
+    ? targetTeamsList.filter(t => t.team !== '인니TF' || targetTeamsList.length === 1)
+    : salesRepsStatus.filter(t => t.team !== '인니TF');
+  const activeList = teams.length > 0 ? teams : salesRepsStatus;
+  const isSingle = activeList.length === 1;
+  const firstRep = activeList[0];
 
-  const toEmails = teams.map(r => String(r.email || '').trim()).filter(Boolean).join(', ');
-  const teamNamesStr = teams.map(r => r.team).join(', ');
+  const toEmails = activeList.map(r => String(r.email || '').trim()).filter(Boolean).join(', ');
+  const teamNamesStr = activeList.map(r => r.team).join(', ');
+  const chanParam = encodeURIComponent(cloudSyncChannelId || 'cgbio_global_crm_prod_v100_clean');
   const specificLink = isSingle
-    ? `https://amy0559.github.io/GLOBAL-CGBIO/?mode=sales&team=${encodeURIComponent(firstRep.team)}`
-    : `https://amy0559.github.io/GLOBAL-CGBIO/?mode=sales`;
+    ? `https://amy0559.github.io/GLOBAL-CGBIO/?mode=sales&channel=${chanParam}&team=${encodeURIComponent(firstRep.team)}`
+    : `https://amy0559.github.io/GLOBAL-CGBIO/?mode=sales&channel=${chanParam}`;
 
   const defaultSubject = isSingle
     ? `[글로벌사업부] ${firstRep.team} 해외 대리상 및 파트너 정보 제출 요청 (마감: ${deadlineConfig.dateStr})`
@@ -4127,67 +4143,91 @@ function openEditableReminderEmailModal(targetTeamsList) {
 
   const defaultBody = `안녕하세요 ${recipientGreeting}
 
-전사 글로벌 대리상 현황 통합 및 신제품 파트너십 매칭을 위해 각 팀에서 관리 중인 해외 대리상 정보(기존, 후보, 잠재 대리상 및 해외법인 거래선)를 취합하고 있습니다.
+글로벌전략TF에서 전사 해외 대리상 현황 통합 관리 및 향후 신제품 국가별 최적 파트너 매칭 지원을 위해 각 팀에서 관리 중인 해외 대리상 정보(기존, 후보, 잠재 대리상 및 해외법인)를 취합하고 있습니다.
 ${deadlineConfig.notice ? '(' + deadlineConfig.notice + ')\n' : ''}
 아래 전용 링크로 접속하셔서 마감 기한(${deadlineConfig.dateStr} 18:00) 내에 제출을 부탁드립니다.
 
 1. 제출 전용 접속 링크
 - 국문 제출 포털: ${specificLink}
-- 해외법인 영문(EN) 포털: https://amy0559.github.io/GLOBAL-CGBIO/?mode=sales&lang=en
+- 해외법인 영문(EN) 포털: https://amy0559.github.io/GLOBAL-CGBIO/?mode=sales&channel=${chanParam}&lang=en
 
-2. 1분 제출 방법 (STEP 1 -> STEP 2 -> STEP 3)
-- STEP 1 (소속 및 실명 입력): 소속 영업팀을 확인하고 담당자 본인의 실명을 입력해 주세요.
+2. 1분 제출 방법 (첨부된 가이드 이미지 참조)
+- STEP 1 (소속 및 실명 입력): 소속 영업팀을 선택하고 담당자 본인의 실명을 입력해 주세요.
 - STEP 2 (편한 제출 방식 택 1):
   [방식 1] 표준 엑셀 양식(.xlsx)을 내려받아 1개 업체당 1행으로 작성 후 업로드
   [방식 2] 각 팀에서 기존에 보유 중인 엑셀, 워드, PDF 파일을 편집 없이 그대로 업로드
   [방식 3] 등록할 업체가 1~2곳인 경우 웹 화면에서 바로 입력
-- STEP 3 (반영링크 전달): 최종 제출 후 하단 접수증의 녹색 [원클릭 자동반영 링크 복사] 버튼을 눌러 복사한 링크를 메신저나 회신 메일로 전달해 주시면 완료됩니다.
+- STEP 3 (반영링크 전달): 최종 제출 후 하단 접수증의 [원클릭 자동반영 링크 복사] 버튼을 눌러 복사한 링크를 웍스 메신저나 회신 메일로 전달해 주시면 완료됩니다.
 
 감사합니다.`;
 
   openModal(
-    `✉️ ${isSingle ? `[${firstRep.team}] 제출 안내 및 독촉 메일 작성/수정` : `[미제출 ${teams.length}개 팀] 일괄 안내 및 독촉 메일 작성/수정`}`,
+    `${isSingle ? `[${firstRep.team}] 네이버 웍스(WORKS) 메일 및 메신저 발송` : `[미제출 팀 일괄] 네이버 웍스(WORKS) 안내 메일 및 메신저 작성`}`,
     `<div class="space-y-3.5 text-xs text-slate-800">
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-blue-900">
-        💡 아래 <strong>수신자 이메일 주소, 메일 제목, 메일 본문</strong>을 자유롭게 수정하신 뒤 <strong>[📧 내 메일창(Outlook/웹메일)으로 열기]</strong> 또는 <strong>[📋 수정한 메일 내용 복사]</strong>를 눌러 발송하세요.
+      <div class="bg-emerald-50 border border-emerald-300 rounded p-3 text-emerald-950 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <strong>사내 네이버 웍스(NAVER WORKS) 전용 발송 모드:</strong> 하단 <strong>[네이버 웍스 메일 쓰기창 열기]</strong>를 누르면 수신자, 제목, 본문이 자동 연동되며, 우측 개별 <strong>[복사]</strong> 버튼으로 웍스 메일이나 웍스 메신저(톡)에 바로 붙여넣으실 수도 있습니다.
+        </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block font-extrabold text-slate-800 mb-1">수신자 이메일 주소 (To) <span class="text-slate-500 font-normal">(여러 명은 쉼표로 구분)</span></label>
-          <input id="modalReminderToEmail" type="text" value="${toEmails.replace(/"/g, '&quot;')}" placeholder="예: hong@cgbio.co.kr, kim@cgbio.co.kr" class="w-full rounded-lg border-2 border-blue-400 focus:border-blue-600 px-3 py-2 text-xs font-bold bg-white text-slate-900" />
+          <div class="flex items-center justify-between mb-1">
+            <label class="font-extrabold text-slate-800">수신자 이메일 주소 (To) <span class="text-slate-500 font-normal">(쉼표로 구분)</span></label>
+            <button type="button" data-copytarget="modalReminderToEmail" class="btn-works-field-copy bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-2 py-0.5 rounded text-[11px] cursor-pointer">수신자 복사</button>
+          </div>
+          <input id="modalReminderToEmail" type="text" value="${toEmails.replace(/"/g, '&quot;')}" placeholder="예: wanqilee@cgbio.co.kr, tjgusdn@cgbio.co.kr" class="w-full rounded border-2 border-emerald-500 focus:border-emerald-700 px-3 py-2 text-xs font-bold bg-white text-slate-900" />
         </div>
         <div>
-          <label class="block font-extrabold text-slate-800 mb-1">참조 이메일 주소 (CC, 선택사항)</label>
-          <input id="modalReminderCcEmail" type="text" value="" placeholder="예: manager@cgbio.co.kr" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold bg-white text-slate-900" />
+          <div class="flex items-center justify-between mb-1">
+            <label class="font-extrabold text-slate-800">참조 이메일 주소 (CC, 선택사항)</label>
+            <button type="button" data-copytarget="modalReminderCcEmail" class="btn-works-field-copy bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-2 py-0.5 rounded text-[11px] cursor-pointer">참조 복사</button>
+          </div>
+          <input id="modalReminderCcEmail" type="text" value="" placeholder="예: manager@cgbio.co.kr" class="w-full rounded border border-slate-300 px-3 py-2 text-xs font-semibold bg-white text-slate-900" />
         </div>
       </div>
 
       <div>
-        <label class="block font-extrabold text-slate-800 mb-1">메일 제목 (자유 수정 가능)</label>
-        <input id="modalReminderSubject" type="text" value="${defaultSubject.replace(/"/g, '&quot;')}" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-extrabold bg-white text-slate-900" />
+        <div class="flex items-center justify-between mb-1">
+          <label class="font-extrabold text-slate-800">메일 제목 (자유 수정 가능)</label>
+          <button type="button" data-copytarget="modalReminderSubject" class="btn-works-field-copy bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-2 py-0.5 rounded text-[11px] cursor-pointer">제목만 복사</button>
+        </div>
+        <input id="modalReminderSubject" type="text" value="${defaultSubject.replace(/"/g, '&quot;')}" class="w-full rounded border border-slate-300 px-3 py-2 text-xs font-extrabold bg-white text-slate-900" />
       </div>
 
       <div>
-        <label class="block font-extrabold text-slate-800 mb-1">메일 본문 (자유롭게 내용을 수정하거나 추가하세요)</label>
-        <textarea id="modalReminderBody" rows="12" class="w-full rounded-xl border border-slate-300 p-3 text-xs font-medium text-slate-800 leading-relaxed bg-white focus:border-blue-600 focus:outline-none">${defaultBody}</textarea>
+        <div class="flex items-center justify-between mb-1">
+          <label class="font-extrabold text-slate-800">메일 / 웍스 메신저 본문 (자유 수정 가능)</label>
+          <button type="button" data-copytarget="modalReminderBody" class="btn-works-field-copy bg-blue-100 hover:bg-blue-200 text-blue-900 font-extrabold px-2.5 py-0.5 rounded text-[11px] cursor-pointer">본문만 복사</button>
+        </div>
+        <textarea id="modalReminderBody" rows="11" class="w-full rounded border border-slate-300 p-3 text-xs font-medium text-slate-800 leading-relaxed bg-white focus:border-emerald-600 focus:outline-none">${defaultBody}</textarea>
       </div>
 
+      <div id="worksLaunchStatusBanner" class="hidden p-3 rounded bg-slate-900 text-white text-xs font-bold"></div>
+
       <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200">
-        <button type="button" id="btnSaveModalEmailsOnly" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-3.5 py-2 rounded-lg text-xs">
-          💾 입력한 수신자 이메일 저장
+        <button type="button" id="btnSaveModalEmailsOnly" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold px-3 py-2 rounded text-xs cursor-pointer">
+          입력한 수신자 이메일 저장
         </button>
         <div class="flex flex-wrap items-center gap-2">
-          <button type="button" id="btnCopyEditedEmailContent" class="bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-4 py-2.5 rounded-lg text-xs shadow-sm">
-            📋 수정한 제목 + 본문 전체 복사
+          <button type="button" id="btnCopyWorksChatMsg" class="bg-slate-800 hover:bg-slate-900 text-white font-extrabold px-3.5 py-2.5 rounded text-xs shadow-sm cursor-pointer">
+            웍스 메신저(톡) 공지용 복사
           </button>
-          <button type="button" id="btnLaunchMailtoClient" class="bg-blue-700 hover:bg-blue-600 text-white font-extrabold px-4 py-2.5 rounded-lg text-xs shadow-sm">
-            📧 내 메일 프로그램(Outlook 등)으로 바로 열기
+          <button type="button" id="btnOpenNaverWorksMail" class="bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold px-4 py-2.5 rounded text-xs shadow-sm cursor-pointer">
+            네이버 웍스(WORKS) 메일 쓰기창 열기 ↗
           </button>
         </div>
       </div>
     </div>`
   );
+
+  const doCopyText = (txt) => {
+    if (typeof window.copyTextUniversal === 'function') {
+      window.copyTextUniversal(txt);
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).catch(() => {});
+    }
+  };
 
   const syncModalEmailToRepTable = () => {
     const toVal = (document.getElementById('modalReminderToEmail')?.value || '').trim();
@@ -4197,7 +4237,7 @@ ${deadlineConfig.notice ? '(' + deadlineConfig.notice + ')\n' : ''}
       renderRepStatusTable();
     } else if (!isSingle && toVal) {
       const parts = toVal.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
-      teams.forEach((tObj, i) => {
+      activeList.forEach((tObj, i) => {
         if (parts[i]) tObj.email = parts[i];
       });
       saveStateToStorage();
@@ -4205,39 +4245,74 @@ ${deadlineConfig.notice ? '(' + deadlineConfig.notice + ')\n' : ''}
     }
   };
 
+  document.querySelectorAll('.btn-works-field-copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      syncModalEmailToRepTable();
+      const targetId = btn.getAttribute('data-copytarget');
+      const val = (document.getElementById(targetId)?.value || '').trim();
+      doCopyText(val);
+      const orig = btn.getAttribute('data-orig') || btn.textContent;
+      btn.setAttribute('data-orig', orig);
+      btn.textContent = '✓ 복사됨';
+      btn.classList.add('bg-emerald-600', 'text-white');
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.classList.remove('bg-emerald-600', 'text-white');
+      }, 1800);
+      showToast('항목 복사 완료', '클립보드에 복사되었습니다. 네이버 웍스에 Ctrl+V로 붙여넣으세요.');
+    });
+  });
+
   document.getElementById('btnSaveModalEmailsOnly')?.addEventListener('click', () => {
     syncModalEmailToRepTable();
-    showToast('수신자 이메일 저장 완료', '입력하신 이메일 주소가 팀별 제출 현황표에 저장되었습니다.');
+    showToast('수신자 이메일 저장 완료', '입력하신 이메일 주소가 팀별 제출 현황표에 자동 저장되었습니다.');
   });
 
-  document.getElementById('btnCopyEditedEmailContent')?.addEventListener('click', () => {
+  document.getElementById('btnCopyWorksChatMsg')?.addEventListener('click', () => {
     syncModalEmailToRepTable();
-    const toVal = (document.getElementById('modalReminderToEmail')?.value || '').trim();
     const subjVal = (document.getElementById('modalReminderSubject')?.value || '').trim();
     const bodyVal = (document.getElementById('modalReminderBody')?.value || '').trim();
-    const fullText = (toVal ? `[수신자] ${toVal}
-` : '') + `[제목] ${subjVal}
-
-${bodyVal}`;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(fullText).catch(() => {});
+    const chatMsg = `${subjVal}\n\n${bodyVal}`;
+    doCopyText(chatMsg);
+    const fb = document.getElementById('worksLaunchStatusBanner');
+    if (fb) {
+      fb.classList.remove('hidden');
+      fb.innerHTML = '✓ 네이버 웍스 메신저(톡)용 전체 공지 문구가 복사되었습니다! 웍스 대화방에 바로 붙여넣기(Ctrl+V) 하세요.';
     }
-    showToast('수정한 메일 내용 복사 완료', '수정한 메일 제목과 본문이 클립보드에 복사되었습니다. 사내 웹메일이나 메신저에 바로 붙여넣으세요.');
+    showToast('웍스 메신저 공지용 복사 완료', '네이버 웍스 메시지방에 바로 붙여넣기(Ctrl+V) 하실 수 있습니다.');
   });
 
-  document.getElementById('btnLaunchMailtoClient')?.addEventListener('click', () => {
+  document.getElementById('btnOpenNaverWorksMail')?.addEventListener('click', () => {
     syncModalEmailToRepTable();
     const toVal = (document.getElementById('modalReminderToEmail')?.value || '').trim();
     const ccVal = (document.getElementById('modalReminderCcEmail')?.value || '').trim();
     const subjVal = (document.getElementById('modalReminderSubject')?.value || '').trim();
     const bodyVal = (document.getElementById('modalReminderBody')?.value || '').trim();
-    const params = [];
-    if (ccVal) params.push('cc=' + encodeURIComponent(ccVal));
-    if (subjVal) params.push('subject=' + encodeURIComponent(subjVal));
-    if (bodyVal) params.push('body=' + encodeURIComponent(bodyVal));
-    const mailtoUrl = `mailto:${encodeURIComponent(toVal)}?${params.join('&')}`;
-    window.location.href = mailtoUrl;
-    showToast('메일 작성창 실행 완료', 'PC 기본 메일 프로그램으로 작성한 제목과 본문을 전달했습니다.');
+
+    // Copy body to clipboard automatically so even if corporate SSO redirects, Ctrl+V pastes immediately!
+    doCopyText(bodyVal);
+
+    const worksParams = new URLSearchParams();
+    worksParams.set('srvid', 'mail');
+    if (toVal) worksParams.set('to', toVal);
+    if (ccVal) worksParams.set('cc', ccVal);
+    if (subjVal) worksParams.set('subject', subjVal);
+    if (bodyVal) worksParams.set('body', bodyVal.slice(0, 1500));
+
+    const worksWriteUrl = `https://mail.worksmobile.com/write/popup?${worksParams.toString()}`;
+    const worksHomeUrl = 'https://mail.worksmobile.com/';
+
+    let win = null;
+    try {
+      win = window.open(worksWriteUrl, '_blank', 'noopener,width=1020,height=780');
+    } catch (e) {}
+
+    const fb = document.getElementById('worksLaunchStatusBanner');
+    if (fb) {
+      fb.classList.remove('hidden');
+      fb.innerHTML = `✓ 네이버 웍스 메일 쓰기창을 호출했으며, 본문 전체가 클립보드에 자동 복사되었습니다. 새 창이 안 열리면 <a href="${worksWriteUrl}" target="_blank" rel="noopener" class="underline text-amber-300 font-extrabold">[여기 클릭: 웍스 메일 쓰기창 열기]</a> 또는 <a href="${worksHomeUrl}" target="_blank" rel="noopener" class="underline text-sky-300 font-extrabold">[웍스 웹메일 홈 열기]</a>를 누르세요.`;
+    }
+    showToast('네이버 웍스 메일 쓰기창 실행 (본문 자동복사됨)', '웍스 메일 창이 열립니다. 본문이 비어 있을 경우 Ctrl+V를 누르면 바로 붙여넣어집니다.');
   });
 }
 
@@ -4354,12 +4429,17 @@ document.getElementById('btnSaveDeadlineConfig').addEventListener('click', async
     try { liveBroadcastChannel.postMessage({ type: 'CGBIO_LIVE_DEADLINE', deadlineConfig }); } catch (e) {}
   }
   try {
-    await fetch(`https://ntfy.sh/${encodeURIComponent(cloudSyncChannelId)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ type: 'CGBIO_LIVE_DEADLINE', deadlineConfig })
-    });
-    showToast('마감기한 및 공지 문구 실시간 원격 반영 완료', `GitHub 영업팀 제출 링크(amy0559.github.io) 상단에도 변경하신 공지 문구와 마감기한(${deadlineConfig.dateStr})이 즉시 송출되었습니다.`);
+    const targetChannels = Array.from(new Set([cloudSyncChannelId, 'cgbio_global_crm_prod_v100_clean'].filter(Boolean)));
+    const payloadStr = JSON.stringify({ type: 'CGBIO_LIVE_DEADLINE', deadlineConfig });
+    await Promise.all(targetChannels.map(ch =>
+      fetch(`https://ntfy.sh/${encodeURIComponent(ch)}`, {
+        method: 'POST',
+        cache: 'no-store',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: payloadStr
+      }).catch(() => {})
+    ));
+    showToast('마감기한 및 공지 문구 실시간 원격 반영 완료', `영업팀 제출 링크 상단에 변경하신 공지 문구와 마감기한(${deadlineConfig.dateStr})이 즉시 송출되었습니다.`);
   } catch (e) {
     showToast('마감기한 및 공지 문구 저장 완료', `마감기한(${deadlineConfig.dateStr}) 및 공지 문구가 저장되었습니다.`);
   }
@@ -8849,7 +8929,12 @@ let liveBroadcastChannel = null;
 let liveEventSource = null;
 try {
 const savedChan = localStorage.getItem('CGBIO_CLOUD_SYNC_CHANNEL');
-if (savedChan) cloudSyncChannelId = savedChan;
+if (savedChan && savedChan !== 'cgbio_global_crm_arom_live_v50') {
+  cloudSyncChannelId = savedChan;
+} else if (savedChan === 'cgbio_global_crm_arom_live_v50') {
+  cloudSyncChannelId = 'cgbio_global_crm_prod_v100_clean';
+  localStorage.setItem('CGBIO_CLOUD_SYNC_CHANNEL', 'cgbio_global_crm_prod_v100_clean');
+}
 const savedHook = localStorage.getItem('CGBIO_CUSTOM_WEBHOOK_URL');
 if (savedHook) customWebhookUrl = savedHook;
 } catch (e) {}
@@ -13984,7 +14069,7 @@ textarea,
     try {
       const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
       if (ctrl) setTimeout(() => ctrl.abort(), 3000);
-      const res = await fetch(`https://ntfy.sh/${encodeURIComponent(chan)}/json?poll=1&since=168h`, ctrl ? { signal: ctrl.signal } : {});
+      const res = await fetch(`https://ntfy.sh/${encodeURIComponent(chan)}/json?poll=1&since=all&_t=${Date.now()}`, Object.assign({ cache: 'no-store' }, ctrl ? { signal: ctrl.signal } : {}));
       if (res.ok) {
         const txt = await res.text();
         let latestDl = null;
@@ -14044,6 +14129,15 @@ textarea,
   }
 })();
 </script>
+
+
+
+
+
+
+
+
+
 
 
 
