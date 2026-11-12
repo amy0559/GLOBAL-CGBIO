@@ -1072,7 +1072,7 @@
         </div>
 
         <!-- Hidden file inputs -->
-        <input type="file" id="salesFileUploadInput" accept=".xlsx,.xls,.csv" multiple class="hidden">
+        <input type="file" id="salesFileUploadInput" accept=".xlsx,.xls,.csv,.docx,.doc,.pdf,.tsv,.txt" multiple class="hidden">
         <input type="file" id="salesRawFileUploadInput" accept=".xlsx,.xls,.csv,.docx,.doc,.pdf,.tsv,.txt" multiple class="hidden">
 
         <!-- Method 1 Panel: Standard Excel Template -->
@@ -1830,7 +1830,7 @@
 
       if (/홈페이지|웹사이트|sns|인스타|링크드인|website|homepage|url|instagram/.test(clean)) return "website";
       if (/^주소$|본사주소|소재지|위치|address|location|city/.test(clean)) return "address";
-      if (/취급계약제품명|취급제품|계약제품|취급품목|제품명|품목명|주력제품|주력품목|^품목$|^제품$|아이템|브랜드|products?|items?|brands?|portfolio/.test(clean)) return "products";
+      if (/취급계약제품명|취급제품|계약제품|취급품목|제품명|품목명|주력제품|주력품목|품목|제품|아이템|브랜드|products?|items?|brands?|portfolio/.test(clean)) return "products";
       if (/카테고리|품목군|제품군|분야|진료과|category|categories|segment|specialty/.test(clean)) return "category";
       if (/^단가$|공급단가|가격|판가|수출단가|unitprice|price|pricing/.test(clean)) return "unitPrice";
       if (/moq|최소주문|최소구매|연간목표|목표수량|연차별/.test(clean)) return "moq";
@@ -1839,7 +1839,7 @@
 
       // True Company Name (strictly excluding long banner titles like '해외 대리상 정보 제출 양식' or '대리상 현황')
       if (/양식|현황표|리스트|목록|안내|제출|집계|관리표|취합/.test(clean)) return null;
-      if (/^업체명$|^대리상명$|^대리상$|^거래처명$|^거래처$|^거래선명$|^거래선$|^파트너명$|^파트너사$|^파트너$|^바이어명$|^바이어$|^회사명$|^법인명$|^상호명$|^상호$|^고객사$|^수입사$|^유통사$|^company$|^companyname$|^distributor$|^distributorname$|^partner$|^partnername$|^account$|^accountname$|^client$|^customer$|^buyer$|^dealer$|^importer$|^vendor$|^organization$/.test(clean)) {
+      if (/업체명|대리상명|거래처명|거래처|거래선명|거래선|파트너명|파트너사|바이어명|바이어|회사명|법인명|상호명|상호|고객사|수입사|수입상|유통사|총판명|총판|대리점명|대리점|디스트리뷰터|^대리상$|^파트너$|^업체$|현지파트너|해외대리상|해외거래처|company|distributor|partner|account|client|customer|buyer|dealer|importer|vendor|agency|organization/.test(clean)) {
         return "company";
       }
       // Attendee / D2D specific (used only in Master Tool D2D uploads)
@@ -1919,8 +1919,12 @@
       });
 
       const slotMap = {};
+      const multiProductCols = [];
+      const multiMemoCols = [];
       rawHeaders.forEach((hd, cIdx) => {
         const slot = classifyHeaderCell(hd);
+        if (slot === "products") multiProductCols.push(cIdx);
+        if (slot === "memo") multiMemoCols.push(cIdx);
         if (slot && slotMap[slot] === undefined) {
           slotMap[slot] = cIdx;
         }
@@ -1931,6 +1935,8 @@
         if (nonEmpty.length === 0) return false;
         const joined = nonEmpty.join(" ");
         if (/^※|전 항목 기재|예시_기입후삭제|작성 안내/.test(joined)) return false;
+        const firstNonEmpty = (nonEmpty[0] || "").trim().toLowerCase();
+        if (/^(합계|총계|소계|계|total|subtotal|grand total|sum)$/.test(firstNonEmpty)) return false;
         // Skip repeated header row
         if (slotMap.company !== undefined && r[slotMap.company] === rawHeaders[slotMap.company]) return false;
         return true;
@@ -1980,13 +1986,13 @@
         rawHeaders.forEach((h, i) => { rawObj[h] = String(r[i] || "").trim(); });
         return { __slots: {
           company: getSlot("company"),
-          partnerType: getSlot("partnerType"),
+          partnerType: getSlot("partnerType") || (/잠재/.test(sLow) ? "잠재대리상" : (/후보|신규/.test(sLow) ? "후보대리상" : "")),
           team: getSlot("team"),
           salesRep: getSlot("salesRep"),
-          country: getSlot("country"),
+          country: getSlot("country") || (KNOWN_COUNTRIES_MAP[sLow] ? KNOWN_COUNTRIES_MAP[sLow] : ""),
           region: getSlot("region"),
           category: getSlot("category"),
-          products: getSlot("products"),
+          products: (multiProductCols.length > 1 ? multiProductCols.map(ci => String(r[ci] || "").trim()).filter(v => v && v !== "없음" && v !== "-").join(", ") : getSlot("products")),
           website: getSlot("website"),
           ceoName: getSlot("ceoName"),
           ceoEmail: getSlot("ceoEmail"),
@@ -1998,7 +2004,7 @@
           unitPrice: getSlot("unitPrice"),
           contract: getSlot("contract"),
           moq: getSlot("moq"),
-          memo: getSlot("memo"),
+          memo: (multiMemoCols.length > 1 ? multiMemoCols.map(ci => String(r[ci] || "").trim()).filter(v => v && v !== "없음" && v !== "-").join(" / ") : getSlot("memo")),
           event: getSlot("event"),
           inquiry: getSlot("inquiry"),
           personName: getSlot("personName"),
@@ -2258,7 +2264,7 @@
         if (!companyVal && rawCells.length > 0) {
           for (let c = 0; c < rawCells.length; c++) {
             const v = String(rawCells[c] || "").trim();
-            if (!v || v === "없음" || v === "협의중") continue;
+            if (!v || v === "없음" || v === "협의중" || /^(합계|총계|소계|total|subtotal)$/i.test(v)) continue;
             if (isPureCountryString(v)) {
               if (!countryRaw) countryRaw = v;
               continue;
@@ -4418,6 +4424,8 @@
     });
   })();
   </script>
+
+
 
 
 
